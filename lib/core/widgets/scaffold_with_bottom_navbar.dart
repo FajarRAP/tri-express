@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../routes/router.dart';
 import '../themes/colors.dart';
 
 class ScaffoldWithBottomNavbar extends StatelessWidget {
@@ -32,7 +33,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
         ),
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           const BottomNavigationBarItem(
@@ -69,15 +70,15 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        GoRouter.of(context).go('/');
+        context.go(menuPage);
       case 1:
-        GoRouter.of(context).go('/second');
+        context.go(onTheWayPage);
       case 2:
-        GoRouter.of(context).go('/third');
+        context.go('/third');
       case 3:
-        GoRouter.of(context).go('/fourth');
+        context.go('/fourth');
       case 4:
-        GoRouter.of(context).go('/fifth');
+        context.go('/fifth');
     }
   }
 
@@ -85,9 +86,9 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
     final selectedIndex = GoRouterState.of(context).uri.path;
 
     switch (selectedIndex) {
-      case '/':
+      case menuPage:
         return 0;
-      case '/second':
+      case onTheWayPage:
         return 1;
       case '/third':
         return 2;
