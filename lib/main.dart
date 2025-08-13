@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'core/routes/router.dart';
+import 'core/themes/theme.dart';
 import 'next_page.dart';
 import 'uhf_result_model.dart';
 
@@ -13,12 +15,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
+      theme: theme,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -83,21 +83,19 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: ListView.separated(
-        itemBuilder:
-            (context, index) => ListTile(
-              title: Text(_tagInfos[index].epcId),
-              subtitle: Text('Frequency: ${_tagInfos[index].frequency}'),
-              trailing: Text('RSSI: ${_tagInfos[index].rssi}'),
-            ),
+        itemBuilder: (context, index) => ListTile(
+          title: Text(_tagInfos[index].epcId),
+          subtitle: Text('Frequency: ${_tagInfos[index].frequency}'),
+          trailing: Text('RSSI: ${_tagInfos[index].rssi}'),
+        ),
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemCount: _tagInfos.length,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const NextPage()),
-            ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NextPage()),
+        ),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
