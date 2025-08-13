@@ -20,7 +20,7 @@ class OutlinePrimaryButton extends StatelessWidget {
         elevation: 0,
         backgroundColor: light,
         foregroundColor: primary,
-        side: const BorderSide(color: primary),
+        side: onPressed != null ? const BorderSide(color: primary) : null,
       ),
       child: child,
     );
