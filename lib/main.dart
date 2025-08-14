@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,7 +7,9 @@ import 'core/themes/theme.dart';
 import 'next_page.dart';
 import 'uhf_result_model.dart';
 
+late Faker faker;
 void main() {
+  faker = Faker();
   runApp(const MyApp());
 }
 
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: router,
       theme: theme,
-      title: 'Flutter Demo',
+      title: 'Tri Express',
     );
   }
 }
