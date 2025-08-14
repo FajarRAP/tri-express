@@ -34,7 +34,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            label: 'Menu',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.local_shipping_outlined),
@@ -70,9 +70,9 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.go(menuPage);
+        context.go(menuRoute);
       case 1:
-        context.go(onTheWayPage);
+        context.go(onTheWayRoute);
       case 2:
         context.go('/third');
       case 3:
@@ -83,21 +83,11 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
   }
 
   static int getIndex(BuildContext context) {
-    final selectedIndex = GoRouterState.of(context).uri.path;
+    final path = GoRouterState.of(context).uri.path;
 
-    switch (selectedIndex) {
-      case menuPage:
-        return 0;
-      case onTheWayPage:
-        return 1;
-      case '/third':
-        return 2;
-      case '/fourth':
-        return 3;
-      case '/fifth':
-        return 4;
-      default:
-        return 0;
-    }
+    if (path.startsWith(menuRoute)) return 0;
+    if (path.startsWith(onTheWayRoute)) return 1;
+
+    return 0;
   }
 }

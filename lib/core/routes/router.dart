@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/inventory/presentation/pages/batch_detail_page.dart';
+import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../pages/home_page.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
@@ -8,12 +10,14 @@ import '../widgets/scaffold_with_bottom_navbar.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-const menuPage = '/menu';
-const onTheWayPage = '/on-the-way';
+const menuRoute = '/menu';
+const onTheWayRoute = '/on-the-way';
+const batchDetailRoute = '/batch-detail';
+const itemDetailRoute = '/item';
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: menuPage,
+  initialLocation: menuRoute,
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -27,6 +31,23 @@ final router = GoRouter(
         GoRoute(
           path: '/on-the-way',
           builder: (context, state) => const OnTheWayPage(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'batch-detail/:batchId',
+              builder: (context, state) => BatchDetailPage(
+                batchId: '${state.pathParameters['batchId']}',
+                title: '${state.extra}',
+              ),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'item/:itemId',
+                  builder: (context, state) => ItemDetailPage(
+                    itemId: '${state.pathParameters['itemId']}',
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: '/third',
