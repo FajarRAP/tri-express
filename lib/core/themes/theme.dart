@@ -4,12 +4,62 @@ import 'colors.dart';
 
 final theme = ThemeData(
   appBarTheme: AppBarTheme(
+    centerTitle: true,
+    scrolledUnderElevation: 0.0,
     titleTextStyle: const TextStyle(
       color: black,
       fontSize: 18,
       fontWeight: FontWeight.w700,
     ),
-    centerTitle: true,
+  ),
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: primary,
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+    ),
+    contentPadding: const EdgeInsets.all(10),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(
+        color: graySecondary,
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(
+        color: graySecondary,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(
+        color: danger,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(
+        color: primary,
+        width: 2,
+      ),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(
+        color: danger,
+        width: 2,
+      ),
+    ),
+    filled: true,
+    fillColor: light,
+    hintStyle: const TextStyle(
+      color: gray,
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+    ),
+    prefixIconColor: gray,
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -22,4 +72,5 @@ final theme = ThemeData(
       ),
     ),
   ),
+  useMaterial3: true,
 );
