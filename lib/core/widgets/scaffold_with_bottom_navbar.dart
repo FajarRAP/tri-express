@@ -76,7 +76,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
       case 2:
         context.go('/third');
       case 3:
-        context.go('/fourth');
+        context.go(inventoryRoute);
       case 4:
         context.go('/fifth');
     }
@@ -87,6 +87,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
 
     if (path.startsWith(menuRoute)) return 0;
     if (path.startsWith(onTheWayRoute)) return 1;
+    if (path.startsWith(inventoryRoute)) return 3;
 
     return 0;
   }

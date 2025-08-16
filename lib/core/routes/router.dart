@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tri_express/features/inventory/presentation/pages/inventory_page.dart';
 
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
@@ -11,9 +12,12 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 const menuRoute = '/menu';
+
 const onTheWayRoute = '/on-the-way';
 const batchDetailRoute = '/batch-detail';
 const itemDetailRoute = '/item';
+
+const inventoryRoute = '/inventory';
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -54,8 +58,8 @@ final router = GoRouter(
           builder: (context, state) => const HomePage(),
         ),
         GoRoute(
-          path: '/fourth',
-          builder: (context, state) => const HomePage(),
+          path: '/inventory',
+          builder: (context, state) => const InventoryPage(),
         ),
         GoRoute(
           path: '/fifth',
