@@ -20,6 +20,7 @@ class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.tri_express/channel"
     private var isKeyDown = false
     private var isInventoryRunning = false
+    private var isInScannablePage = false
 
     val readListener: ReadListener = ReadListener { list: MutableList<TagInfo?>? ->
         if (list == null) return@ReadListener
@@ -46,13 +47,21 @@ class MainActivity : FlutterActivity() {
             call, result ->
             when(call.method) {
                 "handleInventoryButton" -> result.success(handleInventoryButton(isFromKeyEvent = false))
+                "inScannablePage" -> {
+                    isInScannablePage = true
+                    result.success(true)
+                }
+                "notInScannablePage" -> {
+                    isInScannablePage = false
+                    result.success(false)
+                }
                 else -> result.notImplemented()
             }
         }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (!isKeyDown && (keyCode == 292 || keyCode == KeyEvent.KEYCODE_F1)) {
+        if (!isKeyDown && isInScannablePage && (keyCode == 292 || keyCode == KeyEvent.KEYCODE_F1)) {
             handleInventoryButton(isFromKeyEvent = true)
         }
 
@@ -60,7 +69,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (isKeyDown && (keyCode == 292 || keyCode == KeyEvent.KEYCODE_F1)) {
+        if (isKeyDown && isInScannablePage && (keyCode == 292 || keyCode == KeyEvent.KEYCODE_F1)) {
             isKeyDown = false
         }
 
