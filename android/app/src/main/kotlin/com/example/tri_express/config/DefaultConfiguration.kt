@@ -16,7 +16,7 @@ object DefaultConfiguration {
     var isInventoryWithId: Boolean = false
     var inventoryParams: Int =
         InventoryModeParams.MetaFlag.RSSI or InventoryModeParams.MetaFlag.FREQUENCY
-    var rfMode: Int = InventoryModeParams.RF_MODE[9]!!
+    var rfMode: Int = InventoryModeParams.RF_MODE[9]
     var currentEpc: String = ""
 
     fun defaultInitModule() {
