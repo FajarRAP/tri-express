@@ -45,7 +45,7 @@ class MainActivity : FlutterActivity() {
         methodChannel.setMethodCallHandler {
             call, result ->
             when(call.method) {
-                "handleInventoryButton" -> result.success(handleInventoryButton())
+                "handleInventoryButton" -> result.success(handleInventoryButton(isFromKeyEvent = false))
                 else -> result.notImplemented()
             }
         }
@@ -53,30 +53,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (!isKeyDown && (keyCode == 292 || keyCode == KeyEvent.KEYCODE_F1)) {
-            if (isInventoryRunning) {
-                // Then stop the inventory scan
-                UHFEngine.getEngine().stopInventory()
-                isInventoryRunning = false
-
-                methodChannel.invokeMethod("stopInventory", "Selesai")
-            } else {
-                // then start the inventory scan
-                isKeyDown = true
-
-                val params: InventoryParams? = InventoryModeParams.getParams(
-                    DefaultConfiguration.inventoryMode,
-                    DefaultConfiguration.inventoryParams,
-                    DefaultConfiguration.isInventoryWithId
-                )
-
-                val er = UHFEngine.getEngine().startInventory(params, readListener, readErrorListener)
-
-                if (er == READER_ERR.MT_OK_ERR) {
-                    isInventoryRunning = true
-
-                    methodChannel.invokeMethod("startInventory", "Mulai")
-                }
-            }
+            handleInventoryButton(isFromKeyEvent = true)
         }
 
         return super.onKeyDown(keyCode, event)
@@ -92,23 +69,30 @@ class MainActivity : FlutterActivity() {
 
     override fun onResume() {
         super.onResume()
-        UHFEngine.getEngine().powerOn()
-        UHFEngine.getEngine().connectModule(DefaultConfiguration.UART_DEV_PATH, 1)
+        UHFEngine.getEngine().apply {
+            powerOn()
+            connectModule(DefaultConfiguration.UART_DEV_PATH, 1)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        UHFEngine.getEngine().disconnectModule()
-        UHFEngine.getEngine().powerOff()
+        UHFEngine.getEngine().apply {
+            disconnectModule()
+            powerOff()
+        }
     }
 
-    private fun handleInventoryButton(): Boolean {
+    private fun handleInventoryButton(isFromKeyEvent: Boolean): Int {
         if (isInventoryRunning) {
+            val stopMap = mapOf("status_code" to 0, "message" to "Berhenti")
             UHFEngine.getEngine().stopInventory()
             isInventoryRunning = false
-            methodChannel.invokeMethod("stopInventory", "Berhenti")
-            return true
+            methodChannel.invokeMethod("stopInventory", stopMap)
+            return 0
         }
+
+        isKeyDown = isFromKeyEvent
 
         val params: InventoryParams? = InventoryModeParams.getParams(
             DefaultConfiguration.inventoryMode,
@@ -119,12 +103,14 @@ class MainActivity : FlutterActivity() {
         val readerErr = UHFEngine.getEngine().startInventory(params, readListener, readErrorListener)
 
         if (readerErr != READER_ERR.MT_OK_ERR) {
-            methodChannel.invokeMethod("failedInventory", "Terjadi kesalahan")
-            return false
+            val errorMap = mapOf("status_code" to -1, "message" to "Terjadi kesalahan")
+            methodChannel.invokeMethod("failedInventory", errorMap)
+            return -1
         }
 
         isInventoryRunning = true
-        methodChannel.invokeMethod("startInventory", "Mulai")
-        return true
+        val successMap = mapOf("status_code" to 1, "message" to "Mulai")
+        methodChannel.invokeMethod("startInventory", successMap)
+        return 1
     }
 }
