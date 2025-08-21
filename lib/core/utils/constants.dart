@@ -13,3 +13,17 @@ const shipmentStatus = <String, dynamic>{
 };
 
 const platform = MethodChannel('com.example.tri_express/channel');
+
+const scannablePage = <String>{
+  '/receive-goods',
+  '/prepare-goods',
+  '/inventory',
+};
+
+const inScannablePageMethod = 'inScannablePage';
+const notInScannablePageMethod = 'notInScannablePage';
+const handleInventoryButtonMethod = 'handleInventoryButton';
+const getTagInfoMethod = 'getTagInfo';
+const startInventoryMethod = 'startInventory';
+const stopInventoryMethod = 'stopInventory';
+const failedInventoryMethod = 'failedInventory';
