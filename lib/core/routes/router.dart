@@ -7,6 +7,7 @@ import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../pages/home_page.dart';
+import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -25,6 +26,13 @@ const settingRoute = '/setting';
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: menuRoute,
+  redirect: (context, state) {
+    scannablePage.contains(state.uri.path)
+        ? platform.invokeMethod<bool>(inScannablePageMethod)
+        : platform.invokeMethod<bool>(notInScannablePageMethod);
+
+    return null;
+  },
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
