@@ -31,7 +31,7 @@ class _InventoryPageState extends State<InventoryPage> {
     final map = Map<String, dynamic>.from(call.arguments);
 
     switch (call.method) {
-      case 'getTagInfo':
+      case getTagInfoMethod:
         final tagInfo = UHFResultModel.fromJson(map);
         final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
 
@@ -39,12 +39,12 @@ class _InventoryPageState extends State<InventoryPage> {
             ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
             : _tagInfos.add(tagInfo));
         break;
-      case 'startInventory':
-      case 'stopInventory':
-      case 'failedInventory':
+      case startInventoryMethod:
+      case stopInventoryMethod:
+      case failedInventoryMethod:
         final response = UHFResponse.fromJson(map);
         setState(() => _isInventoryRunning = response.statusCode == 1);
-        call.method == 'startInventory'
+        call.method == startInventoryMethod
             ? TopSnackbar.successSnackbar(message: response.message)
             : TopSnackbar.dangerSnackbar(message: response.message);
         break;
@@ -52,16 +52,12 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Future<void> _callHandleInventoryButton() async {
-    try {
-      final isSuccess =
-          await platform.invokeMethod<int>('handleInventoryButton') ?? -1;
+    final isSuccess =
+        await platform.invokeMethod<int>(handleInventoryButtonMethod) ?? -1;
 
-      if (isSuccess == -1) return;
+    if (isSuccess == -1) return;
 
-      setState(() => _isInventoryRunning = isSuccess == 1);
-    } on PlatformException catch (pe) {
-      debugPrint('PlatformException: ${pe.message}');
-    }
+    setState(() => _isInventoryRunning = isSuccess == 1);
   }
 
   @override
