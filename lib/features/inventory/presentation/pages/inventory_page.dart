@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
-import '../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../main.dart';
 import '../../../../uhf_result_model.dart';
+import '../widgets/inventory_summary_card.dart';
 import 'on_the_way_page.dart';
 
 class InventoryPage extends StatefulWidget {
@@ -16,9 +18,8 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
-  static const platform =
-      MethodChannel('com.example.tri_express/android_channel');
   final _tagInfos = <UHFResultModel>[];
+  var _isInventoryRunning = false;
 
   @override
   void initState() {
@@ -27,43 +28,39 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Future<dynamic> callHandler(MethodCall call) async {
+    final map = Map<String, dynamic>.from(call.arguments);
+
     switch (call.method) {
       case 'getTagInfo':
-        final map = Map<String, dynamic>.from(call.arguments);
         final tagInfo = UHFResultModel.fromJson(map);
         final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
 
-        setState(() {
-          index != -1
-              ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
-              : _tagInfos.add(tagInfo);
-        });
-
+        setState(() => index != -1
+            ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
+            : _tagInfos.add(tagInfo));
         break;
       case 'startInventory':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('${call.arguments}'),
-          ),
-        );
-        break;
       case 'stopInventory':
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('${call.arguments}'),
-          ),
-        );
+      case 'failedInventory':
+        final response = UHFResponse.fromJson(map);
+        setState(() => _isInventoryRunning = response.statusCode == 1);
+        call.method == 'startInventory'
+            ? TopSnackbar.successSnackbar(message: response.message)
+            : TopSnackbar.dangerSnackbar(message: response.message);
         break;
     }
   }
 
   Future<void> _callHandleInventoryButton() async {
     try {
-      await platform.invokeMethod<void>('handleInventoryButton');
+      final isSuccess =
+          await platform.invokeMethod<int>('handleInventoryButton') ?? -1;
+
+      if (isSuccess == -1) return;
+
+      setState(() => _isInventoryRunning = isSuccess == 1);
     } on PlatformException catch (pe) {
-      print(pe);
+      debugPrint('PlatformException: ${pe.message}');
     }
   }
 
@@ -82,6 +79,7 @@ class _InventoryPageState extends State<InventoryPage> {
         child: Column(
           children: <Widget>[
             const SizedBox(height: 16),
+            // Header
             Row(
               children: [
                 Expanded(
@@ -133,89 +131,25 @@ class _InventoryPageState extends State<InventoryPage> {
               ],
             ),
             const SizedBox(height: 24),
+            // Cards
             Row(
               children: <Widget>[
                 Expanded(
-                  child: PrimaryGradientCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Koli',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '0',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: InventorySummaryCard(title: 'Koli', value: 0),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: PrimaryGradientCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Scan',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '0',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: InventorySummaryCard(title: 'Scan', value: 0),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: PrimaryGradientCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Hilang',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '0',
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: InventorySummaryCard(title: 'Hilang', value: 0),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            if (_tagInfos.isNotEmpty)
+            // Datas
+            if (_tagInfos.isEmpty)
               Expanded(
                 child: Center(
                   child: Text(
@@ -235,18 +169,19 @@ class _InventoryPageState extends State<InventoryPage> {
                   itemBuilder: (context, index) => BatchCardItem(
                     batch: Batch(
                       id: '$index',
-                      batch: '_tagInfos[$index].epcId',
+                      batch: _tagInfos[index].epcId,
                       destination: faker.address.city(),
                       itemCount: faker.randomGenerator.integer(100, min: 1),
                       origin: faker.address.city(),
-                      path: 'Darat',
+                      path: faker.randomGenerator.mapElementValue(shipmentPath),
                       sendAt: faker.date.dateTime(),
-                      status: 'Selesai',
+                      status:
+                          faker.randomGenerator.mapElementValue(shipmentStatus),
                     ),
                   ),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 12),
-                  itemCount: 20,
+                  itemCount: _tagInfos.length,
                   padding: const EdgeInsets.only(bottom: 16),
                 ),
               ),
@@ -257,7 +192,9 @@ class _InventoryPageState extends State<InventoryPage> {
         onPressed: _callHandleInventoryButton,
         backgroundColor: primary,
         foregroundColor: light,
-        child: const Icon(Icons.play_arrow),
+        child: _isInventoryRunning
+            ? const Icon(Icons.stop)
+            : const Icon(Icons.play_arrow),
       ),
     );
   }
