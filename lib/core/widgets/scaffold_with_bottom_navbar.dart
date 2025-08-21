@@ -19,18 +19,6 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) => _onItemTapped(index, context),
         currentIndex: getIndex(context),
-        selectedItemColor: primary,
-        selectedLabelStyle: const TextStyle(
-          color: primary,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -47,7 +35,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
                 color: primary,
               ),
               padding: const EdgeInsets.all(10),
-              child: Icon(
+              child: const Icon(
                 Icons.qr_code_scanner_outlined,
                 color: light,
               ),
@@ -78,7 +66,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
       case 3:
         context.go(inventoryRoute);
       case 4:
-        context.go('/fifth');
+        context.go(settingRoute);
     }
   }
 
@@ -88,6 +76,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
     if (path.startsWith(menuRoute)) return 0;
     if (path.startsWith(onTheWayRoute)) return 1;
     if (path.startsWith(inventoryRoute)) return 3;
+    if (path.startsWith(settingRoute)) return 4;
 
     return 0;
   }

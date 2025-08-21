@@ -12,6 +12,20 @@ final theme = ThemeData(
       fontWeight: FontWeight.w700,
     ),
   ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    selectedItemColor: primary,
+    selectedLabelStyle: const TextStyle(
+      color: primary,
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+    ),
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed,
+    unselectedLabelStyle: const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+    ),
+  ),
   colorScheme: ColorScheme.fromSeed(
     seedColor: primary,
   ),
@@ -61,6 +75,7 @@ final theme = ThemeData(
     ),
     prefixIconColor: gray,
   ),
+  
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       disabledBackgroundColor: gray,
