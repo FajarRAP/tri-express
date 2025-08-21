@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/features/inventory/presentation/pages/inventory_page.dart';
 
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
+import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
+import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../pages/home_page.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 
@@ -18,6 +19,8 @@ const batchDetailRoute = '/batch-detail';
 const itemDetailRoute = '/item';
 
 const inventoryRoute = '/inventory';
+
+const settingRoute = '/setting';
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -62,8 +65,8 @@ final router = GoRouter(
           builder: (context, state) => const InventoryPage(),
         ),
         GoRoute(
-          path: '/fifth',
-          builder: (context, state) => const HomePage(),
+          path: '/setting',
+          builder: (context, state) => const SettingPage(),
         ),
       ],
     ),
