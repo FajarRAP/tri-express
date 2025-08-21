@@ -17,7 +17,7 @@ import java.util.function.Consumer
 
 class MainActivity : FlutterActivity() {
     private lateinit var methodChannel: MethodChannel
-    private val CHANNEL = "com.example.tri_express/android_channel"
+    private val CHANNEL = "com.example.tri_express/channel"
     private var isKeyDown = false
     private var isInventoryRunning = false
 
@@ -42,6 +42,13 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel.setMethodCallHandler {
+            call, result ->
+            when(call.method) {
+                "handleInventoryButton" -> result.success(handleInventoryButton())
+                else -> result.notImplemented()
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -51,8 +58,7 @@ class MainActivity : FlutterActivity() {
                 UHFEngine.getEngine().stopInventory()
                 isInventoryRunning = false
 
-                methodChannel.invokeMethod("endInventory", "Selesai")
-
+                methodChannel.invokeMethod("stopInventory", "Selesai")
             } else {
                 // then start the inventory scan
                 isKeyDown = true
@@ -94,5 +100,31 @@ class MainActivity : FlutterActivity() {
         super.onPause()
         UHFEngine.getEngine().disconnectModule()
         UHFEngine.getEngine().powerOff()
+    }
+
+    private fun handleInventoryButton(): Boolean {
+        if (isInventoryRunning) {
+            UHFEngine.getEngine().stopInventory()
+            isInventoryRunning = false
+            methodChannel.invokeMethod("stopInventory", "Berhenti")
+            return true
+        }
+
+        val params: InventoryParams? = InventoryModeParams.getParams(
+            DefaultConfiguration.inventoryMode,
+            DefaultConfiguration.inventoryParams,
+            DefaultConfiguration.isInventoryWithId
+        )
+
+        val readerErr = UHFEngine.getEngine().startInventory(params, readListener, readErrorListener)
+
+        if (readerErr != READER_ERR.MT_OK_ERR) {
+            methodChannel.invokeMethod("failedInventory", "Terjadi kesalahan")
+            return false
+        }
+
+        isInventoryRunning = true
+        methodChannel.invokeMethod("startInventory", "Mulai")
+        return true
     }
 }
