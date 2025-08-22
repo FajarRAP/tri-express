@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../uhf_result_model.dart';
 import '../themes/colors.dart';
+import 'constants.dart';
 
 class UHFResponse {
   const UHFResponse({
@@ -45,7 +48,7 @@ class TopSnackbar {
             .slideY(begin: 0.15, end: 0, duration: 200.ms)
             .then()
             .slideY(begin: 0, end: 0.15, duration: 200.ms)
-            .then(delay: 1.seconds)
+            .then(delay: 800.ms)
             .slideY(begin: 0, end: -2),
       ),
     );
@@ -80,5 +83,37 @@ class TopSnackbar {
         ),
       ),
     );
+  }
+}
+
+class UHFMethodHandler {
+  const UHFMethodHandler(this._platform);
+
+  final MethodChannel _platform;
+
+  Future<dynamic> methodHandler(
+    MethodCall call, {
+    required void Function(UHFResultModel result) onGetTag,
+    required void Function(String toggleCase, UHFResponse response)
+        onToggleInventory,
+  }) async {
+    final map = Map<String, dynamic>.from(call.arguments);
+
+    switch (call.method) {
+      case getTagInfoMethod:
+        final tagInfo = UHFResultModel.fromJson(map);
+        onGetTag(tagInfo);
+        break;
+      case startInventoryMethod:
+      case stopInventoryMethod:
+      case failedInventoryMethod:
+        final response = UHFResponse.fromJson(map);
+        onToggleInventory(call.method, response);
+        break;
+    }
+  }
+
+  Future<int> invokeHandleInventory() async {
+    return await _platform.invokeMethod<int>(handleInventoryButtonMethod) ?? -1;
   }
 }
