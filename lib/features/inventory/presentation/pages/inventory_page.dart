@@ -7,9 +7,9 @@ import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
 import '../../../../main.dart';
 import '../../../../uhf_result_model.dart';
+import '../../domain/entity/batch_entity.dart';
 import '../widgets/batch_card_status_item.dart';
 import '../widgets/inventory_summary_card.dart';
-import 'on_the_way_page.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
@@ -164,7 +164,7 @@ class _InventoryPageState extends State<InventoryPage> {
               Expanded(
                 child: ListView.separated(
                   itemBuilder: (context, index) => BatchCardStatusItem(
-                    batch: Batch(
+                    batch: BatchEntity(
                       id: '$index',
                       batch: _tagInfos[index].epcId,
                       destination: faker.address.city(),

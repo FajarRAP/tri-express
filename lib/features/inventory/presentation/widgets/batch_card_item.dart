@@ -6,7 +6,7 @@ import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/widgets/base_card.dart';
 import '../../../../core/widgets/buttons/outline_primary_button.dart';
-import '../pages/on_the_way_page.dart';
+import '../../domain/entity/batch_entity.dart';
 import 'info_tile.dart';
 
 class BatchCardItem extends StatelessWidget {
@@ -16,7 +16,7 @@ class BatchCardItem extends StatelessWidget {
     this.action,
   });
 
-  final Batch batch;
+  final BatchEntity batch;
   final Widget? action;
 
   @override

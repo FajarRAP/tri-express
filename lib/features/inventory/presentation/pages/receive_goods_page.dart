@@ -6,8 +6,8 @@ import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../uhf_result_model.dart';
+import '../../domain/entity/batch_entity.dart';
 import '../widgets/batch_card_item.dart';
-import 'on_the_way_page.dart';
 
 class ReceiveGoodsPage extends StatefulWidget {
   const ReceiveGoodsPage({super.key});
@@ -133,7 +133,7 @@ class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
               Expanded(
                 child: ListView.separated(
                   itemBuilder: (context, index) => BatchCardItem(
-                    batch: Batch(
+                    batch: BatchEntity(
                       id: '-',
                       batch: _tagInfos[index].epcId,
                       destination: '-',

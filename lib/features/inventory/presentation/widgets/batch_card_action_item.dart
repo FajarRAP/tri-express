@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/themes/colors.dart';
-import '../pages/on_the_way_page.dart';
+import '../../domain/entity/batch_entity.dart';
 import 'batch_card_item.dart';
 
 class BatchCardActionItem extends StatelessWidget {
@@ -10,7 +10,7 @@ class BatchCardActionItem extends StatelessWidget {
     required this.batch,
   });
 
-  final Batch batch;
+  final BatchEntity batch;
 
   @override
   Widget build(BuildContext context) {
