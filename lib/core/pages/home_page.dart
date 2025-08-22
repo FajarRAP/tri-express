@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../routes/router.dart';
 import '../themes/colors.dart';
 import '../widgets/notification_icon_button.dart';
 import '../widgets/primary_icon_rectangle.dart';
@@ -106,6 +108,7 @@ class HomePage extends StatelessWidget {
               shrinkWrap: true,
               children: <Widget>[
                 _ActionCard(
+                  onTap: () => context.push(receiveGoodsRoute),
                   icon: Icons.inventory_2_outlined,
                   title: 'Terima Barang',
                 ),
@@ -210,8 +213,8 @@ class _DataCard extends StatelessWidget {
               color: grayTertiary,
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              overflow: TextOverflow.ellipsis,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           // Row(
           //   children: <Widget>[
