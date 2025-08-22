@@ -15,7 +15,7 @@ const shipmentStatus = <String, dynamic>{
 const platform = MethodChannel('com.example.tri_express/channel');
 
 const scannablePage = <String>{
-  '/receive-goods',
+  '/menu/receive-goods',
   '/prepare-goods',
   '/inventory',
 };
