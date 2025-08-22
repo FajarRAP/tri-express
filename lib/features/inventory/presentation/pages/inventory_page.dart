@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constants.dart';
@@ -19,46 +18,33 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
+  late final UHFMethodHandler _uhfMethodHandler;
   final _tagInfos = <UHFResultModel>[];
   var _isInventoryRunning = false;
 
   @override
   void initState() {
     super.initState();
-    platform.setMethodCallHandler(callHandler);
-  }
+    _uhfMethodHandler = UHFMethodHandler(platform);
+    platform.setMethodCallHandler(
+      (call) async => await _uhfMethodHandler.methodHandler(
+        call,
+        onGetTag: (tagInfo) {
+          final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
 
-  Future<dynamic> callHandler(MethodCall call) async {
-    final map = Map<String, dynamic>.from(call.arguments);
+          setState(() => index != -1
+              ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
+              : _tagInfos.add(tagInfo));
+        },
+        onToggleInventory: (toggleCase, response) {
+          setState(() => _isInventoryRunning = response.statusCode == 1);
 
-    switch (call.method) {
-      case getTagInfoMethod:
-        final tagInfo = UHFResultModel.fromJson(map);
-        final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
-
-        setState(() => index != -1
-            ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
-            : _tagInfos.add(tagInfo));
-        break;
-      case startInventoryMethod:
-      case stopInventoryMethod:
-      case failedInventoryMethod:
-        final response = UHFResponse.fromJson(map);
-        setState(() => _isInventoryRunning = response.statusCode == 1);
-        call.method == startInventoryMethod
-            ? TopSnackbar.successSnackbar(message: response.message)
-            : TopSnackbar.dangerSnackbar(message: response.message);
-        break;
-    }
-  }
-
-  Future<void> _callHandleInventoryButton() async {
-    final isSuccess =
-        await platform.invokeMethod<int>(handleInventoryButtonMethod) ?? -1;
-
-    if (isSuccess == -1) return;
-
-    setState(() => _isInventoryRunning = isSuccess == 1);
+          call.method == startInventoryMethod
+              ? TopSnackbar.successSnackbar(message: response.message)
+              : TopSnackbar.dangerSnackbar(message: response.message);
+        },
+      ),
+    );
   }
 
   @override
@@ -186,7 +172,7 @@ class _InventoryPageState extends State<InventoryPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _callHandleInventoryButton,
+        onPressed: _uhfMethodHandler.invokeHandleInventory,
         backgroundColor: primary,
         foregroundColor: light,
         child: _isInventoryRunning
