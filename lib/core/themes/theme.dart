@@ -29,6 +29,17 @@ final theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: primary,
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      disabledBackgroundColor: gray,
+      disabledForegroundColor: light,
+      padding: const EdgeInsets.all(10),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  ),
   inputDecorationTheme: InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
@@ -75,16 +86,18 @@ final theme = ThemeData(
     ),
     prefixIconColor: gray,
   ),
-  
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      disabledBackgroundColor: gray,
-      disabledForegroundColor: light,
-      padding: const EdgeInsets.all(10),
-      textStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
+  tabBarTheme: TabBarTheme(
+    dividerColor: Colors.transparent,
+    indicatorColor: primary,
+    indicatorSize: TabBarIndicatorSize.tab,
+    labelStyle: const TextStyle(
+      color: primary,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
+    unselectedLabelStyle: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
     ),
   ),
   useMaterial3: true,
