@@ -84,6 +84,7 @@ class _FilterReceivedGoodsPageState extends State<FilterReceivedGoodsPage> {
               decoration: const InputDecoration(
                 hintText: 'DD/MM/YYYY',
                 labelText: 'Tanggal Terima',
+                suffixIcon: Icon(Icons.calendar_month),
               ),
               readOnly: true,
             ),
