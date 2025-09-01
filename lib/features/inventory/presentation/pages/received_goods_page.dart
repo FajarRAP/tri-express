@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routes/router.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/decorated_icon_button.dart';
 import '../../domain/entity/batch_entity.dart';
@@ -41,7 +43,7 @@ class ReceivedGoodsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     DecoratedIconButton(
-                      onTap: () {},
+                      onTap: () => context.push(filterReceivedGoodsRoute),
                       icon: const Icon(Icons.add_outlined),
                     ),
                   ],
