@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/core/routes/router.dart';
 
+import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/base_card.dart';
 import '../../../../core/widgets/buttons/outline_primary_button.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
@@ -23,73 +24,78 @@ class BatchDetailPage extends StatelessWidget {
     final path = GoRouterState.of(context).uri.path;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Text('$title $batchId'),
-        actions: <Widget>[
-          const NotificationIconButton(),
-          const SizedBox(width: 16),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 24),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari resi atau invoice',
-                prefixIcon: const Icon(Icons.search),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            actions: <Widget>[
+              const NotificationIconButton(),
+              const SizedBox(width: 16),
+            ],
+            expandedHeight: kToolbarHeight + kSpaceBarHeight,
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                alignment: Alignment.bottomCenter,
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: 'Cari resi atau invoice',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) => BaseCard(
-                  child: Row(
-                    children: <Widget>[
-                      const PrimaryIconCircle(
-                        icon: Icons.inventory_2_outlined,
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'No. Koli',
-                            style: const TextStyle(
-                              color: black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
+            pinned: true,
+            snap: true,
+            title: Text('$title $batchId'),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverList.separated(
+              itemBuilder: (context, index) => BaseCard(
+                child: Row(
+                  children: <Widget>[
+                    const PrimaryIconCircle(
+                      icon: Icons.inventory_2_outlined,
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'No. Koli',
+                          style: const TextStyle(
+                            color: black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
-                          Text(
-                            'Item-$index',
-                            style: const TextStyle(
-                              color: black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        ],
-                      ),
-                      const Spacer(),
-                      OutlinePrimaryButton(
+                        ),
+                        Text(
+                          'Item-$index',
+                          style: const TextStyle(
+                            color: black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      width: 80,
+                      child: OutlinePrimaryButton(
                         onPressed: () =>
                             context.push('$path$itemDetailRoute/$index'),
                         child: const Text('Detail'),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemCount: 20,
-                padding: const EdgeInsets.only(bottom: 24),
               ),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
