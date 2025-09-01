@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+import '../routes/router.dart';
+
 const shipmentPath = <String, dynamic>{
   '1': 'Darat',
   '2': 'Laut',
@@ -15,9 +17,9 @@ const shipmentStatus = <String, dynamic>{
 const platform = MethodChannel('com.example.tri_express/channel');
 
 const scannablePage = <String>{
-  '/menu/receive-goods',
-  '/prepare-goods',
-  '/inventory',
+  receiveGoodsRoute,
+  prepareGoodsRoute,
+  inventoryRoute,
 };
 
 const inScannablePageMethod = 'inScannablePage';
@@ -27,3 +29,5 @@ const getTagInfoMethod = 'getTagInfo';
 const startInventoryMethod = 'startInventory';
 const stopInventoryMethod = 'stopInventory';
 const failedInventoryMethod = 'failedInventory';
+
+const kSpaceBarHeight = 88.0;
