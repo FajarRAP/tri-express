@@ -5,6 +5,7 @@ import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../core/widgets/primary_gradient_card.dart';
+import '../../../../main.dart';
 import '../../../../uhf_result_model.dart';
 import '../../domain/entity/batch_entity.dart';
 import '../widgets/batch_card_item.dart';
@@ -49,118 +50,172 @@ class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Terima Barang'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Card
-            SizedBox(
-              width: double.infinity,
-              child: PrimaryGradientCard(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                alignment: Alignment.bottomCenter,
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(
-                      'Barang di Gudang Bekasi',
-                      style: const TextStyle(
-                        color: light,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                    SizedBox(
+                      width: double.infinity,
+                      child: PrimaryGradientCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Barang di Gudang \$Warehouse',
+                              style: const TextStyle(
+                                color: light,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Total Koli',
+                              style: const TextStyle(
+                                color: light,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '\$Number',
+                              style: const TextStyle(
+                                color: light,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Total Barang',
-                      style: const TextStyle(
-                        color: light,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '\$Number',
-                      style: const TextStyle(
-                        color: light,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Cari resi atau invoice',
+                              prefixIcon: const Icon(Icons.search_outlined),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        DecoratedIconButton(
+                          onTap: () {},
+                          icon: const Icon(Icons.qr_code_scanner_outlined),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            // Headers
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Cari resi atau invoice',
-                      prefixIcon: const Icon(Icons.search_outlined),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                DecoratedIconButton(
-                  onTap: () {},
-                  icon: const Icon(Icons.qr_code_scanner_outlined),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            // List
-            if (_tagInfos.isEmpty)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'Belum ada barang, terima barang sebelum cek inventory gudang',
-                    style: const TextStyle(
-                      color: grayTertiary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            else
-              Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) => BatchCardItem(
-                    batch: BatchEntity(
-                      id: '-',
-                      batch: _tagInfos[index].epcId,
-                      destination: '-',
-                      itemCount: _tagInfos[index].frequency,
-                      origin: '-',
-                      path: '-',
-                      sendAt: DateTime.now(),
-                      status: '-',
-                    ),
-                  ),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemCount: _tagInfos.length,
-                  padding: const EdgeInsets.only(bottom: 24),
-                ),
+            floating: true,
+            pinned: true,
+            snap: true,
+            title: const Text('Terima Barang'),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: _buildList(),
+          ),
+        ],
+      ),
+      floatingActionButton: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(color: gray),
+          ),
+          color: light,
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FloatingActionButton.small(
+              onPressed: () {},
+              backgroundColor: light,
+              foregroundColor: danger,
+              heroTag: 'scan_again',
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: danger),
               ),
+              tooltip: 'Scan Ulang',
+              child: Icon(Icons.restore),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton.small(
+              onPressed: _uhfMethodHandler.invokeHandleInventory,
+              backgroundColor: primary,
+              foregroundColor: light,
+              heroTag: 'start_stop_scan',
+              tooltip: _isInventoryRunning ? 'Berhenti Scan' : 'Mulai Scan',
+              child: _isInventoryRunning
+                  ? const Icon(Icons.stop)
+                  : const Icon(Icons.play_arrow),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton.small(
+              onPressed: () {},
+              backgroundColor: light,
+              foregroundColor: primary,
+              heroTag: 'save',
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: primary),
+              ),
+              tooltip: 'Simpan',
+              child: Icon(Icons.save),
+            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _uhfMethodHandler.invokeHandleInventory,
-        backgroundColor: primary,
-        foregroundColor: light,
-        child: _isInventoryRunning
-            ? const Icon(Icons.stop)
-            : const Icon(Icons.play_arrow),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget _buildList() {
+    if (_tagInfos.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'Belum ada barang, terima barang sebelum cek inventory gudang',
+            style: const TextStyle(
+              color: grayTertiary,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    return SliverList.separated(
+      itemBuilder: (context, index) => BatchCardItem(
+        batch: BatchEntity(
+          id: '-',
+          batch: _tagInfos[index].epcId,
+          destination: faker.address.city(),
+          itemCount: _tagInfos[index].frequency,
+          origin: faker.address.city(),
+          path: '-',
+          sendAt: DateTime.now(),
+          status: '-',
+        ),
       ),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemCount: _tagInfos.length,
     );
   }
 }
