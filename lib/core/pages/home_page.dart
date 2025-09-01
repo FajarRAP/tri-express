@@ -108,11 +108,12 @@ class HomePage extends StatelessWidget {
               shrinkWrap: true,
               children: <Widget>[
                 _ActionCard(
-                  onTap: () => context.push(receiveGoodsRoute),
+                  onTap: () => context.push(receivedGoodsRoute),
                   icon: Icons.inventory_2_outlined,
                   title: 'Terima Barang',
                 ),
                 _ActionCard(
+                  onTap: () => context.push(prepareGoodsRoute),
                   icon: Icons.inventory_2_outlined,
                   title: 'Persiapan Barang',
                 ),
