@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tri_express/features/inventory/presentation/pages/filter_received_goods_page.dart';
 
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
@@ -17,6 +18,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 const menuRoute = '/menu';
 const receivedGoodsRoute = '$menuRoute/received-goods';
+const filterReceivedGoodsRoute = '$receivedGoodsRoute/filter';
 const receiveGoodsRoute = '$menuRoute/receive-goods';
 const prepareGoodsRoute = '$menuRoute/prepare-goods';
 
@@ -51,6 +53,12 @@ final router = GoRouter(
             GoRoute(
               path: 'received-goods',
               builder: (context, state) => const ReceivedGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'filter',
+                  builder: (context, state) => const FilterReceivedGoodsPage(),
+                ),
+              ],
             ),
             GoRoute(
               path: 'prepare-goods',
