@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
+import '../../features/inventory/presentation/pages/filter_prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/filter_received_goods_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
@@ -22,6 +23,7 @@ const receivedGoodsRoute = '$menuRoute/received-goods';
 const filterReceivedGoodsRoute = '$receivedGoodsRoute/filter';
 const receiveGoodsRoute = '$receivedGoodsRoute/receive';
 const prepareGoodsRoute = '$menuRoute/prepare-goods';
+const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
 
 const onTheWayRoute = '/on-the-way';
 const batchDetailRoute = '/batch-detail';
@@ -68,6 +70,12 @@ final router = GoRouter(
             GoRoute(
               path: 'prepare-goods',
               builder: (context, state) => const PrepareGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'filter',
+                  builder: (context, state) => const FilterPrepareGoodsPage(),
+                ),
+              ],
             ),
           ],
         ),
