@@ -118,12 +118,13 @@ class HomePage extends StatelessWidget {
                   title: 'Persiapan Barang',
                 ),
                 _ActionCard(
+                  onTap: () => context.push(sendGoodsRoute),
                   icon: Icons.inventory_2_outlined,
                   title: 'Kirim Barang',
                 ),
                 _ActionCard(
                   icon: Icons.inventory_2_outlined,
-                  title: 'Serahkan ke Kurir',
+                  title: 'Ambil di Gudang',
                 ),
               ],
             ),

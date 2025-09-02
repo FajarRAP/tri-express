@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
-import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/filter_received_goods_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_add_item_page.dart';
+import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/received_goods_page.dart';
+import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../pages/home_page.dart';
 import '../utils/constants.dart';
@@ -26,6 +27,7 @@ const receiveGoodsRoute = '$receivedGoodsRoute/receive';
 const prepareGoodsRoute = '$menuRoute/prepare-goods';
 const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
 const prepareGoodsAddItemRoute = '$prepareGoodsRoute/add-item';
+const sendGoodsRoute = '$menuRoute/send-goods';
 
 const onTheWayRoute = '/on-the-way';
 const batchDetailRoute = '/batch-detail';
@@ -84,6 +86,10 @@ final router = GoRouter(
                   ),
                 ),
               ],
+            ),
+            GoRoute(
+              path: 'send-goods',
+              builder: (context, state) => const SendGoodsPage(),
             ),
           ],
         ),
