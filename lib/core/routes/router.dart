@@ -11,6 +11,7 @@ import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/received_goods_page.dart';
+import '../../features/inventory/presentation/pages/send_goods/send_goods_add_item_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
@@ -30,6 +31,7 @@ const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
 const prepareGoodsAddItemRoute = '$prepareGoodsRoute/add-item';
 const sendGoodsRoute = '$menuRoute/send-goods';
 const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
+const sendGoodsAddItemRoute = '$sendGoodsRoute/add-items';
 
 const onTheWayRoute = '/on-the-way';
 const batchDetailRoute = '/batch-detail';
@@ -96,6 +98,10 @@ final router = GoRouter(
                 GoRoute(
                   path: 'filter',
                   builder: (context, state) => const SendGoodsFilterPage(),
+                ),
+                GoRoute(
+                  path: 'add-items',
+                  builder: (context, state) => const SendGoodsAddItemPage(),
                 ),
               ],
             ),
