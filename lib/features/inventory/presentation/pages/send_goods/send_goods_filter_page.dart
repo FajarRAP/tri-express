@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
@@ -50,7 +52,7 @@ class SendGoodsFilterPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () {},
+                onPressed: () => context.push(sendGoodsAddItemRoute),
                 child: const Text('Simpan'),
               ),
             ),
