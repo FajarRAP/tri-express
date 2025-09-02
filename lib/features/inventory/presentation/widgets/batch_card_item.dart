@@ -39,43 +39,13 @@ class BatchCardItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            batch.batch,
-                            style: const TextStyle(
-                              color: black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.blue.shade50,
-                            ),
-                            padding: const EdgeInsets.all(4),
-                            child: Text.rich(
-                              TextSpan(
-                                text: '10',
-                                style: const TextStyle(
-                                  color: primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                children: const <InlineSpan>[
-                                  TextSpan(
-                                    text: '/20',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        batch.batch,
+                        style: const TextStyle(
+                          color: black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
