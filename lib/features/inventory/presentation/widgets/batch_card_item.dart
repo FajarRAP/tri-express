@@ -24,6 +24,7 @@ class BatchCardItem extends StatefulWidget {
 }
 
 class _BatchCardItemState extends State<BatchCardItem> {
+  final bgColor = primary.withValues(alpha: .05);
   final activeColor = primary;
 
   @override
@@ -34,6 +35,12 @@ class _BatchCardItemState extends State<BatchCardItem> {
         setState(() => widget.batch.isChecked = !widget.batch.isChecked);
       },
       child: BaseCard(
+        backgroundColor: widget.isCheckboxOpen
+            ? (widget.batch.isChecked ? bgColor : null)
+            : null,
+        borderColor: widget.isCheckboxOpen
+            ? (widget.batch.isChecked ? activeColor : null)
+            : null,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
