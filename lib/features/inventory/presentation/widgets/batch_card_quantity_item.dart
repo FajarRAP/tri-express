@@ -8,14 +8,17 @@ class BatchCardQuantityItem extends StatelessWidget {
   const BatchCardQuantityItem({
     super.key,
     required this.batch,
+    this.isCheckboxOpen = false,
   });
 
   final BatchEntity batch;
+  final bool isCheckboxOpen;
 
   @override
   Widget build(BuildContext context) {
     return BatchCardItem(
       batch: batch,
+      isCheckboxOpen: isCheckboxOpen,
       action: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
