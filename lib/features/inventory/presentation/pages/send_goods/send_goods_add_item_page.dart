@@ -5,6 +5,7 @@ import '../../../../../core/utils/constants.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
+import '../../../domain/entity/batch_entity.dart';
 import '../../widgets/batch_card_quantity_item.dart';
 
 class SendGoodsAddItemPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class SendGoodsAddItemPage extends StatefulWidget {
 
 class _SendGoodsAddItemPageState extends State<SendGoodsAddItemPage> {
   var _isCheckboxOpen = false;
+  final batches = BatchEntity.generate(100);
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +122,15 @@ class _SendGoodsAddItemPageState extends State<SendGoodsAddItemPage> {
             SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: SliverList.separated(
-                itemBuilder: (context, index) => BatchCardQuantityItem(
-                  batch: batch,
-                  isCheckboxOpen: _isCheckboxOpen,
-                ),
+                itemBuilder: (context, index) {
+                  return BatchCardQuantityItem(
+                    batch: batches[index],
+                    isCheckboxOpen: _isCheckboxOpen,
+                  );
+                },
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
+                itemCount: batches.length,
               ),
             ),
         ],
