@@ -29,6 +29,17 @@ final theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: primary,
   ),
+  checkboxTheme: CheckboxThemeData(
+    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(4),
+    ),
+    side: const BorderSide(color: gray),
+    visualDensity: VisualDensity(
+      horizontal: VisualDensity.minimumDensity,
+      vertical: VisualDensity.minimumDensity,
+    ),
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       disabledBackgroundColor: gray,
