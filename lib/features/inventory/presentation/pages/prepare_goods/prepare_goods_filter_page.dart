@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tri_express/core/routes/router.dart';
 
-import '../../../../core/widgets/buttons/primary_button.dart';
-import '../../../../core/widgets/notification_icon_button.dart';
+import '../../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../../core/widgets/notification_icon_button.dart';
 
-class FilterPrepareGoodsPage extends StatelessWidget {
+class FilterPrepareGoodsPage extends StatefulWidget {
   const FilterPrepareGoodsPage({super.key});
+
+  @override
+  State<FilterPrepareGoodsPage> createState() => _FilterPrepareGoodsPageState();
+}
+
+class _FilterPrepareGoodsPageState extends State<FilterPrepareGoodsPage> {
+  late final TextEditingController _batchNameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _batchNameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _batchNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +113,7 @@ class FilterPrepareGoodsPage extends StatelessWidget {
                   ],
                 ),
                 TextFormField(
+                  controller: _batchNameController,
                   decoration: const InputDecoration(
                     labelText: 'Batch',
                   ),
@@ -127,7 +149,10 @@ class FilterPrepareGoodsPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () {},
+                onPressed: () => context.push(
+                  prepareGoodsAddItemRoute,
+                  extra: _batchNameController.text,
+                ),
                 child: const Text('Simpan'),
               ),
             ),
