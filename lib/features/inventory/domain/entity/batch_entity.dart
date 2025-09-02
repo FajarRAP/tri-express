@@ -1,16 +1,16 @@
 import '../../../../main.dart';
 
 class BatchEntity {
-  const BatchEntity({
-    required this.id,
-    required this.batch,
-    required this.destination,
-    required this.itemCount,
-    required this.origin,
-    required this.path,
-    required this.sendAt,
-    required this.status,
-  });
+  BatchEntity(
+      {required this.id,
+      required this.batch,
+      required this.destination,
+      required this.itemCount,
+      required this.origin,
+      required this.path,
+      required this.sendAt,
+      required this.status,
+      this.isChecked = false});
 
   final String id;
   final String batch;
@@ -20,6 +20,7 @@ class BatchEntity {
   final String path;
   final DateTime sendAt;
   final String status;
+  bool isChecked;
 
   static List<BatchEntity> generate(int count) {
     const path = <String, dynamic>{
