@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../fonts/fonts.dart';
+import '../routes/router.dart';
 import '../themes/colors.dart';
 import '../utils/constants.dart';
 import '../widgets/buttons/primary_button.dart';
@@ -63,12 +65,12 @@ class OnboardingPage extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: PrimaryButton(
-                          onPressed: () {},
+                          onPressed: () => context.go(loginRoute),
                           child: const Text('Mulai Sekarang'),
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Text(
+                      const Text(
                         '2025 © PT. Tri Perkasa Express. All Right Reserved',
                         style: TextStyle(
                           fontSize: 12,
