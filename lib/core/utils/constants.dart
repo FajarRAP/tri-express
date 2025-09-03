@@ -52,3 +52,8 @@ const dropdownItems = <DropdownMenuItem>[
   DropdownMenuItem(value: 'D', child: Text('Item D')),
   DropdownMenuItem(value: 'E', child: Text('Item E')),
 ];
+
+const imagePath = 'assets/images';
+const onboardingImagePath = '$imagePath/onboarding-bg.jpg';
+const loginImagePath = '$imagePath/login-bg.jpg';
+const logoTextImagePath = '$imagePath/logo-text.png';
