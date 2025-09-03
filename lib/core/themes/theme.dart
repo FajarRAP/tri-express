@@ -58,7 +58,10 @@ final theme = ThemeData(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
     ),
-    contentPadding: const EdgeInsets.all(10),
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: 14,
+      vertical: 10,
+    ),
     disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
       borderSide: const BorderSide(
