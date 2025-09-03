@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'colors.dart';
 
+const fontFamily = 'HelveticaNeue';
+
 final theme = ThemeData(
   appBarTheme: AppBarTheme(
     centerTitle: true,
@@ -51,6 +53,7 @@ final theme = ThemeData(
       ),
     ),
   ),
+  fontFamily: fontFamily,
   inputDecorationTheme: InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
