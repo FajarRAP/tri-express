@@ -16,11 +16,14 @@ import '../../features/inventory/presentation/pages/send_goods/send_goods_filter
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../pages/home_page.dart';
+import '../pages/onboarding_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+
+const onboardingRoute = '/onboarding';
 
 const menuRoute = '/menu';
 const receivedGoodsRoute = '$menuRoute/received-goods';
@@ -43,7 +46,7 @@ const settingRoute = '/setting';
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: menuRoute,
+  initialLocation: onboardingRoute,
   redirect: (context, state) {
     scannablePage.contains(state.uri.path)
         ? platform.invokeMethod<bool>(inScannablePageMethod)
@@ -52,6 +55,10 @@ final router = GoRouter(
     return null;
   },
   routes: <RouteBase>[
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingPage(),
+    ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) =>
