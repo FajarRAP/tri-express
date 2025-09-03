@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/filter_received_goods_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
@@ -24,6 +25,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 const onboardingRoute = '/onboarding';
+const loginRoute = '/login';
 
 const menuRoute = '/menu';
 const receivedGoodsRoute = '$menuRoute/received-goods';
@@ -58,6 +60,10 @@ final router = GoRouter(
     GoRoute(
       path: '/onboarding',
       builder: (context, state) => const OnboardingPage(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
