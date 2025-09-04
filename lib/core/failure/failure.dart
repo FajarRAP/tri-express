@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class Failure implements Exception {
+class Failure {
   const Failure({
     String? message,
     int? statusCode,
