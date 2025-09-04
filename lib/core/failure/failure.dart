@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
-
 class Failure {
   const Failure({
-    String? message,
-    int? statusCode,
-  })  : message = (kDebugMode ? message : null) ?? 'Terjadi Kesalahan',
-        statusCode = statusCode ?? 500;
+    required this.message,
+    this.statusCode = 500,
+  });
 
   final String message;
   final int statusCode;
@@ -13,18 +10,14 @@ class Failure {
 
 class ServerFailure extends Failure {
   const ServerFailure({
-    String? message,
+    required super.message,
     super.statusCode,
-  }) : super(
-            message:
-                (kDebugMode ? message : null) ?? 'Terjadi Kesalahan Server');
+  });
 }
 
 class CacheFailure extends Failure {
   const CacheFailure({
-    String? message,
+    required super.message,
     super.statusCode,
-  }) : super(
-            message:
-                (kDebugMode ? message : null) ?? 'Terjadi Kesalahan Cache');
+  });
 }
