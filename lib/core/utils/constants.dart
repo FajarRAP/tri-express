@@ -5,6 +5,8 @@ import '../../features/inventory/domain/entity/batch_entity.dart';
 import '../routes/router.dart';
 
 const apiUrl = String.fromEnvironment('API_URL');
+const accessTokenKey = String.fromEnvironment('ACCESS_TOKEN_KEY');
+const refreshTokenKey = String.fromEnvironment('REFRESH_TOKEN_KEY');
 
 const shipmentPath = <String, dynamic>{
   '1': 'Darat',
