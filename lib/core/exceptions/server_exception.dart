@@ -1,8 +1,8 @@
 class ServerException implements Exception {
   const ServerException({
-    this.message = 'Terjadi Kesalahan Server',
+    String? message,
     this.statusCode = 500,
-  });
+  }) : message = message ?? 'Server error occurred';
 
   final String message;
   final int statusCode;

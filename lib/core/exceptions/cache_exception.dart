@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
-
 class CacheException implements Exception {
   const CacheException({
     String? message,
     this.statusCode = 500,
-  }) : message = (kDebugMode ? message : null) ?? 'Terjadi Kesalahan Cache';
+  }) : message = message ?? 'Cache error occurred';
 
   final String message;
   final int statusCode;
+
+  @override
+  String toString() => 'CacheException: $message (Status code: $statusCode)';
 }

@@ -1,8 +1,8 @@
 class InternalException implements Exception {
   const InternalException({
-    this.message = 'Terjadi Kesalahan Internal',
+    String? message,
     this.statusCode = 500,
-  });
+  }) : message = message ?? 'Internal error occurred';
 
   final String message;
   final int statusCode;
