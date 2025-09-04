@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/internal_exception.dart';
 import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/features/auth/data/data_sources/auth_remote_data_sources.dart';
+import 'package:tri_express/features/auth/data/models/login_response_model.dart';
 import 'package:tri_express/features/auth/data/models/user_model.dart';
 import 'package:tri_express/features/auth/domain/use_cases/login_use_case.dart';
 
@@ -89,10 +90,10 @@ void main() {
           );
 
           // act
-          final call = authRemoteDataSources.fetchCurrentUser;
+          final result = authRemoteDataSources.fetchCurrentUser();
 
           // assert
-          expect(call, throwsA(isA<ServerException>()));
+          await expectLater(result, throwsA(isA<ServerException>()));
         },
       );
 
@@ -103,10 +104,10 @@ void main() {
           when(() => mockDio.get(any())).thenThrow(InternalException());
 
           // act
-          final call = authRemoteDataSources.fetchCurrentUser;
+          final result = authRemoteDataSources.fetchCurrentUser();
 
           // assert
-          expect(call, throwsA(isA<InternalException>()));
+          await expectLater(result, throwsA(isA<InternalException>()));
         },
       );
     },
@@ -166,7 +167,7 @@ void main() {
           final result = await authRemoteDataSources.login(params: params);
 
           // assert
-          expect(result, isA<UserModel>());
+          expect(result, isA<LoginResponseModel>());
         },
       );
 
@@ -186,10 +187,10 @@ void main() {
           );
 
           // act
-          final call = authRemoteDataSources.login;
+          final result = authRemoteDataSources.login(params: params);
 
           // assert
-          expect(() => call(params: params), throwsA(isA<ServerException>()));
+          await expectLater(result, throwsA(isA<ServerException>()));
         },
       );
 
@@ -200,10 +201,10 @@ void main() {
           when(() => mockDio.post(any())).thenThrow(InternalException());
 
           // act
-          final call = authRemoteDataSources.login;
+          final result = authRemoteDataSources.login(params: params);
 
           // assert
-          expect(() => call(params: params), throwsA(isA<InternalException>()));
+          await expectLater(result, throwsA(isA<InternalException>()));
         },
       );
     },
@@ -248,10 +249,10 @@ void main() {
           );
 
           // act
-          final call = authRemoteDataSources.logout;
+          final result = authRemoteDataSources.logout();
 
           // assert
-          expect(call, throwsA(isA<ServerException>()));
+          await expectLater(result, throwsA(isA<ServerException>()));
         },
       );
 
@@ -262,10 +263,10 @@ void main() {
           when(() => mockDio.post(any())).thenThrow(InternalException());
 
           // act
-          final call = authRemoteDataSources.logout;
+          final result = authRemoteDataSources.logout();
 
           // assert
-          expect(call, throwsA(isA<InternalException>()));
+          await expectLater(result, throwsA(isA<InternalException>()));
         },
       );
     },
