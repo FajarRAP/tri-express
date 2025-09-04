@@ -1,6 +1,6 @@
 class UserEntity {
   final String id;
-  final String warehouseId;
+  final String? warehouseId;
   final String? avatarUrl;
   final String email;
   final String name;
@@ -9,7 +9,7 @@ class UserEntity {
 
   const UserEntity({
     required this.id,
-    required this.warehouseId,
+    this.warehouseId,
     this.avatarUrl,
     required this.email,
     required this.name,
