@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tri_express/core/failure/failure.dart';
+import 'package:tri_express/core/exceptions/internal_exception.dart';
+import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/features/auth/data/data_sources/auth_remote_data_sources.dart';
 import 'package:tri_express/features/auth/data/models/user_model.dart';
 import 'package:tri_express/features/auth/domain/use_cases/login_use_case.dart';
@@ -73,7 +74,7 @@ void main() {
       );
 
       test(
-        'should return ServerFailure when response status code is not 200',
+        'should return ServerException when response status code is not 200',
         () async {
           // arrange
           when(() => mockDio.get(any())).thenThrow(
@@ -91,21 +92,21 @@ void main() {
           final call = authRemoteDataSources.fetchCurrentUser;
 
           // assert
-          expect(call, throwsA(isA<ServerFailure>()));
+          expect(call, throwsA(isA<ServerException>()));
         },
       );
 
       test(
-        'should return Failure when unexpected error occurs',
+        'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.get(any())).thenThrow(Failure());
+          when(() => mockDio.get(any())).thenThrow(InternalException());
 
           // act
           final call = authRemoteDataSources.fetchCurrentUser;
 
           // assert
-          expect(call, throwsA(isA<Failure>()));
+          expect(call, throwsA(isA<InternalException>()));
         },
       );
     },
@@ -170,7 +171,7 @@ void main() {
       );
 
       test(
-        'should return ServerFailure when response status code is not 200',
+        'should return ServerException when response status code is not 200',
         () async {
           // arrange
           when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
@@ -188,28 +189,28 @@ void main() {
           final call = authRemoteDataSources.login;
 
           // assert
-          expect(() => call(params: params), throwsA(isA<ServerFailure>()));
+          expect(() => call(params: params), throwsA(isA<ServerException>()));
         },
       );
 
       test(
-        'should return Failure when unexpected error occurs',
+        'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.post(any())).thenThrow(Failure());
+          when(() => mockDio.post(any())).thenThrow(InternalException());
 
           // act
           final call = authRemoteDataSources.login;
 
           // assert
-          expect(() => call(params: params), throwsA(isA<Failure>()));
+          expect(() => call(params: params), throwsA(isA<InternalException>()));
         },
       );
     },
   );
 
   group(
-    'login: ',
+    'logout: ',
     () {
       test(
         'should return String when the request status code is 200',
@@ -232,7 +233,7 @@ void main() {
       );
 
       test(
-        'should return ServerFailure when response status code is not 200',
+        'should return ServerException when response status code is not 200',
         () async {
           // arrange
           when(() => mockDio.post(any())).thenThrow(
@@ -250,21 +251,21 @@ void main() {
           final call = authRemoteDataSources.logout;
 
           // assert
-          expect(call, throwsA(isA<ServerFailure>()));
+          expect(call, throwsA(isA<ServerException>()));
         },
       );
 
       test(
-        'should return Failure when unexpected error occurs',
+        'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.post(any())).thenThrow(Failure());
+          when(() => mockDio.post(any())).thenThrow(InternalException());
 
           // act
           final call = authRemoteDataSources.logout;
 
           // assert
-          expect(call, throwsA(isA<Failure>()));
+          expect(call, throwsA(isA<InternalException>()));
         },
       );
     },

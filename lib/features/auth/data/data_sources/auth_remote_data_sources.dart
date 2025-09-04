@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/failure/failure.dart';
+import '../../../../core/exceptions/internal_exception.dart';
+import '../../../../core/exceptions/server_exception.dart';
 import '../../../../core/utils/constants.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../models/user_model.dart';
@@ -25,13 +26,13 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
     } on DioException catch (de) {
       switch (de.response?.statusCode) {
         default:
-          throw ServerFailure(
+          throw ServerException(
             message: de.response?.data['message'] ?? 'Something went wrong',
             statusCode: de.response?.statusCode ?? 500,
           );
       }
     } catch (e) {
-      throw Failure(message: '$e');
+      throw InternalException(message: '$e');
     }
   }
 
@@ -50,13 +51,13 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
     } on DioException catch (de) {
       switch (de.response?.statusCode) {
         default:
-          throw ServerFailure(
+          throw ServerException(
             message: de.response?.data['message'] ?? 'Something went wrong',
             statusCode: de.response?.statusCode ?? 500,
           );
       }
     } catch (e) {
-      throw Failure(message: '$e');
+      throw InternalException(message: '$e');
     }
   }
 
@@ -69,13 +70,13 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
     } on DioException catch (de) {
       switch (de.response?.statusCode) {
         default:
-          throw ServerFailure(
+          throw ServerException(
             message: de.response?.data['message'] ?? 'Something went wrong',
             statusCode: de.response?.statusCode ?? 500,
           );
       }
     } catch (e) {
-      throw Failure(message: '$e');
+      throw InternalException(message: '$e');
     }
   }
 }
