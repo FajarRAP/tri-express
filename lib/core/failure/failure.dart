@@ -19,3 +19,12 @@ class ServerFailure extends Failure {
             message:
                 (kDebugMode ? message : null) ?? 'Terjadi Kesalahan Server');
 }
+
+class CacheFailure extends Failure {
+  const CacheFailure({
+    String? message,
+    super.statusCode,
+  }) : super(
+            message:
+                (kDebugMode ? message : null) ?? 'Terjadi Kesalahan Cache');
+}
