@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import '../../features/inventory/domain/entity/batch_entity.dart';
 import '../routes/router.dart';
 
+const apiUrl = String.fromEnvironment('API_URL');
+
 const shipmentPath = <String, dynamic>{
   '1': 'Darat',
   '2': 'Laut',
@@ -55,5 +57,5 @@ const dropdownItems = <DropdownMenuItem>[
 
 const imagePath = 'assets/images';
 const onboardingImagePath = '$imagePath/onboarding-bg.jpg';
-const loginImagePath = '$imagePath/login-bg.jpg';
+const loginImagePath = '$imagePath/login-bg.png';
 const logoTextImagePath = '$imagePath/logo-text.png';
