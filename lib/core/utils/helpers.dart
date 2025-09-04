@@ -49,7 +49,7 @@ class TopSnackbar {
             .then()
             .slideY(begin: 0, end: 0.15, duration: 200.ms)
             .then(delay: 800.ms)
-            .slideY(begin: 0, end: -2),
+            .slideY(begin: 0, end: -3),
       ),
     );
 
