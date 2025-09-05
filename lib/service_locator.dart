@@ -17,6 +17,7 @@ import 'features/core/data/repositories/core_repositories_impl.dart';
 import 'features/core/domain/repositories/core_repositories.dart';
 import 'features/core/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/core/domain/use_cases/fetch_banners_use_case.dart';
+import 'features/core/domain/use_cases/fetch_summary_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -49,8 +50,9 @@ void setupServiceLocator() {
     ..registerLazySingleton<CoreCubit>(() => CoreCubit(
         completeOnboardingUseCase:
             CompleteOnboardingUseCase(coreRepositories: getIt.get()),
-        fetchBannersUseCase:
-            FetchBannersUseCase(coreRepositories: getIt.get())));
+        fetchBannersUseCase: FetchBannersUseCase(coreRepositories: getIt.get()),
+        fetchSummaryUseCase:
+            FetchSummaryUseCase(coreRepositories: getIt.get())));
 
   // Auth
   getIt
