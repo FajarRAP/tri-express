@@ -49,4 +49,29 @@ void main() {
       );
     },
   );
+
+  group(
+    'fetch summary: ',
+    () {
+      test(
+        'should return List<int> when request is successful',
+        () async {
+          // arrange
+          const json = <String, dynamic>{
+            "status": "Success",
+            "message": "data summary",
+            "data": {"ontheway": 0, "diterima": 0, "dikirim": 0}
+          };
+          when(() => mockDio.get(any())).thenAnswer((_) async => Response(
+              data: json, requestOptions: RequestOptions(), statusCode: 200));
+
+          // act
+          final result = await dataSources.fetchSummary();
+
+          // assert
+          expect(result, isA<List<int>>());
+        },
+      );
+    },
+  );
 }
