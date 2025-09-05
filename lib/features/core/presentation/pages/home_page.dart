@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
-import '../../../../core/utils/constants.dart';
-import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
+import '../../../../core/widgets/profile_row.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/core_cubit.dart';
 import '../widgets/action_card.dart';
@@ -33,52 +32,7 @@ class HomePage extends StatelessWidget {
           if (state is FetchCurrentUserLoaded) {
             return Scaffold(
               appBar: AppBar(
-                title: Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 24,
-                      foregroundImage: state.user.avatarUrl != null
-                          ? NetworkImage(state.user.avatarUrl!)
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          state.user.name,
-                          style: const TextStyle(
-                            color: black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        if (!state.user.roles.contains(superAdminRole))
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const Icon(
-                                Icons.location_pin,
-                                color: grayTertiary,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'Warehouse Location',
-                                style: const TextStyle(
-                                  color: grayTertiary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          )
-                      ],
-                    ),
-                  ],
-                ),
+                title: ProfileRow(user: state.user),
                 actions: <Widget>[
                   const NotificationIconButton(),
                   const SizedBox(width: 16),
@@ -88,14 +42,9 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: <Widget>[
                   const SizedBox(height: 24),
-                  BlocConsumer<CoreCubit, CoreState>(
+                  BlocBuilder<CoreCubit, CoreState>(
                     bloc: coreCubit..fetchSummary(),
                     buildWhen: (previous, current) => current is FetchSummary,
-                    listener: (context, state) {
-                      if (state is FetchSummaryError) {
-                        TopSnackbar.dangerSnackbar(message: state.message);
-                      }
-                    },
                     builder: (context, state) {
                       if (state is FetchSummaryLoading) {
                         return const Center(
