@@ -217,9 +217,15 @@ void main() {
         'should return String when the request status code is 200',
         () async {
           // arrange
+          const json = <String, dynamic>{
+                "status": "Success",
+                "message": 200,
+                "data":
+                    "You have successfully logged out and the token was successfully deleted"
+              };
           when(() => mockDio.post(any())).thenAnswer(
             (_) async => Response(
-              data: {'message': 'succses logout'},
+              data: json,
               requestOptions: RequestOptions(),
               statusCode: 200,
             ),
