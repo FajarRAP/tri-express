@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/exceptions/internal_exception.dart';
-import '../../../../core/exceptions/server_exception.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../models/login_response_model.dart';
 import '../models/user_model.dart';
@@ -24,13 +24,7 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
 
       return UserModel.fromJson(response.data['data']['user']);
     } on DioException catch (de) {
-      switch (de.response?.statusCode) {
-        default:
-          throw ServerException(
-            message: de.response?.data['message'] ?? 'Something went wrong',
-            statusCode: de.response?.statusCode ?? 500,
-          );
-      }
+      throw handleDioException(de);
     } catch (e) {
       throw InternalException(message: '$e');
     }
@@ -49,13 +43,7 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
 
       return LoginResponseModel.fromJson(response.data['data']);
     } on DioException catch (de) {
-      switch (de.response?.statusCode) {
-        default:
-          throw ServerException(
-            message: de.response?.data['message'] ?? 'Something went wrong',
-            statusCode: de.response?.statusCode ?? 500,
-          );
-      }
+      throw handleDioException(de);
     } catch (e) {
       throw InternalException(message: '$e');
     }
@@ -66,15 +54,9 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
     try {
       final response = await dio.post('/logout');
 
-      return response.data['message'];
+      return response.data['data'];
     } on DioException catch (de) {
-      switch (de.response?.statusCode) {
-        default:
-          throw ServerException(
-            message: de.response?.data['message'] ?? 'Something went wrong',
-            statusCode: de.response?.statusCode ?? 500,
-          );
-      }
+      throw handleDioException(de);
     } catch (e) {
       throw InternalException(message: '$e');
     }
