@@ -29,7 +29,8 @@ class AuthLocalDataSourcesImpl extends AuthLocalDataSources {
   @override
   Future<void> clearToken() async {
     try {
-      await storage.deleteAll();
+      await storage.delete(key: accessTokenKey);
+      await storage.delete(key: refreshTokenKey);
     } catch (e) {
       throw CacheException(message: '$e');
     }
