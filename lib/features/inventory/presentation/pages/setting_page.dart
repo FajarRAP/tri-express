@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:tri_express/core/widgets/base_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../../../core/widgets/base_card.dart';
+import '../../../../core/widgets/buttons/danger_button.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authCubit = context.read<AuthCubit>();
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -255,6 +263,32 @@ class SettingPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 24),
+          BlocConsumer<AuthCubit, AuthState>(
+            buildWhen: (previous, current) => current is Logout,
+            listenWhen: (previous, current) => current is Logout,
+            listener: (context, state) {
+              if (state is LogoutLoaded) {
+                TopSnackbar.successSnackbar(message: state.message);
+                context.go(loginRoute);
+              }
+              if (state is LogoutError) {
+                TopSnackbar.dangerSnackbar(message: state.message);
+              }
+            },
+            builder: (context, state) {
+              if (state is LogoutLoading) {
+                return const DangerButton(
+                  child: Text('Logout'),
+                );
+              }
+
+              return DangerButton(
+                onPressed: authCubit.logout,
+                child: const Text('Logout'),
+              );
+            },
           ),
           const SizedBox(height: 12),
         ],
