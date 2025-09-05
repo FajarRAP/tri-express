@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
-import '../../../auth/domain/use_cases/complete_onboarding_use_case.dart';
+import '../../domain/use_cases/complete_onboarding_use_case.dart';
 import '../../domain/use_cases/fetch_banners_use_case.dart';
 
 part 'core_state.dart';
