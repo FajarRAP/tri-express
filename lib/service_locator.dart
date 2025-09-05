@@ -7,7 +7,6 @@ import 'features/auth/data/data_sources/auth_local_data_sources.dart';
 import 'features/auth/data/data_sources/auth_remote_data_sources.dart';
 import 'features/auth/data/repositories/auth_repositories_impl.dart';
 import 'features/auth/domain/repositories/auth_repositories.dart';
-import 'features/auth/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/auth/domain/use_cases/fetch_current_user_use_case.dart';
 import 'features/auth/domain/use_cases/login_use_case.dart';
 import 'features/auth/domain/use_cases/logout_use_case.dart';
@@ -16,6 +15,7 @@ import 'features/core/data/data_sources/core_local_data_sources.dart';
 import 'features/core/data/data_sources/core_remote_data_sources.dart';
 import 'features/core/data/repositories/core_repositories_impl.dart';
 import 'features/core/domain/repositories/core_repositories.dart';
+import 'features/core/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/core/domain/use_cases/fetch_banners_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 
@@ -48,7 +48,7 @@ void setupServiceLocator() {
         coreLocalDataSources: getIt.get(), coreRemoteDataSources: getIt.get()))
     ..registerLazySingleton<CoreCubit>(() => CoreCubit(
         completeOnboardingUseCase:
-            CompleteOnboardingUseCase(authRepositories: getIt.get()),
+            CompleteOnboardingUseCase(coreRepositories: getIt.get()),
         fetchBannersUseCase:
             FetchBannersUseCase(coreRepositories: getIt.get())));
 
