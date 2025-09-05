@@ -5,6 +5,7 @@ import '../../../../core/utils/helpers.dart';
 
 abstract class CoreRemoteDataSources {
   Future<List<String>> fetchBanners();
+  Future<List<int>> fetchSummary();
 }
 
 class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
@@ -15,10 +16,24 @@ class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
   @override
   Future<List<String>> fetchBanners() async {
     try {
-      final response = await dio.get('/dashboard/banners');
+      final response = await dio.get('/dashboard/banner');
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => '${e['foto_url']}').toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<int>> fetchSummary() async {
+    try {
+      final response = await dio.get('/dashboard/summary');
+      final contents = Map<String, dynamic>.from(response.data['data']);
+
+      return [contents['ontheway'], contents['diterima'], contents['dikirim']];
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

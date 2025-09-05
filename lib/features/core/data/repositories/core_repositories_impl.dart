@@ -46,4 +46,23 @@ class CoreRepositoriesImpl extends CoreRepositories {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, List<int>>> fetchSummary() async {
+    try {
+      final result = await coreRemoteDataSources.fetchSummary();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
 }
