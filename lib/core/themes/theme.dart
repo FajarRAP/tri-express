@@ -30,6 +30,7 @@ final theme = ThemeData(
   ),
   colorScheme: ColorScheme.fromSeed(
     seedColor: primary,
+    primary: primary,
   ),
   checkboxTheme: CheckboxThemeData(
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
