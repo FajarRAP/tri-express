@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../fonts/fonts.dart';
-import '../routes/router.dart';
-import '../themes/colors.dart';
-import '../utils/constants.dart';
-import '../widgets/buttons/primary_button.dart';
+import '../../../../core/fonts/fonts.dart';
+import '../../../../core/routes/router.dart';
+import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/constants.dart';
+import '../../../../core/widgets/buttons/primary_button.dart';
+import '../cubit/core_cubit.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -65,7 +67,9 @@ class OnboardingPage extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: PrimaryButton(
-                          onPressed: () => context.go(loginRoute),
+                          onPressed: () => context
+                            ..read<CoreCubit>().completeOnboarding()
+                            ..go(loginRoute),
                           child: const Text('Mulai Sekarang'),
                         ),
                       ),
