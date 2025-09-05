@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:tri_express/core/exceptions/cache_exception.dart';
 
+import '../../../../core/exceptions/cache_exception.dart';
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/exceptions/server_exception.dart';
 import '../../../../core/failure/failure.dart';
