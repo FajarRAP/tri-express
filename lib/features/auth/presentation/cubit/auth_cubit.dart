@@ -22,6 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
   final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
   final LoginUseCase _loginUseCase;
   final LogoutUseCase _logoutUseCase;
+  late UserEntity user;
 
   Future<void> fetchCurrentUser() async {
     emit(FetchCurrentUserLoading());
@@ -30,7 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (failure) => emit(FetchCurrentUserError(message: failure.message)),
-      (user) => emit(FetchCurrentUserLoaded(user: user)),
+      (user) => emit(FetchCurrentUserLoaded(user: this.user = user)),
     );
   }
 
@@ -42,7 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (failure) => emit(LoginError(message: failure.message)),
-      (user) => emit(LoginLoaded(user: user)),
+      (user) => emit(LoginLoaded(user: this.user = user)),
     );
   }
 
