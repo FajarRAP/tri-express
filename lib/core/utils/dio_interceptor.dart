@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 
+import '../../features/auth/data/data_sources/auth_local_data_sources.dart';
+import '../../service_locator.dart';
+
 class CustomInterceptor implements Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -7,7 +10,13 @@ class CustomInterceptor implements Interceptor {
   }
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final accessToken = await getIt.get<AuthLocalDataSources>().getAccessToken();
+
+    if (!options.path.endsWith('/login')) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
+    }
+
     return handler.next(options);
   }
 
