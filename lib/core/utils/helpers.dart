@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../uhf_result_model.dart';
+import '../exceptions/server_exception.dart';
 import '../themes/colors.dart';
 import 'constants.dart';
 
@@ -115,5 +117,18 @@ class UHFMethodHandler {
 
   Future<int> invokeHandleInventory() async {
     return await _platform.invokeMethod<int>(handleInventoryButtonMethod) ?? -1;
+  }
+}
+
+ServerException handleDioException(DioException de) {
+  final data = de.response?.data;
+  final isMap = data is Map<String, dynamic>;
+
+  switch (de.response?.statusCode) {
+    default:
+      return ServerException(
+        message: isMap ? data['message'] : null,
+        statusCode: de.response?.statusCode ?? 500,
+      );
   }
 }
