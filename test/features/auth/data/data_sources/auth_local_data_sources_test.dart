@@ -8,6 +8,7 @@ import 'package:tri_express/features/auth/data/data_sources/auth_local_data_sour
 class MockStorage extends Mock implements FlutterSecureStorage {}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   late MockStorage mockStorage;
   late AuthLocalDataSourcesImpl dataSources;
 
@@ -69,13 +70,15 @@ void main() {
           'should call storage.delete with correct key when clearToken is called',
           () async {
         // arrange
-        when(() => mockStorage.deleteAll()).thenAnswer((_) async {});
+        when(() => mockStorage.delete(key: any(named: 'key')))
+            .thenAnswer((_) async {});
 
         // act
         await dataSources.clearToken();
 
         // assert
-        verify(() => mockStorage.deleteAll()).called(1);
+        verify(() => mockStorage.delete(key: accessTokenKey)).called(1);
+        verify(() => mockStorage.delete(key: refreshTokenKey)).called(1);
       });
 
       test(
