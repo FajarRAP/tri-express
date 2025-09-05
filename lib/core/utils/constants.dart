@@ -62,3 +62,5 @@ const imagePath = 'assets/images';
 const onboardingImagePath = '$imagePath/onboarding-bg.jpg';
 const loginImagePath = '$imagePath/login-bg.png';
 const logoTextImagePath = '$imagePath/logo-text.png';
+
+const superAdminRole = 'superadmin';
