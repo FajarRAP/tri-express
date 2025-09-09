@@ -104,7 +104,7 @@ final theme = ThemeData(
     ),
     prefixIconColor: gray,
   ),
-  tabBarTheme: TabBarTheme(
+  tabBarTheme: TabBarThemeData(
     dividerColor: Colors.transparent,
     indicatorColor: primary,
     indicatorSize: TabBarIndicatorSize.tab,
