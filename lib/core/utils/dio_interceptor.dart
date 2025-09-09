@@ -10,12 +10,15 @@ class CustomInterceptor implements Interceptor {
   }
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final accessToken = await getIt.get<AuthLocalDataSources>().getAccessToken();
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final accessToken =
+        await getIt.get<AuthLocalDataSources>().getAccessToken();
 
     if (!options.path.endsWith('/login')) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
+    options.headers['Accept'] = 'application/json';
 
     return handler.next(options);
   }
