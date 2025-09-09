@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../features/inventory/domain/entity/batch_entity.dart';
 import '../routes/router.dart';
 
 const apiUrl = String.fromEnvironment('API_URL');
@@ -38,17 +37,6 @@ const stopInventoryMethod = 'stopInventory';
 const failedInventoryMethod = 'failedInventory';
 
 const kSpaceBarHeight = 88.0;
-
-final batch = BatchEntity(
-    id: '-',
-    batch: 'Batch 100',
-    destination: 'Yogyakarta',
-    itemCount: 100,
-    origin: 'Bandung',
-    path: 'Darat',
-    sendAt: DateTime.now(),
-    status: 'Diterima',
-    isChecked: false);
 
 const dropdownItems = <DropdownMenuItem>[
   DropdownMenuItem(value: 'A', child: Text('Item A')),
