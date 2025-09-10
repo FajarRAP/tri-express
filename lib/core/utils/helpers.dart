@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:intl/intl.dart';
 
 import '../../uhf_result_model.dart';
 import '../exceptions/server_exception.dart';
@@ -131,4 +132,8 @@ ServerException handleDioException(DioException de) {
         statusCode: de.response?.statusCode ?? 500,
       );
   }
+}
+
+extension DateTimeExtension on DateTime {
+  String get toDDMMMMYYYY => DateFormat('dd MMMM yyyy').format(this);
 }
