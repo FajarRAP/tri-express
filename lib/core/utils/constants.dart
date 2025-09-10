@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../features/inventory/domain/entities/batch_entity.dart';
+import '../../features/inventory/domain/entities/good_entity.dart';
+import '../../features/inventory/domain/entities/warehouse_entity.dart';
 import '../routes/router.dart';
 
 const apiUrl = String.fromEnvironment('API_URL');
@@ -23,7 +26,7 @@ const shipmentStatus = <String, dynamic>{
 const platform = MethodChannel('com.example.tri_express/channel');
 
 const scannablePage = <String>{
-  receiveGoodsRoute,
+  '$receiveGoodsRoute$scanReceiveGoodsRoute',
   prepareGoodsRoute,
   inventoryRoute,
 };
@@ -52,3 +55,34 @@ const loginImagePath = '$imagePath/login-bg.png';
 const logoTextImagePath = '$imagePath/logo-text.png';
 
 const superAdminRole = 'superadmin';
+
+final _warehouse = WarehouseEntity(
+  id: 'id',
+  countryId: 'countryId',
+  address: 'address',
+  description: 'description',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  name: 'name',
+  phone: 'phone',
+  warehouseCode: 'warehouseCode',
+  createdAt: DateTime.now(),
+  updatedAt: DateTime.now(),
+);
+final batch = BatchEntity(
+  id: 'id',
+  name: 'name',
+  status: 'status',
+  trackingNumber: 'trackingNumber',
+  goods: [
+    for (var i = 0; i < 3; i++)
+      GoodEntity(
+        id: 'id-$i',
+        name: 'name-$i',
+        receiptNumber: 'TRI.2507231450302$i',
+      )
+  ],
+  origin: _warehouse,
+  destination: _warehouse,
+  sendAt: DateTime.now(),
+);
