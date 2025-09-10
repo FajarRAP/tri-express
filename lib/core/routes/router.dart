@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/core/presentation/pages/home_page.dart';
+import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
-import '../../features/inventory/presentation/pages/filter_received_goods_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_add_item_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
-import '../../features/inventory/presentation/pages/receive_goods_page.dart';
-import '../../features/inventory/presentation/pages/received_goods_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/filter_receive_goods_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/scan_receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_add_item_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
-import '../../features/core/presentation/pages/home_page.dart';
-import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 
@@ -30,9 +30,9 @@ const onboardingRoute = '/onboarding';
 const loginRoute = '/login';
 
 const menuRoute = '/menu';
-const receivedGoodsRoute = '$menuRoute/received-goods';
-const filterReceivedGoodsRoute = '$receivedGoodsRoute/filter';
-const receiveGoodsRoute = '$receivedGoodsRoute/receive';
+const receiveGoodsRoute = '$menuRoute/receive-goods';
+const filterReceiveGoodsRoute = '$receiveGoodsRoute/filter';
+const scanReceiveGoodsRoute = '$receiveGoodsRoute/scan';
 const prepareGoodsRoute = '$menuRoute/prepare-goods';
 const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
 const prepareGoodsAddItemRoute = '$prepareGoodsRoute/add-item';
@@ -77,17 +77,23 @@ final router = GoRouter(
           builder: (context, state) => const HomePage(),
           routes: <RouteBase>[
             GoRoute(
-              path: 'received-goods',
-              builder: (context, state) => const ReceivedGoodsPage(),
+              path: 'receive-goods',
+              builder: (context, state) => const ReceiveGoodsPage(),
               routes: <RouteBase>[
                 GoRoute(
                   path: 'filter',
-                  builder: (context, state) => const FilterReceivedGoodsPage(),
+                  builder: (context, state) => const FilterReceiveGoodsPage(),
                 ),
                 GoRoute(
-                  path: 'receive',
-                  builder: (context, state) => const ReceiveGoodsPage(),
+                  path: 'scan',
+                  builder: (context, state) => const ScanReceiveGoodsPage(),
                 ),
+                GoRoute(
+                  path: 'item/:itemId',
+                  builder: (context, state) => ItemDetailPage(
+                    itemId: '${state.pathParameters['itemId']}',
+                  ),
+                )
               ],
             ),
             GoRoute(
