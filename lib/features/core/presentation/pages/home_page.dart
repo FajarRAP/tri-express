@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                     shrinkWrap: true,
                     children: <Widget>[
                       ActionCard(
-                        onTap: () => context.push(receivedGoodsRoute),
+                        onTap: () => context.push(receiveGoodsRoute),
                         icon: Icons.inventory_2_outlined,
                         title: 'Terima Barang',
                       ),
