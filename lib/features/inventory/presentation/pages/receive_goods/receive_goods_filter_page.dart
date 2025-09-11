@@ -6,14 +6,14 @@ import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
 
-class FilterReceiveGoodsPage extends StatefulWidget {
-  const FilterReceiveGoodsPage({super.key});
+class ReceiveGoodsFilterPage extends StatefulWidget {
+  const ReceiveGoodsFilterPage({super.key});
 
   @override
-  State<FilterReceiveGoodsPage> createState() => _FilterReceiveGoodsPageState();
+  State<ReceiveGoodsFilterPage> createState() => _ReceiveGoodsFilterPageState();
 }
 
-class _FilterReceiveGoodsPageState extends State<FilterReceiveGoodsPage> {
+class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
   late final TextEditingController _dateController;
   late final TextEditingController _warehouseController;
 

@@ -8,12 +8,12 @@ import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
-import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_add_item_page.dart';
+import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
-import '../../features/inventory/presentation/pages/receive_goods/filter_receive_goods_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/receive_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
-import '../../features/inventory/presentation/pages/receive_goods/scan_receive_goods_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/receive_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_add_item_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
@@ -134,11 +134,11 @@ final router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: 'filter',
-          builder: (context, state) => const FilterReceiveGoodsPage(),
+          builder: (context, state) => const ReceiveGoodsFilterPage(),
         ),
         GoRoute(
           path: 'scan',
-          builder: (context, state) => const ScanReceiveGoodsPage(),
+          builder: (context, state) => const ReceiveGoodsScanPage(),
         ),
       ],
     ),
@@ -149,11 +149,11 @@ final router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: 'filter',
-          builder: (context, state) => const FilterPrepareGoodsPage(),
+          builder: (context, state) => const PrepareGoodsFilterPage(),
         ),
         GoRoute(
           path: 'scan',
-          builder: (context, state) => PrepareGoodsAddItemPage(
+          builder: (context, state) => PrepareGoodsScanPage(
             batchName: '${state.extra}',
           ),
         ),

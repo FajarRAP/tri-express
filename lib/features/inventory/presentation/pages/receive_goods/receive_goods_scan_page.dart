@@ -14,14 +14,14 @@ import '../../../../../uhf_result_model.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
-class ScanReceiveGoodsPage extends StatefulWidget {
-  const ScanReceiveGoodsPage({super.key});
+class ReceiveGoodsScanPage extends StatefulWidget {
+  const ReceiveGoodsScanPage({super.key});
 
   @override
-  State<ScanReceiveGoodsPage> createState() => _ScanReceiveGoodsPageState();
+  State<ReceiveGoodsScanPage> createState() => _ReceiveGoodsScanPageState();
 }
 
-class _ScanReceiveGoodsPageState extends State<ScanReceiveGoodsPage> {
+class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
   late final UHFMethodHandler _uhfMethodHandler;
   final _tagInfos = <UHFResultModel>[];
   var _isInventoryRunning = false;
