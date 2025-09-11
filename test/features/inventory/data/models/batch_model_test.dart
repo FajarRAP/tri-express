@@ -25,6 +25,7 @@ void main() {
       id: 'id',
       name: 'name',
       status: 'status',
+      transportMode: 'mode',
       trackingNumber: 'trackingNumber',
       goods: [],
       origin: tWarehouseModel,
