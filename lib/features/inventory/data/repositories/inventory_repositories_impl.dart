@@ -1,4 +1,4 @@
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/exceptions/server_exception.dart';
@@ -6,6 +6,7 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/fetch_delivery_goods_use_case.dart';
+import '../../domain/use_cases/fetch_receive_goods_use_case.dart';
 import '../data_sources/inventory_remote_data_sources.dart';
 
 class InventoryRepositoriesImpl extends InventoryRepositories {
@@ -83,11 +84,26 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchReceiveGoods() {
-    // TODO: implement fetchReceiveGoods
-    throw UnimplementedError();
+  Future<Either<Failure, List<BatchEntity>>> fetchReceiveGoods(
+      {required FetchReceiveGoodsUseCaseParams params}) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchReceiveGoods(params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
   }
-  
+
   @override
   Future<Either<Failure, List<String>>> fetchShipmentReceiptNumbers() {
     // TODO: implement fetchReceiptNumbers

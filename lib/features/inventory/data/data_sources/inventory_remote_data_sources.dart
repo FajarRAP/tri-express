@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_receive_goods_use_case.dart';
 
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
@@ -17,7 +18,8 @@ abstract class InventoryRemoteDataSources {
   Future fetchPrepareGood({required String id});
   Future fetchPrepareGoods();
   Future fetchReceiveGood({required String id});
-  Future<List<BatchEntity>> fetchReceiveGoods();
+  Future<List<BatchEntity>> fetchReceiveGoods(
+      {required FetchReceiveGoodsUseCaseParams params});
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -96,9 +98,16 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
-  Future<List<BatchEntity>> fetchReceiveGoods() async {
+  Future<List<BatchEntity>> fetchReceiveGoods(
+      {required FetchReceiveGoodsUseCaseParams params}) async {
     try {
-      final response = await dio.get('/receive');
+      final response = await dio.get(
+        '/receive',
+        queryParameters: {
+          'page': params.page,
+          'search': params.search,
+        },
+      );
       final contents =
           List<Map<String, dynamic>>.from(response.data['data']['data']);
 
