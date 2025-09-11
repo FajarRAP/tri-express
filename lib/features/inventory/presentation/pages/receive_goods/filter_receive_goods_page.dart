@@ -55,7 +55,6 @@ class _FilterReceiveGoodsPageState extends State<FilterReceiveGoodsPage> {
             ),
             const SizedBox(height: 24),
             TextFormField(
-              controller: _dateController,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Tanggal Terima',
