@@ -17,7 +17,7 @@ class OptionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilterChip(
+    return ChoiceChip(
       onSelected: onSelected,
       backgroundColor: light,
       label: SizedBox(
