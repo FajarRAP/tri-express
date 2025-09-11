@@ -1,3 +1,4 @@
+import '../../../inventory/data/models/warehouse_model.dart';
 import '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
@@ -9,6 +10,7 @@ class UserModel extends UserEntity {
     required super.name,
     required super.phoneNumber,
     required super.roles,
+    super.warehouse,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class UserModel extends UserEntity {
       name: json['name'],
       phoneNumber: json['no_telp'],
       roles: roles.map((role) => '${role['name']}').toList(),
+      warehouse: WarehouseModel.fromJson(json['gudang']),
     );
   }
 }

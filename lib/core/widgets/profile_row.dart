@@ -46,7 +46,7 @@ class ProfileRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Warehouse Location',
+                    user.warehouse?.name ?? '-',
                     style: const TextStyle(
                       color: grayTertiary,
                       fontSize: 12,
