@@ -53,13 +53,21 @@ class InventoryCubit extends Cubit<InventoryState> {
     await Future.delayed(const Duration(seconds: 1));
 
     emit(FetchShipmentReceiptNumbersLoaded(receiptNumbers: []));
+  }
 
-    // final result = await _fetchReceiptNumbersUseCase();
+  Future<void> fetchPrepareGoods() async {
+    emit(FetchPrepareGoodsLoading());
 
-    // result.fold(
-    //   (failure) => emit(FetchReceiptNumbersError(message: failure.message)),
-    //   (receiptNumbers) =>
-    //       emit(FetchReceiptNumbersLoaded(receiptNumbers: receiptNumbers)),
-    // );
+    await Future.delayed(const Duration(seconds: 1));
+
+    emit(FetchPrepareGoodsLoaded(batches: []));
+  }
+
+  Future<void> fetchReceiveGoods() async {
+    emit(FetchReceiveGoodsLoading());
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    emit(FetchReceiveGoodsLoaded(batches: []));
   }
 }

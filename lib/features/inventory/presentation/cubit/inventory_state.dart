@@ -9,6 +9,10 @@ class ListPaginate extends InventoryState {}
 
 class FetchDeliveryGoods extends InventoryState {}
 
+class FetchReceiveGoods extends InventoryState {}
+
+class FetchPrepareGoods extends InventoryState {}
+
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
@@ -51,6 +55,34 @@ class FetchShipmentReceiptNumbersLoaded extends FetchShipmentReceiptNumbers {
 
 class FetchShipmentReceiptNumbersError extends FetchShipmentReceiptNumbers {
   FetchShipmentReceiptNumbersError({required this.message});
+
+  final String message;
+}
+
+class FetchReceiveGoodsLoading extends FetchReceiveGoods {}
+
+class FetchReceiveGoodsLoaded extends FetchReceiveGoods {
+  FetchReceiveGoodsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class FetchReceiveGoodsError extends FetchReceiveGoods {
+  FetchReceiveGoodsError({required this.message});
+
+  final String message;
+}
+
+class FetchPrepareGoodsLoading extends FetchPrepareGoods {}
+
+class FetchPrepareGoodsLoaded extends FetchPrepareGoods {
+  FetchPrepareGoodsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class FetchPrepareGoodsError extends FetchPrepareGoods {
+  FetchPrepareGoodsError({required this.message});
 
   final String message;
 }
