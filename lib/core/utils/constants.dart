@@ -74,6 +74,7 @@ final batch = BatchEntity(
   name: 'name',
   status: 'status',
   trackingNumber: 'trackingNumber',
+  transportMode: 'Darat',
   goods: [
     for (var i = 0; i < 3; i++)
       GoodEntity(
