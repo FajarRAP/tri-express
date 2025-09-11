@@ -30,7 +30,7 @@ const onboardingRoute = '/onboarding';
 const loginRoute = '/login';
 
 const menuRoute = '/menu';
-const receiveGoodsRoute = '$menuRoute/receive-goods';
+const receiveGoodsRoute = '/receive-goods';
 const filterReceiveGoodsRoute = '$receiveGoodsRoute/filter';
 const scanReceiveGoodsRoute = '$receiveGoodsRoute/scan';
 const prepareGoodsRoute = '$menuRoute/prepare-goods';
@@ -76,26 +76,6 @@ final router = GoRouter(
           path: '/menu',
           builder: (context, state) => const HomePage(),
           routes: <RouteBase>[
-            GoRoute(
-              path: 'receive-goods',
-              builder: (context, state) => const ReceiveGoodsPage(),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'filter',
-                  builder: (context, state) => const FilterReceiveGoodsPage(),
-                ),
-                GoRoute(
-                  path: 'scan',
-                  builder: (context, state) => const ScanReceiveGoodsPage(),
-                ),
-                GoRoute(
-                  path: 'item/:itemId',
-                  builder: (context, state) => ItemDetailPage(
-                    itemId: '${state.pathParameters['itemId']}',
-                  ),
-                )
-              ],
-            ),
             GoRoute(
               path: 'prepare-goods',
               builder: (context, state) => const PrepareGoodsPage(),
@@ -161,6 +141,26 @@ final router = GoRouter(
           path: '/setting',
           builder: (context, state) => const SettingPage(),
         ),
+      ],
+    ),
+    GoRoute(
+      path: '/receive-goods',
+      builder: (context, state) => const ReceiveGoodsPage(),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterReceiveGoodsPage(),
+        ),
+        GoRoute(
+          path: 'scan',
+          builder: (context, state) => const ScanReceiveGoodsPage(),
+        ),
+        GoRoute(
+          path: 'item/:itemId',
+          builder: (context, state) => ItemDetailPage(
+            itemId: '${state.pathParameters['itemId']}',
+          ),
+        )
       ],
     ),
   ],
