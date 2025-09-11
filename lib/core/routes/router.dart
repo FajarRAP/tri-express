@@ -33,9 +33,9 @@ const menuRoute = '/menu';
 const receiveGoodsRoute = '/receive-goods';
 const filterReceiveGoodsRoute = '$receiveGoodsRoute/filter';
 const scanReceiveGoodsRoute = '$receiveGoodsRoute/scan';
-const prepareGoodsRoute = '$menuRoute/prepare-goods';
+const prepareGoodsRoute = '/prepare-goods';
 const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
-const prepareGoodsAddItemRoute = '$prepareGoodsRoute/add-item';
+const scanPrepareGoodsRoute = '$prepareGoodsRoute/scan';
 const sendGoodsRoute = '$menuRoute/send-goods';
 const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
 const sendGoodsAddItemRoute = '$sendGoodsRoute/add-items';
@@ -76,22 +76,6 @@ final router = GoRouter(
           path: '/menu',
           builder: (context, state) => const HomePage(),
           routes: <RouteBase>[
-            GoRoute(
-              path: 'prepare-goods',
-              builder: (context, state) => const PrepareGoodsPage(),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'filter',
-                  builder: (context, state) => const FilterPrepareGoodsPage(),
-                ),
-                GoRoute(
-                  path: 'add-item',
-                  builder: (context, state) => PrepareGoodsAddItemPage(
-                    batchName: '${state.extra}',
-                  ),
-                ),
-              ],
-            ),
             GoRoute(
               path: 'send-goods',
               builder: (context, state) => const SendGoodsPage(),
@@ -143,6 +127,7 @@ final router = GoRouter(
         ),
       ],
     ),
+    // Receive Goods
     GoRoute(
       path: '/receive-goods',
       builder: (context, state) => const ReceiveGoodsPage(),
@@ -155,13 +140,31 @@ final router = GoRouter(
           path: 'scan',
           builder: (context, state) => const ScanReceiveGoodsPage(),
         ),
-        GoRoute(
-          path: 'item/:itemId',
-          builder: (context, state) => ItemDetailPage(
-            itemId: '${state.pathParameters['itemId']}',
-          ),
-        )
       ],
+    ),
+    // Prepare Goods
+    GoRoute(
+      path: '/prepare-goods',
+      builder: (context, state) => const PrepareGoodsPage(),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const FilterPrepareGoodsPage(),
+        ),
+        GoRoute(
+          path: 'scan',
+          builder: (context, state) => PrepareGoodsAddItemPage(
+            batchName: '${state.extra}',
+          ),
+        ),
+      ],
+    ),
+
+    GoRoute(
+      path: '/item/:itemId',
+      builder: (context, state) => ItemDetailPage(
+        itemId: '${state.pathParameters['itemId']}',
+      ),
     ),
   ],
 );
