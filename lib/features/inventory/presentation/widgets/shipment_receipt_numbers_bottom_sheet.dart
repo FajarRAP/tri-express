@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/option_chip.dart';
 import '../../domain/entities/batch_entity.dart';
@@ -101,8 +102,12 @@ class _ShipmentReceiptNumbersBottomSheetState
                       childAspectRatio: 4,
                     ),
                     itemBuilder: (context, goodsIndex) => OptionChip(
-                      onSelected: (value) =>
-                          setState(() => _index = goodsIndex),
+                      onSelected: (value) {
+                        setState(() => _index = goodsIndex);
+                        _selectedReceiptNumbers
+                          ..clear()
+                          ..add(widget.batch.goods[_index].receiptNumber);
+                      },
                       isActive: goodsIndex == _index,
                       text: widget.batch.goods[goodsIndex].receiptNumber,
                     ),
@@ -110,10 +115,14 @@ class _ShipmentReceiptNumbersBottomSheetState
                   ),
                 ),
                 PrimaryButton(
-                  onPressed: () => widget.onSelected((_selectedReceiptNumbers
-                        ..clear()
-                        ..add(widget.batch.goods[_index].receiptNumber))
-                      .toList()),
+                  onPressed: () {
+                    if (_selectedReceiptNumbers.isEmpty) {
+                      const message = 'Pilih nomor resi terlebih dahulu';
+                      return TopSnackbar.dangerSnackbar(message: message);
+                    }
+
+                    widget.onSelected(_selectedReceiptNumbers.toList());
+                  },
                   child: const Text('Lihat Detail'),
                 ),
               ],
