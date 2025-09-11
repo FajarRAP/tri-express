@@ -42,8 +42,8 @@ class WarehouseModel extends WarehouseEntity {
       name: json["title"],
       phone: json["no_telp"],
       warehouseCode: json["kode"],
-      createdAt: json["created_at"],
-      updatedAt: json["updated_at"],
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
     );
   }
 }
