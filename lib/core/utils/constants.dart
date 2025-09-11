@@ -87,3 +87,12 @@ final batch = BatchEntity(
   destination: _warehouse,
   sendAt: DateTime.now(),
 );
+
+final goods = [
+  for (var i = 0; i < 20; i++)
+    GoodEntity(
+      id: 'id-$i',
+      name: 'name-$i',
+      receiptNumber: 'TRI.2507231450302$i',
+    )
+];
