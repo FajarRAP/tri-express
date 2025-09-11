@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tri_express/core/routes/router.dart';
+import 'package:tri_express/core/utils/helpers.dart';
+import 'package:tri_express/core/widgets/dropdowns/warehouse_dropdown.dart';
 
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 
-class FilterPrepareGoodsPage extends StatefulWidget {
-  const FilterPrepareGoodsPage({super.key});
+class PrepareGoodsFilterPage extends StatefulWidget {
+  const PrepareGoodsFilterPage({super.key});
 
   @override
-  State<FilterPrepareGoodsPage> createState() => _FilterPrepareGoodsPageState();
+  State<PrepareGoodsFilterPage> createState() => _PrepareGoodsFilterPageState();
 }
 
-class _FilterPrepareGoodsPageState extends State<FilterPrepareGoodsPage> {
+class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   late final TextEditingController _batchNameController;
+  late final TextEditingController _estimateDateController;
+  late final TextEditingController _transportModeController;
+  late final TextEditingController _warehouseController;
 
   @override
   void initState() {
     super.initState();
-    _batchNameController = TextEditingController();
+    _batchNameController = TextEditingController(text: 'NAMA BATCHNYA');
+    _estimateDateController = TextEditingController();
+    _transportModeController = TextEditingController();
+    _warehouseController = TextEditingController();
   }
 
   @override
   void dispose() {
     _batchNameController.dispose();
+    _estimateDateController.dispose();
+    _transportModeController.dispose();
+    _warehouseController.dispose();
     super.dispose();
   }
 
@@ -42,115 +53,63 @@ class _FilterPrepareGoodsPageState extends State<FilterPrepareGoodsPage> {
         child: Column(
           children: <Widget>[
             const SizedBox(height: 24),
-            GridView.count(
-              childAspectRatio: 2.5 / 1,
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: <Widget>[
-                DropdownButtonFormField(
-                  onChanged: (value) {},
-                  decoration: const InputDecoration(
-                    labelText: 'Gudang Asal',
-                    hintText: 'Pilih gudang',
-                  ),
-                  items: <DropdownMenuItem>[
-                    DropdownMenuItem(
-                      value: 'A',
-                      child: const Text('Gudang A'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B',
-                      child: const Text('Gudang B'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'C',
-                      child: const Text('Gudang C'),
-                    ),
-                  ],
-                ),
-                DropdownButtonFormField(
-                  onChanged: (value) {},
-                  decoration: const InputDecoration(
-                    labelText: 'Gudang Tujuan',
-                    hintText: 'Pilih gudang',
-                  ),
-                  items: <DropdownMenuItem>[
-                    DropdownMenuItem(
-                      value: 'A',
-                      child: const Text('Gudang A'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B',
-                      child: const Text('Gudang B'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'C',
-                      child: const Text('Gudang C'),
-                    ),
-                  ],
-                ),
-                DropdownButtonFormField(
-                  onChanged: (value) {},
-                  decoration: const InputDecoration(
-                    labelText: 'Jalur Pengiriman',
-                    hintText: 'Pilih jalur',
-                  ),
-                  items: <DropdownMenuItem>[
-                    DropdownMenuItem(
-                      value: 'A',
-                      child: const Text('Jalur A'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B',
-                      child: const Text('Jalur B'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'C',
-                      child: const Text('Jalur C'),
-                    ),
-                  ],
-                ),
-                TextFormField(
-                  controller: _batchNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Batch',
-                  ),
-                ),
-                TextFormField(
-                  onTap: () => showDatePicker(
-                    context: context,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Tanggal Pengiriman',
-                    hintText: 'DD/MM/YYYY',
-                    suffixIcon: Icon(Icons.calendar_month_outlined),
-                  ),
-                  readOnly: true,
-                ),
-                TextFormField(
-                  onTap: () => showDatePicker(
-                    context: context,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Estimasi Tiba',
-                    hintText: 'DD/MM/YYYY',
-                    suffixIcon: Icon(Icons.calendar_month_outlined),
-                  ),
-                  readOnly: true,
-                ),
-              ],
+            TextFormField(
+              onTap: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => WarehouseDropdown(onTap: context.pop),
+              ),
+              controller: _warehouseController,
+              decoration: const InputDecoration(
+                labelText: 'Pilih Gudang Asal',
+                suffixIcon: Icon(Icons.arrow_drop_down),
+              ),
+              readOnly: true,
             ),
+            const SizedBox(height: 12),
+            TextFormField(
+              onTap: () => showModalBottomSheet(
+                context: context,
+                builder: (context) => WarehouseDropdown(onTap: context.pop),
+              ),
+              controller: _warehouseController,
+              decoration: const InputDecoration(
+                labelText: 'Pilih Jalur Pengiriman',
+                suffixIcon: Icon(Icons.arrow_drop_down),
+              ),
+              readOnly: true,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: 'DD MM YYYY',
+                labelText: 'Tanggal Terima',
+                suffixIcon: Icon(Icons.calendar_month),
+              ),
+              initialValue: DateTime.now().toDDMMMMYYYY,
+              readOnly: true,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: 'DD MM YYYY',
+                labelText: 'Estimasi Tiba',
+                suffixIcon: Icon(Icons.calendar_month),
+              ),
+              readOnly: true,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _batchNameController,
+              decoration: const InputDecoration(
+                labelText: 'Batch',
+              ),
+            ),
+            const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
                 onPressed: () => context.push(
-                  prepareGoodsAddItemRoute,
+                  scanPrepareGoodsRoute,
                   extra: _batchNameController.text,
                 ),
                 child: const Text('Simpan'),
