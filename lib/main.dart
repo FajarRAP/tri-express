@@ -10,6 +10,7 @@ import 'core/utils/helpers.dart';
 import 'features/auth/data/data_sources/auth_local_data_sources.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
+import 'features/inventory/presentation/cubit/inventory_cubit.dart';
 import 'service_locator.dart';
 
 late Faker faker;
@@ -38,6 +39,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<CoreCubit>(create: (context) => getIt.get<CoreCubit>()),
         BlocProvider<AuthCubit>(create: (context) => getIt.get<AuthCubit>()),
+        BlocProvider<InventoryCubit>(
+            create: (context) => getIt.get<InventoryCubit>()),
       ],
       child: MaterialApp.router(
         builder: (context, child) => Overlay(
