@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../core/themes/colors.dart';
-import '../../../../core/utils/constants.dart';
-import '../../../../core/utils/helpers.dart';
-import '../../../../core/widgets/decorated_icon_button.dart';
-import '../../../../core/widgets/primary_gradient_card.dart';
-import '../../../../main.dart';
-import '../../../../uhf_result_model.dart';
-import '../../domain/entity/batch_entity.dart';
-import '../widgets/batch_card_item.dart';
+import '../../../../../core/fonts/fonts.dart';
+import '../../../../../core/routes/router.dart';
+import '../../../../../core/themes/colors.dart';
+import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
+import '../../../../../core/widgets/decorated_icon_button.dart';
+import '../../../../../core/widgets/primary_gradient_card.dart';
+import '../../../../../core/widgets/triple_floating_action_buttons.dart';
+import '../../../../../uhf_result_model.dart';
+import '../../widgets/batch_card_item.dart';
+import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
-class ReceiveGoodsPage extends StatefulWidget {
-  const ReceiveGoodsPage({super.key});
+class ScanReceiveGoodsPage extends StatefulWidget {
+  const ScanReceiveGoodsPage({super.key});
 
   @override
-  State<ReceiveGoodsPage> createState() => _ReceiveGoodsPageState();
+  State<ScanReceiveGoodsPage> createState() => _ScanReceiveGoodsPageState();
 }
 
-class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
+class _ScanReceiveGoodsPageState extends State<ScanReceiveGoodsPage> {
   late final UHFMethodHandler _uhfMethodHandler;
   final _tagInfos = <UHFResultModel>[];
   var _isInventoryRunning = false;
@@ -132,52 +136,19 @@ class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
       ),
       floatingActionButton: Container(
         decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: gray),
-          ),
+          border: Border(top: BorderSide(color: gray)),
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FloatingActionButton.small(
-              onPressed: () {},
-              backgroundColor: light,
-              foregroundColor: danger,
-              heroTag: 'scan_again',
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: danger),
-              ),
-              tooltip: 'Scan Ulang',
-              child: Icon(Icons.restore),
+        child: TripleFloatingActionButtons(
+          onSave: () => showModalBottomSheet(
+            context: context,
+            builder: (context) => ActionConfirmationBottomSheet(
+              onPressed: () => context.go(receiveGoodsRoute),
+              message: 'Apakah anda yakin akan menyimpan barang ini?',
             ),
-            const SizedBox(width: 16),
-            FloatingActionButton.small(
-              onPressed: _uhfMethodHandler.invokeHandleInventory,
-              backgroundColor: primary,
-              foregroundColor: light,
-              heroTag: 'start_stop_scan',
-              tooltip: _isInventoryRunning ? 'Berhenti Scan' : 'Mulai Scan',
-              child: _isInventoryRunning
-                  ? const Icon(Icons.stop)
-                  : const Icon(Icons.play_arrow),
-            ),
-            const SizedBox(width: 16),
-            FloatingActionButton.small(
-              onPressed: () {},
-              backgroundColor: light,
-              foregroundColor: primary,
-              heroTag: 'save',
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: primary),
-              ),
-              tooltip: 'Simpan',
-              child: Icon(Icons.save),
-            ),
-          ],
+          ),
+          isScanning: _isInventoryRunning,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -185,37 +156,38 @@ class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
   }
 
   Widget _buildList() {
-    if (_tagInfos.isEmpty) {
+    if (_tagInfos.isNotEmpty) {
       return SliverFillRemaining(
         child: Center(
           child: Text(
-            'Belum ada barang, terima barang sebelum cek inventory gudang',
-            style: const TextStyle(
-              color: grayTertiary,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
+            style: label[medium].copyWith(color: primaryGradientEnd),
             textAlign: TextAlign.center,
           ),
         ),
       );
     }
 
-    return SliverList.separated(
-      itemBuilder: (context, index) => BatchCardItem(
-        batch: BatchEntity(
-          id: '-',
-          batch: _tagInfos[index].epcId,
-          destination: faker.address.city(),
-          itemCount: _tagInfos[index].frequency,
-          origin: faker.address.city(),
-          path: '-',
-          sendAt: DateTime.now(),
-          status: '-',
+    return SliverPadding(
+      padding: const EdgeInsets.only(bottom: 80),
+      sliver: SliverList.separated(
+        itemBuilder: (context, index) => BatchCardItem(
+          onTap: () => showModalBottomSheet(
+            context: context,
+            builder: (context) => ShipmentReceiptNumbersBottomSheet(
+              onSelected: (selectedReceiptNumbers) {
+                debugPrint('Selected Receipt Numbers: $selectedReceiptNumbers');
+                context.push(
+                    '$receiveGoodsRoute$itemDetailRoute/${batch.goods.first.id}');
+              },
+              batch: batch,
+            ),
+          ),
+          batch: batch,
         ),
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemCount: 10,
       ),
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemCount: _tagInfos.length,
     );
   }
 }
