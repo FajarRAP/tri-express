@@ -144,7 +144,9 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
           onSave: () => showModalBottomSheet(
             context: context,
             builder: (context) => ActionConfirmationBottomSheet(
-              onPressed: () => context.go(receiveGoodsRoute),
+              onPressed: () => context
+                ..go(menuRoute)
+                ..push(receiveGoodsRoute),
               message: 'Apakah anda yakin akan menyimpan barang ini?',
             ),
           ),
@@ -158,11 +160,14 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
   Widget _buildList() {
     if (_tagInfos.isNotEmpty) {
       return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
-            style: label[medium].copyWith(color: primaryGradientEnd),
-            textAlign: TextAlign.center,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Center(
+            child: Text(
+              'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
+              style: label[medium].copyWith(color: primaryGradientEnd),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );
@@ -175,18 +180,15 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
           onTap: () => showModalBottomSheet(
             context: context,
             builder: (context) => ShipmentReceiptNumbersBottomSheet(
-              onSelected: (selectedReceiptNumbers) {
-                debugPrint('Selected Receipt Numbers: $selectedReceiptNumbers');
-                context.push(
-                    '$receiveGoodsRoute$itemDetailRoute/${batch.goods.first.id}');
-              },
+              onSelected: (selectedReceiptNumbers) => context
+                  .push('$itemDetailRoute/${selectedReceiptNumbers.first}'),
               batch: batch,
             ),
           ),
           batch: batch,
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemCount: 10,
+        itemCount: null,
       ),
     );
   }

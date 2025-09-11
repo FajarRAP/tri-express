@@ -18,6 +18,7 @@ class ReceiveGoodsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inventoryCubit = context.read<InventoryCubit>();
+
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -68,7 +69,7 @@ class ReceiveGoodsPage extends StatelessWidget {
               }
 
               if (state is FetchReceiveGoodsLoaded) {
-                if (state.batches.isNotEmpty) {
+                if (state.batches.isEmpty) {
                   return SliverFillRemaining(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -86,22 +87,22 @@ class ReceiveGoodsPage extends StatelessWidget {
                 }
 
                 return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList.separated(
                     itemBuilder: (context, index) => BatchCardItem(
                       onTap: () => showModalBottomSheet(
                         context: context,
                         builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                          onSelected: (selectedReceiptNumbers) => context
-                              .push('$itemDetailRoute/${batch.goods.first.id}'),
-                          batch: batch,
+                          onSelected: (selectedReceiptNumbers) => context.push(
+                              '$itemDetailRoute/${selectedReceiptNumbers.first}'),
+                          batch: state.batches[index],
                         ),
                       ),
-                      batch: batch,
+                      batch: state.batches[index],
                     ),
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
-                    itemCount: null,
+                    itemCount: state.batches.length,
                   ),
                 );
               }
