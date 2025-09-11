@@ -1,0 +1,123 @@
+{
+    "id": 29,
+    "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+    "next_warehouse_id": "019903c3-ca40-72da-a63e-044c3fd1f8c1",
+    "shipment_date": "2025-09-02T17:00:00.000000Z",
+    "delivery_date": "2025-09-02T17:00:00.000000Z",
+    "estimate_date": "2025-09-03",
+    "tracking_number": "SHIP.2509031259414",
+    "batch_code": "STO200",
+    "shipment_code": "TK/MHUO/VXUM",
+    "marking_code": null,
+    "status": 2,
+    "type": 4,
+    "summary": {
+        "prepare": [
+            {
+                "qty": 1,
+                "tanggal": "2025-09-03",
+                "receipt_item_id": 29,
+                "batch_tracking_number": "TRI.2509031259706"
+            }
+        ],
+        "receive": [],
+        "delivery": [
+            {
+                "qty": 1,
+                "tanggal": "2025-09-03",
+                "receipt_item_id": 29,
+                "batch_tracking_number": "TRI.2509031259706"
+            }
+        ]
+    },
+    "prepare_qty": 1,
+    "delivery_qty": 1,
+    "receive_qty": 0,
+    "stt_finish": 0,
+    "finish_qty": 0,
+    "courier_qty": 0,
+    "receive_date": null,
+    "created_at": "2025-09-03T05:59:06.000000Z",
+    "updated_at": "2025-09-03T05:59:33.000000Z",
+    "user_id": "019908d1-635b-70d7-b012-194607f49d16",
+    "status_label": "Dalam Pengiriman",
+    "type_label": "Kereta",
+    "shipment_items": [
+        {
+            "id": 255,
+            "shipment_id": 29,
+            "receipt_item_id": 29,
+            "receipt_id": 22,
+            "receipt_unit_id": 214,
+            "item_name": "CN/STO/PRO - 1 kg - 10x10x10 cm",
+            "unique_code": "A00000000214",
+            "batch_tracking_number": "TRI.2509031259706",
+            "status": 2,
+            "prepare_at": "2025-09-03 00:00:00",
+            "delivery_at": "2025-09-03 00:00:00",
+            "receive_at": null,
+            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+            "source_shipment_item_id": null,
+            "created_at": "2025-09-03T05:59:06.000000Z",
+            "updated_at": "2025-09-03T05:59:33.000000Z",
+            "status_label": "Dalam Pengiriman",
+            "receipt": {
+                "id": 22,
+                "customer_id": "019903c3-d0fa-7035-866e-365651efaf14",
+                "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                "destination_warehouse_id": "019903c3-ca40-72da-a63e-044c3fd1f8c1",
+                "invoice_code": "INV.2509031258905",
+                "receipt_date": "2025-09-02T17:00:00.000000Z",
+                "price_all": "290.00",
+                "volume_all": "574.00",
+                "jalur": 1,
+                "created_at": "2025-09-03T05:58:08.000000Z",
+                "updated_at": "2025-09-03T05:58:08.000000Z",
+                "customer": {
+                    "id": "019903c3-d0fa-7035-866e-365651efaf14",
+                    "negara_id": "019903c3-c9af-7157-9088-460103aadf8c",
+                    "kode": "CUST000000",
+                    "nama": "Nilam Melani",
+                    "no_telp": "(+62) 244 3917 1394",
+                    "alamat": "Jr. Dago No. 996",
+                    "jenis": 1,
+                    "keterangan": null,
+                    "latitude": null,
+                    "longitude": null,
+                    "provinsi_id": null,
+                    "kota_id": null,
+                    "kecamatan_id": null,
+                    "desa_id": null,
+                    "created_at": "2025-09-01T05:33:08.000000Z",
+                    "updated_at": "2025-09-01T05:33:08.000000Z"
+                }
+            }
+        }
+    ],
+    "warehouse": {
+        "id": "019903c3-ca54-7183-96d2-381bce035072",
+        "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+        "kode": "MHUO",
+        "title": "Gudang Pekalongan",
+        "no_telp": "(+62) 758 8958 1894",
+        "alamat": "Jr. Krakatau No. 972",
+        "longitude": "126.409562",
+        "latitude": "-9.319892",
+        "keterangan": "Eligendi eos quis reiciendis eum est.",
+        "created_at": "2025-09-01T05:33:07.000000Z",
+        "updated_at": "2025-09-01T05:33:07.000000Z"
+    },
+    "next_warehouse": {
+        "id": "019903c3-ca40-72da-a63e-044c3fd1f8c1",
+        "negara_id": "019903c3-c9c1-7206-9cf5-ff4916c11633",
+        "kode": "VXUM",
+        "title": "Gudang Sungai Penuh",
+        "no_telp": "0640 4733 6579",
+        "alamat": "Psr. Abdullah No. 483",
+        "longitude": "110.026192",
+        "latitude": "-1.51791",
+        "keterangan": "Eos maiores ut ad.",
+        "created_at": "2025-09-01T05:33:07.000000Z",
+        "updated_at": "2025-09-01T05:33:07.000000Z"
+    }
+}
