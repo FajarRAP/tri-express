@@ -147,6 +147,7 @@ class HomePage extends StatelessWidget {
                         title: 'Kirim Barang',
                       ),
                       ActionCard(
+                        onTap: () => context.push(pickUpGoodsRoute),
                         icon: Icons.inventory_2_outlined,
                         title: 'Ambil di Gudang',
                       ),
