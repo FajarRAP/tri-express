@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/core/fonts/fonts.dart';
-import 'package:tri_express/core/themes/colors.dart';
-import 'package:tri_express/core/widgets/buttons/outline_primary_button.dart';
-import 'package:tri_express/core/widgets/buttons/primary_button.dart';
+
+import '../fonts/fonts.dart';
+import '../themes/colors.dart';
+import 'buttons/outline_primary_button.dart';
+import 'buttons/primary_button.dart';
+import 'handle_bar.dart';
 
 class ActionConfirmationBottomSheet extends StatelessWidget {
   const ActionConfirmationBottomSheet({
@@ -23,14 +25,7 @@ class ActionConfirmationBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: 48,
-            height: 5,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.grey.shade300,
-            ),
-          ),
+          const HandleBar(),
           const SizedBox(height: 24),
           Text(
             'Konfirmasi Aksi',
