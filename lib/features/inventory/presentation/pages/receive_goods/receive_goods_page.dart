@@ -44,7 +44,7 @@ class ReceiveGoodsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     DecoratedIconButton(
-                      onTap: () => context.push(filterReceiveGoodsRoute),
+                      onTap: () => context.push(receiveGoodsFilterRoute),
                       icon: const Icon(Icons.add_outlined),
                     ),
                   ],

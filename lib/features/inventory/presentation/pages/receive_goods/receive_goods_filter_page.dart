@@ -67,7 +67,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () => context.push(scanReceiveGoodsRoute),
+                onPressed: () => context.push(receiveGoodsScanRoute),
                 child: const Text('Simpan'),
               ),
             ),

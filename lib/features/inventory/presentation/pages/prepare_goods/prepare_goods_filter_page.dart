@@ -109,7 +109,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
               width: double.infinity,
               child: PrimaryButton(
                 onPressed: () => context.push(
-                  scanPrepareGoodsRoute,
+                  prepareGoodsScanRoute,
                   extra: _batchNameController.text,
                 ),
                 child: const Text('Simpan'),

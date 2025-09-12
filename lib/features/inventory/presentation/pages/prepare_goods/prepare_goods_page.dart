@@ -45,7 +45,7 @@ class PrepareGoodsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     DecoratedIconButton(
-                      onTap: () => context.push(filterPrepareGoodsRoute),
+                      onTap: () => context.push(prepareGoodsFilterRoute),
                       icon: const Icon(Icons.add_outlined),
                     ),
                   ],
