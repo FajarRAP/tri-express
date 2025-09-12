@@ -13,6 +13,8 @@ class FetchReceiveGoods extends InventoryState {}
 
 class FetchPrepareGoods extends InventoryState {}
 
+class FetchPickUpGoods extends InventoryState {}
+
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
@@ -83,6 +85,20 @@ class FetchPrepareGoodsLoaded extends FetchPrepareGoods {
 
 class FetchPrepareGoodsError extends FetchPrepareGoods {
   FetchPrepareGoodsError({required this.message});
+
+  final String message;
+}
+
+class FetchPickUpGoodsLoading extends FetchPickUpGoods {}
+
+class FetchPickUpGoodsLoaded extends FetchPickUpGoods {
+  FetchPickUpGoodsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class FetchPickUpGoodsError extends FetchPickUpGoods {
+  FetchPickUpGoodsError({required this.message});
 
   final String message;
 }

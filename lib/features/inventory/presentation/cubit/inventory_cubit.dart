@@ -103,4 +103,12 @@ class InventoryCubit extends Cubit<InventoryState> {
               batches: _receiveBatches..addAll(batches))),
     );
   }
+
+  Future<void> fetchPickUpGoods({String? search}) async {
+    emit(FetchPickUpGoodsLoading());
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    emit(FetchPickUpGoodsLoaded(batches: []));
+  }
 }
