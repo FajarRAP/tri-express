@@ -8,15 +8,18 @@ import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
-import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
+import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
+import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_page.dart';
+import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
+import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_scan_page.dart';
-import '../../features/inventory/presentation/pages/send_goods/send_goods_add_item_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
+import '../../features/inventory/presentation/pages/send_goods/send_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
@@ -31,14 +34,17 @@ const loginRoute = '/login';
 
 const menuRoute = '/menu';
 const receiveGoodsRoute = '/receive-goods';
-const filterReceiveGoodsRoute = '$receiveGoodsRoute/filter';
-const scanReceiveGoodsRoute = '$receiveGoodsRoute/scan';
+const receiveGoodsFilterRoute = '$receiveGoodsRoute/filter';
+const receiveGoodsScanRoute = '$receiveGoodsRoute/scan';
 const prepareGoodsRoute = '/prepare-goods';
-const filterPrepareGoodsRoute = '$prepareGoodsRoute/filter';
-const scanPrepareGoodsRoute = '$prepareGoodsRoute/scan';
-const sendGoodsRoute = '$menuRoute/send-goods';
+const prepareGoodsFilterRoute = '$prepareGoodsRoute/filter';
+const prepareGoodsScanRoute = '$prepareGoodsRoute/scan';
+const sendGoodsRoute = '/send-goods';
 const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
-const sendGoodsAddItemRoute = '$sendGoodsRoute/add-items';
+const sendGoodsScanRoute = '$sendGoodsRoute/scan';
+const pickUpGoodsRoute = '/pick-up-goods';
+const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute/confirmation';
+const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
 
 const onTheWayRoute = '/on-the-way';
 const batchDetailRoute = '/batch-detail';
@@ -75,22 +81,6 @@ final router = GoRouter(
         GoRoute(
           path: '/menu',
           builder: (context, state) => const HomePage(),
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'send-goods',
-              builder: (context, state) => const SendGoodsPage(),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'filter',
-                  builder: (context, state) => const SendGoodsFilterPage(),
-                ),
-                GoRoute(
-                  path: 'add-items',
-                  builder: (context, state) => const SendGoodsAddItemPage(),
-                ),
-              ],
-            ),
-          ],
         ),
         GoRoute(
           path: '/on-the-way',
@@ -159,7 +149,36 @@ final router = GoRouter(
         ),
       ],
     ),
-
+    // Send Goods
+    GoRoute(
+      path: '/send-goods',
+      builder: (context, state) => const SendGoodsPage(),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'filter',
+          builder: (context, state) => const SendGoodsFilterPage(),
+        ),
+        GoRoute(
+          path: 'scan',
+          builder: (context, state) => const SendGoodsScanPage(),
+        ),
+      ],
+    ),
+    // Pick Up Goods
+    GoRoute(
+      path: '/pick-up-goods',
+      builder: (context, state) => const PickUpGoodsPage(),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'confirmation',
+          builder: (context, state) => const PickUpGoodsConfirmationPage(),
+        ),
+        GoRoute(
+          path: 'scan',
+          builder: (context, state) => const PickUpGoodsScanPage(),
+        ),
+      ],
+    ),
     GoRoute(
       path: '/item/:itemId',
       builder: (context, state) => ItemDetailPage(
