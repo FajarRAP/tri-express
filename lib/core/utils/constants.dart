@@ -11,24 +11,13 @@ const accessTokenKey = String.fromEnvironment('ACCESS_TOKEN_KEY');
 const refreshTokenKey = String.fromEnvironment('REFRESH_TOKEN_KEY');
 const onboardingKey = String.fromEnvironment('ONBOARDING_KEY');
 
-const shipmentPath = <String, dynamic>{
-  '1': 'Darat',
-  '2': 'Laut',
-  '3': 'Udara',
-  '4': 'Kereta'
-};
-const shipmentStatus = <String, dynamic>{
-  '1': 'Selesai',
-  '2': 'Sedang Dikirim',
-  '3': 'Terjadwal'
-};
-
 const platform = MethodChannel('com.example.tri_express/channel');
 
 const scannablePage = <String>{
-  '$receiveGoodsRoute$scanReceiveGoodsRoute',
-  prepareGoodsRoute,
-  inventoryRoute,
+  receiveGoodsScanRoute,
+  prepareGoodsScanRoute,
+  pickUpGoodsScanRoute,
+  sendGoodsScanRoute,
 };
 
 const inScannablePageMethod = 'inScannablePage';
