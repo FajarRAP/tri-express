@@ -73,28 +73,22 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
                           children: <Widget>[
                             Text(
                               'Barang di Gudang \$Warehouse',
-                              style: const TextStyle(
+                              style: paragraphMedium[bold].copyWith(
                                 color: light,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Total Koli',
-                              style: const TextStyle(
+                              style: paragraphSmall[medium].copyWith(
                                 color: light,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               '\$Number',
-                              style: const TextStyle(
+                              style: paragraphSmall[medium].copyWith(
                                 color: light,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
