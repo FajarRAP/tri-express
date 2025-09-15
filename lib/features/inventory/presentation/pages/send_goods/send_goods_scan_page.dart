@@ -121,7 +121,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () {},
+                          onTap: () => context.push(scanBarcodeInnerRoute),
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
                       ],
