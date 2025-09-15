@@ -7,6 +7,7 @@ import '../models/dropdown_model.dart';
 
 abstract class CoreRemoteDataSources {
   Future<List<String>> fetchBanners();
+  Future<List<DropdownEntity>> fetchDriverDropdown();
   Future<List<int>> fetchSummary();
   Future<List<DropdownEntity>> fetchTransportModeDropdown();
   Future<List<DropdownEntity>> fetchWarehouseDropdown();
@@ -63,6 +64,20 @@ class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
   Future<List<DropdownEntity>> fetchWarehouseDropdown() async {
     try {
       final response = await dio.get('/prepare/warehouse');
+      final contents = List<Map<String, dynamic>>.from(response.data['data']);
+
+      return contents.map((e) => DropdownModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<DropdownEntity>> fetchDriverDropdown() async {
+    try {
+      final response = await dio.get('/delivery/driver_list');
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => DropdownModel.fromJson(e).toEntity()).toList();

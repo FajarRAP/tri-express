@@ -49,6 +49,25 @@ class CoreRepositoriesImpl extends CoreRepositories {
   }
 
   @override
+  Future<Either<Failure, List<DropdownEntity>>> fetchDriverDropdown() async {
+    try {
+      final result = await coreRemoteDataSources.fetchDriverDropdown();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<int>>> fetchSummary() async {
     try {
       final result = await coreRemoteDataSources.fetchSummary();

@@ -1,0 +1,22 @@
+{
+    "status": "Success",
+    "message": "data driver",
+    "data": [
+        {
+            "id": "019903c3-cfc6-72fb-9cc5-bb67eb4f12c3",
+            "text": "kurir_gudang"
+        },
+        {
+            "id": "019908d1-635b-70d7-b012-194607f49d16",
+            "text": "KG_Tono"
+        },
+        {
+            "id": "019908d3-e521-7101-b21a-58b30d6ec27d",
+            "text": "KG_Budi"
+        },
+        {
+            "id": "019908d4-55c2-734f-a2b2-d11602c33e66",
+            "text": "KG_Kurniawan"
+        }
+    ]
+}

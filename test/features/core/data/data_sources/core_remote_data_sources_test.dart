@@ -21,7 +21,7 @@ void main() {
   });
 
   group(
-    'fetch banners: ',
+    'fetch banners remote data source',
     () {
       test(
         'should return List<String> when request is successful',
@@ -57,7 +57,7 @@ void main() {
   );
 
   group(
-    'fetch summary: ',
+    'fetch summary remote data source',
     () {
       test(
         'should return List<int> when request is successful',
@@ -82,7 +82,7 @@ void main() {
   );
 
   group(
-    'fetch transport mode dropdown: ',
+    'fetch transport mode dropdown remote data source',
     () {
       test(
         'should return List<DropdownEntity> when request is successful',
@@ -108,7 +108,7 @@ void main() {
   );
 
   group(
-    'fetch warehouse dropdown: ',
+    'fetch warehouse dropdown remote data source',
     () {
       test(
         'should return List<DropdownEntity> when request is successful',
@@ -124,6 +124,32 @@ void main() {
 
           // act
           final result = await dataSources.fetchWarehouseDropdown();
+
+          // assert
+          expect(result, isNot(isA<List<DropdownModel>>()));
+          expect(result, isA<List<DropdownEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch driver dropdown remote data source',
+    () {
+      test(
+        'should return List<DropdownEntity> when request is successful',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_driver_dropdown.json');
+          final json = jsonDecode(jsonString);
+          when(() => mockDio.get(any())).thenAnswer(
+            (_) async => Response(
+                data: json, requestOptions: RequestOptions(), statusCode: 200),
+          );
+
+          // act
+          final result = await dataSources.fetchDriverDropdown();
 
           // assert
           expect(result, isNot(isA<List<DropdownModel>>()));
