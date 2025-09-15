@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/features/core/presentation/pages/notification_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/core/presentation/pages/home_page.dart';
+import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
+import '../../features/core/presentation/pages/scan_barcode_page.dart';
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
@@ -57,6 +58,9 @@ const settingRoute = '/setting';
 
 const notificationRoute = '/notification';
 
+const scanBarcodeRoute = '/scan-barcode';
+const scanBarcodeInnerRoute = '/scan-barcode-inner';
+
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: initialLocation,
@@ -107,8 +111,8 @@ final router = GoRouter(
           ],
         ),
         GoRoute(
-          path: '/third',
-          builder: (context, state) => const HomePage(),
+          path: '/scan-barcode',
+          builder: (context, state) => const ScanBarcodePage(),
         ),
         GoRoute(
           path: '/inventory',
@@ -193,6 +197,11 @@ final router = GoRouter(
     GoRoute(
       path: '/notification',
       builder: (context, state) => const NotificationPage(),
+    ),
+
+    GoRoute(
+      path: '/scan-barcode-inner',
+      builder: (context, state) => const ScanBarcodePage(),
     ),
   ],
 );
