@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../../core/widgets/dropdowns/driver_dropdown.dart';
 import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class SendGoodsFilterPage extends StatefulWidget {
   const SendGoodsFilterPage({super.key});
@@ -15,19 +17,21 @@ class SendGoodsFilterPage extends StatefulWidget {
 }
 
 class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
-  late final TextEditingController _courierController;
+  late final TextEditingController _driverController;
   late final TextEditingController _warehouseController;
+  DropdownEntity? _selectedWarehouse;
+  DropdownEntity? _selectedDriver;
 
   @override
   void initState() {
     super.initState();
-    _courierController = TextEditingController();
+    _driverController = TextEditingController();
     _warehouseController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _courierController.dispose();
+    _driverController.dispose();
     _warehouseController.dispose();
     super.dispose();
   }
@@ -49,12 +53,18 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => WarehouseDropdown(
+                  onTap: (warehouse) {
+                    _warehouseController.text = warehouse.value;
+                    setState(() => _selectedWarehouse = warehouse);
+                    context.pop();
+                  },
+                ),
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
-                labelText: 'Pilih Gudang Asal',
                 hintText: 'Pilih Gudang Asal',
+                labelText: 'Pilih Gudang Asal',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
               readOnly: true,
@@ -63,12 +73,18 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => DriverDropdown(
+                  onTap: (driver) {
+                    _driverController.text = driver.value;
+                    setState(() => _selectedDriver = driver);
+                    context.pop();
+                  },
+                ),
               ),
-              controller: _warehouseController,
+              controller: _driverController,
               decoration: const InputDecoration(
-                labelText: 'Pilih Kurir Gudang',
                 hintText: 'Pilih Kurir Gudang',
+                labelText: 'Pilih Kurir Gudang',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
               readOnly: true,
@@ -86,7 +102,9 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () => context.push(sendGoodsScanRoute),
+                onPressed: _selectedDriver == null || _selectedWarehouse == null
+                    ? null
+                    : () => context.push(sendGoodsScanRoute),
                 child: const Text('Simpan'),
               ),
             ),
