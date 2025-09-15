@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/features/core/data/data_sources/core_remote_data_sources.dart';
+import 'package:tri_express/features/core/data/models/dropdown_model.dart';
+import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
+
+import '../../../../fixtures/fixture_reader.dart';
 
 class MockDio extends Mock implements Dio {}
 
@@ -70,6 +76,58 @@ void main() {
 
           // assert
           expect(result, isA<List<int>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch transport mode dropdown: ',
+    () {
+      test(
+        'should return List<DropdownEntity> when request is successful',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_transport_mode_dropdown.json');
+          final json = jsonDecode(jsonString);
+          when(() => mockDio.get(any())).thenAnswer(
+            (_) async => Response(
+                data: json, requestOptions: RequestOptions(), statusCode: 200),
+          );
+
+          // act
+          final result = await dataSources.fetchTransportModeDropdown();
+
+          // assert
+          expect(result, isNot(isA<List<DropdownModel>>()));
+          expect(result, isA<List<DropdownEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch warehouse dropdown: ',
+    () {
+      test(
+        'should return List<DropdownEntity> when request is successful',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_warehouse_dropdown.json');
+          final json = jsonDecode(jsonString);
+          when(() => mockDio.get(any())).thenAnswer(
+            (_) async => Response(
+                data: json, requestOptions: RequestOptions(), statusCode: 200),
+          );
+
+          // act
+          final result = await dataSources.fetchWarehouseDropdown();
+
+          // assert
+          expect(result, isNot(isA<List<DropdownModel>>()));
+          expect(result, isA<List<DropdownEntity>>());
         },
       );
     },

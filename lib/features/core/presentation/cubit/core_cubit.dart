@@ -2,9 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
+import '../../domain/entities/dropdown_entity.dart';
 import '../../domain/use_cases/complete_onboarding_use_case.dart';
 import '../../domain/use_cases/fetch_banners_use_case.dart';
 import '../../domain/use_cases/fetch_summary_use_case.dart';
+import '../../domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
+import '../../domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
 
 part 'core_state.dart';
 
@@ -13,14 +16,21 @@ class CoreCubit extends Cubit<CoreState> {
     required CompleteOnboardingUseCase completeOnboardingUseCase,
     required FetchBannersUseCase fetchBannersUseCase,
     required FetchSummaryUseCase fetchSummaryUseCase,
+    required FetchTransportModeDropdownUseCase
+        fetchTransportModeDropdownUseCase,
+    required FetchWarehouseDropdownUseCase fetchWarehouseDropdownUseCase,
   })  : _completeOnboardingUseCase = completeOnboardingUseCase,
         _fetchBannersUseCase = fetchBannersUseCase,
         _fetchSummaryUseCase = fetchSummaryUseCase,
+        _fetchTransportModeDropdownUseCase = fetchTransportModeDropdownUseCase,
+        _fetchWarehouseDropdownUseCase = fetchWarehouseDropdownUseCase,
         super(CoreInitial());
 
   final CompleteOnboardingUseCase _completeOnboardingUseCase;
   final FetchBannersUseCase _fetchBannersUseCase;
   final FetchSummaryUseCase _fetchSummaryUseCase;
+  final FetchTransportModeDropdownUseCase _fetchTransportModeDropdownUseCase;
+  final FetchWarehouseDropdownUseCase _fetchWarehouseDropdownUseCase;
 
   Future<void> completeOnboarding() async {
     emit(CompleteOnboardingLoading());
@@ -52,6 +62,28 @@ class CoreCubit extends Cubit<CoreState> {
     result.fold(
       (failure) => emit(FetchSummaryError(message: failure.message)),
       (summary) => emit(FetchSummaryLoaded(summary: summary)),
+    );
+  }
+
+  Future<void> fetchTransportModeDropdown() async {
+    emit(FetchDropdownLoading());
+
+    final result = await _fetchTransportModeDropdownUseCase(NoParams());
+
+    result.fold(
+      (failure) => emit(FetchDropdownError(message: failure.message)),
+      (items) => emit(FetchDropdownLoaded(items: items)),
+    );
+  }
+
+  Future<void> fetchWarehouseDropdown() async {
+    emit(FetchDropdownLoading());
+
+    final result = await _fetchWarehouseDropdownUseCase(NoParams());
+
+    result.fold(
+      (failure) => emit(FetchDropdownError(message: failure.message)),
+      (items) => emit(FetchDropdownLoaded(items: items)),
     );
   }
 }

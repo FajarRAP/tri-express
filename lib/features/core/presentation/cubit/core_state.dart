@@ -11,6 +11,8 @@ class FetchBanners extends CoreState {}
 
 class FetchSummary extends CoreState {}
 
+class FetchDropdown extends CoreState {}
+
 class CompleteOnboardingLoading extends CompleteOnboarding {}
 
 class CompleteOnboardingLoaded extends CompleteOnboarding {}
@@ -45,6 +47,20 @@ class FetchSummaryLoaded extends FetchSummary {
 
 class FetchSummaryError extends FetchSummary {
   FetchSummaryError({required this.message});
+
+  final String message;
+}
+
+class FetchDropdownLoading extends FetchDropdown {}
+
+class FetchDropdownLoaded extends FetchDropdown {
+  FetchDropdownLoaded({required this.items});
+
+  final List<DropdownEntity> items;
+}
+
+class FetchDropdownError extends FetchDropdown {
+  FetchDropdownError({required this.message});
 
   final String message;
 }
