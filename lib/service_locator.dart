@@ -18,6 +18,8 @@ import 'features/core/domain/repositories/core_repositories.dart';
 import 'features/core/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/core/domain/use_cases/fetch_banners_use_case.dart';
 import 'features/core/domain/use_cases/fetch_summary_use_case.dart';
+import 'features/core/domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
+import 'features/core/domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
@@ -57,8 +59,11 @@ void setupServiceLocator() {
         completeOnboardingUseCase:
             CompleteOnboardingUseCase(coreRepositories: getIt.get()),
         fetchBannersUseCase: FetchBannersUseCase(coreRepositories: getIt.get()),
-        fetchSummaryUseCase:
-            FetchSummaryUseCase(coreRepositories: getIt.get())));
+        fetchSummaryUseCase: FetchSummaryUseCase(coreRepositories: getIt.get()),
+        fetchTransportModeDropdownUseCase:
+            FetchTransportModeDropdownUseCase(coreRepositories: getIt.get()),
+        fetchWarehouseDropdownUseCase:
+            FetchWarehouseDropdownUseCase(coreRepositories: getIt.get())));
 
   // Auth
   getIt
