@@ -1,30 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../features/core/domain/entities/dropdown_entity.dart';
+import '../../../features/core/presentation/cubit/core_cubit.dart';
+import '../dropdown_modal.dart';
 import '../dropdown_modal_item.dart';
-import '../dropdown_search_modal.dart';
 
-class WarehouseDropdown extends StatelessWidget {
+class WarehouseDropdown extends StatefulWidget {
   const WarehouseDropdown({
     super.key,
-    this.onTap,
+    required this.onTap,
   });
 
-  final void Function()? onTap;
+  final void Function(DropdownEntity warehouse) onTap;
+
+  @override
+  State<WarehouseDropdown> createState() => _WarehouseDropdownState();
+}
+
+class _WarehouseDropdownState extends State<WarehouseDropdown> {
+  late final CoreCubit _coreCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _coreCubit = context.read<CoreCubit>()..fetchWarehouseDropdown();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DropdownSearchModal(
-      search: (keyword) {},
+    return DropdownModal(
       title: 'Gudang Asal',
       child: Expanded(
-        child: ListView.separated(
-          itemBuilder: (context, index) => GestureDetector(
-            onTap: onTap,
-            child: DropdownModalItem(child: const Text('Lorem 1')),
-          ),
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
-          itemCount: 10,
-          padding: const EdgeInsets.symmetric(vertical: 6),
+        child: BlocBuilder<CoreCubit, CoreState>(
+          bloc: _coreCubit,
+          buildWhen: (previous, current) => current is FetchDropdown,
+          builder: (context, state) {
+            if (state is FetchDropdownLoading) {
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
+              );
+            }
+
+            if (state is FetchDropdownLoaded) {
+              return ListView.separated(
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () => widget.onTap(state.items[index]),
+                  child: DropdownModalItem(
+                    child: Text(state.items[index].value),
+                  ),
+                ),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
+                itemCount: state.items.length,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+              );
+            }
+
+            return const SizedBox();
+          },
         ),
       ),
     );
