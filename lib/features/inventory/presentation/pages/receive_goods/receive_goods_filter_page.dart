@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/helpers.dart';
@@ -16,6 +17,7 @@ class ReceiveGoodsFilterPage extends StatefulWidget {
 class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
   late final TextEditingController _dateController;
   late final TextEditingController _warehouseController;
+  DropdownEntity? _selectedWarehouse;
 
   @override
   void initState() {
@@ -44,7 +46,13 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => WarehouseDropdown(
+                  onTap: (warehouse) {
+                    _warehouseController.text = warehouse.value;
+                    setState(() => _selectedWarehouse = warehouse);
+                    context.pop();
+                  },
+                ),
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
@@ -67,7 +75,9 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () => context.push(receiveGoodsScanRoute),
+                onPressed: _selectedWarehouse == null
+                    ? null
+                    : () => context.push(receiveGoodsScanRoute),
                 child: const Text('Simpan'),
               ),
             ),

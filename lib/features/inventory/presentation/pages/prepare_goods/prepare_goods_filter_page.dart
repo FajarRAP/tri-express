@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/core/routes/router.dart';
-import 'package:tri_express/core/utils/helpers.dart';
-import 'package:tri_express/core/widgets/dropdowns/warehouse_dropdown.dart';
 
+import '../../../../../core/routes/router.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../../core/widgets/dropdowns/transport_mode_dropdown.dart';
+import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class PrepareGoodsFilterPage extends StatefulWidget {
   const PrepareGoodsFilterPage({super.key});
@@ -19,6 +21,8 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   late final TextEditingController _estimateDateController;
   late final TextEditingController _transportModeController;
   late final TextEditingController _warehouseController;
+  DropdownEntity? _selectedTransportMode;
+  DropdownEntity? _selectedWarehouse;
 
   @override
   void initState() {
@@ -56,7 +60,13 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => WarehouseDropdown(
+                  onTap: (warehouse) {
+                    _warehouseController.text = warehouse.value;
+                    setState(() => _selectedWarehouse = warehouse);
+                    context.pop();
+                  },
+                ),
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
@@ -69,9 +79,15 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => TransportModeDropdown(
+                  onTap: (transportMode) {
+                    _transportModeController.text = transportMode.value;
+                    setState(() => _selectedTransportMode = transportMode);
+                    context.pop();
+                  },
+                ),
               ),
-              controller: _warehouseController,
+              controller: _transportModeController,
               decoration: const InputDecoration(
                 labelText: 'Pilih Jalur Pengiriman',
                 suffixIcon: Icon(Icons.arrow_drop_down),
@@ -108,10 +124,13 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () => context.push(
-                  prepareGoodsScanRoute,
-                  extra: _batchNameController.text,
-                ),
+                onPressed:
+                    _selectedWarehouse == null || _selectedTransportMode == null
+                        ? null
+                        : () => context.push(
+                              prepareGoodsScanRoute,
+                              extra: _batchNameController.text,
+                            ),
                 child: const Text('Simpan'),
               ),
             ),
