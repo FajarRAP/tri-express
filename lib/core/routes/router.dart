@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tri_express/features/core/presentation/pages/notification_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/core/presentation/pages/home_page.dart';
@@ -53,6 +54,8 @@ const itemDetailRoute = '/item';
 const inventoryRoute = '/inventory';
 
 const settingRoute = '/setting';
+
+const notificationRoute = '/notification';
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -179,11 +182,17 @@ final router = GoRouter(
         ),
       ],
     ),
+    // Good Detail
     GoRoute(
       path: '/item/:itemId',
       builder: (context, state) => ItemDetailPage(
         itemId: '${state.pathParameters['itemId']}',
       ),
+    ),
+
+    GoRoute(
+      path: '/notification',
+      builder: (context, state) => const NotificationPage(),
     ),
   ],
 );
