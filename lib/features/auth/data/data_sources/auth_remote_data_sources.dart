@@ -1,0 +1,64 @@
+import 'package:dio/dio.dart';
+
+import '../../../../core/exceptions/internal_exception.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../domain/use_cases/login_use_case.dart';
+import '../models/login_response_model.dart';
+import '../models/user_model.dart';
+
+abstract class AuthRemoteDataSources {
+  Future<UserModel> fetchCurrentUser();
+  Future<LoginResponseModel> login({required LoginParams params});
+  Future<String> logout();
+}
+
+class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
+  AuthRemoteDataSourcesImpl({required this.dio});
+
+  final Dio dio;
+
+  @override
+  Future<UserModel> fetchCurrentUser() async {
+    try {
+      final response = await dio.get('/profile');
+
+      return UserModel.fromJson(response.data['data']['user']);
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<LoginResponseModel> login({required LoginParams params}) async {
+    try {
+      final response = await dio.post(
+        '/login',
+        data: {
+          'email': params.email,
+          'password': params.password,
+        },
+      );
+
+      return LoginResponseModel.fromJson(response.data['data']);
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> logout() async {
+    try {
+      final response = await dio.post('/logout');
+
+      return response.data['data'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+}

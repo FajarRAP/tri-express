@@ -1,0 +1,284 @@
+{
+    "status": "Success",
+    "message": "Detail delivery shipment",
+    "data": {
+        "shipment": {
+            "id": 13,
+            "warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+            "next_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+            "shipment_date": "2025-08-31T17:00:00.000000Z",
+            "delivery_date": "2025-08-31T17:00:00.000000Z",
+            "estimate_date": "2025-09-02",
+            "tracking_number": "SHIP.2509021230876",
+            "batch_code": "Kirim 1",
+            "shipment_code": "TD/DBIO/MHUO",
+            "marking_code": null,
+            "status": 3,
+            "type": 1,
+            "summary": {
+                "prepare": [
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-01",
+                        "receipt_item_id": 11,
+                        "batch_tracking_number": "TRI.2509021230139"
+                    },
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-01",
+                        "receipt_item_id": 10,
+                        "batch_tracking_number": "TRI.2509021230419"
+                    }
+                ],
+                "receive": [
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-02",
+                        "receipt_item_id": 11,
+                        "batch_tracking_number": "TRI.2509021230139"
+                    },
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-02",
+                        "receipt_item_id": 10,
+                        "batch_tracking_number": "TRI.2509021230419"
+                    }
+                ],
+                "delivery": [
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-01",
+                        "receipt_item_id": 11,
+                        "batch_tracking_number": "TRI.2509021230139"
+                    },
+                    {
+                        "qty": 1,
+                        "tanggal": "2025-09-01",
+                        "receipt_item_id": 10,
+                        "batch_tracking_number": "TRI.2509021230419"
+                    }
+                ]
+            },
+            "prepare_qty": 2,
+            "delivery_qty": 2,
+            "receive_qty": 2,
+            "stt_finish": 0,
+            "finish_qty": 0,
+            "courier_qty": 0,
+            "receive_date": "2025-09-02",
+            "created_at": "2025-09-02T05:30:27.000000Z",
+            "updated_at": "2025-09-02T05:34:01.000000Z",
+            "user_id": "019908d3-e521-7101-b21a-58b30d6ec27d",
+            "status_label": "Tiba di Gudang Tujuan",
+            "type_label": "Darat"
+        },
+        "qty_group": {
+            "TRI.2509021230139": 1,
+            "TRI.2509021230419": 1
+        },
+        "items": {
+            "meta": {
+                "current_page": 1,
+                "last_page": 1,
+                "per_page": 10,
+                "total": 2
+            },
+            "data": [
+                {
+                    "id": 147,
+                    "shipment_id": 13,
+                    "receipt_item_id": 11,
+                    "receipt_id": 11,
+                    "receipt_unit_id": 125,
+                    "item_name": "SL/BD/Edi - 10 kg - 20x10x5 cm",
+                    "unique_code": "A00000000125",
+                    "batch_tracking_number": "TRI.2509021230139",
+                    "status": 3,
+                    "prepare_at": "2025-09-01 00:00:00",
+                    "delivery_at": "2025-09-01 00:00:00",
+                    "receive_at": "2025-09-02 00:00:00",
+                    "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                    "source_shipment_item_id": null,
+                    "created_at": "2025-09-02T05:30:27.000000Z",
+                    "updated_at": "2025-09-02T05:34:01.000000Z",
+                    "status_label": "Tiba di Gudang Tujuan",
+                    "receipt_item": {
+                        "id": 11,
+                        "receipt_id": 11,
+                        "item_name": "SL/BD/Edi",
+                        "quantity": 1,
+                        "group_code": "SL/BD/Edi|10|20x10x5",
+                        "group_label": "SL/BD/Edi - 10 kg - 20x10x5 cm",
+                        "berat": 10,
+                        "panjang": 20,
+                        "lebar": 10,
+                        "tinggi": 5,
+                        "berat_volume": "0.30",
+                        "pembagi": "3500.00",
+                        "volume_used_total": "10.00",
+                        "berat_volume_total": "0.30",
+                        "berat_total": "10.00",
+                        "volume_total": "1000.00",
+                        "volume_used": "10.00",
+                        "jalur": 2,
+                        "price": "10.00",
+                        "price_total": "10.00",
+                        "keterangan": "Kursi Kayu",
+                        "created_at": "2025-09-02T05:28:56.000000Z",
+                        "updated_at": "2025-09-02T05:28:56.000000Z",
+                        "jalur_label": "Darat Domestik",
+                        "transport": {
+                            "id": 2,
+                            "name": "Darat Domestik",
+                            "value": 3500,
+                            "status": 1,
+                            "created_at": "2025-09-02T04:42:59.000000Z",
+                            "updated_at": "2025-09-02T04:42:59.000000Z"
+                        }
+                    },
+                    "receipt": {
+                        "id": 11,
+                        "customer_id": "019903c3-d131-72da-9105-df3d95161621",
+                        "warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "destination_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                        "invoice_code": "INV.2509021228184",
+                        "receipt_date": "2025-08-30T17:00:00.000000Z",
+                        "price_all": "10.00",
+                        "volume_all": "10.00",
+                        "jalur": 1,
+                        "created_at": "2025-09-02T05:28:56.000000Z",
+                        "updated_at": "2025-09-02T05:28:56.000000Z",
+                        "customer": {
+                            "id": "019903c3-d131-72da-9105-df3d95161621",
+                            "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                            "kode": "CUST000006",
+                            "nama": "Restu Purwanti",
+                            "no_telp": "(+62) 404 3528 7955",
+                            "alamat": "Jr. Baya Kali Bungur No. 714",
+                            "jenis": 1,
+                            "keterangan": null,
+                            "latitude": null,
+                            "longitude": null,
+                            "provinsi_id": null,
+                            "kota_id": null,
+                            "kecamatan_id": null,
+                            "desa_id": null,
+                            "created_at": "2025-09-01T05:33:08.000000Z",
+                            "updated_at": "2025-09-01T05:33:08.000000Z"
+                        },
+                        "destination_warehouse": {
+                            "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                            "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                            "kode": "WGQV",
+                            "title": "Gudang Bandung",
+                            "no_telp": "0763 2969 090",
+                            "alamat": "Jr. Babadak No. 188",
+                            "longitude": "107.751046",
+                            "latitude": "1.633127",
+                            "keterangan": "Adipisci qui recusandae dignissimos consequuntur sunt non laudantium.",
+                            "created_at": "2025-09-01T05:33:07.000000Z",
+                            "updated_at": "2025-09-01T05:33:07.000000Z"
+                        }
+                    }
+                },
+                {
+                    "id": 148,
+                    "shipment_id": 13,
+                    "receipt_item_id": 10,
+                    "receipt_id": 10,
+                    "receipt_unit_id": 124,
+                    "item_name": "SL/BD/Edi - 10 kg - 50x25x10 cm",
+                    "unique_code": "A00000000124",
+                    "batch_tracking_number": "TRI.2509021230419",
+                    "status": 3,
+                    "prepare_at": "2025-09-01 00:00:00",
+                    "delivery_at": "2025-09-01 00:00:00",
+                    "receive_at": "2025-09-02 00:00:00",
+                    "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                    "source_shipment_item_id": null,
+                    "created_at": "2025-09-02T05:30:27.000000Z",
+                    "updated_at": "2025-09-02T05:34:01.000000Z",
+                    "status_label": "Tiba di Gudang Tujuan",
+                    "receipt_item": {
+                        "id": 10,
+                        "receipt_id": 10,
+                        "item_name": "SL/BD/Edi",
+                        "quantity": 1,
+                        "group_code": "SL/BD/Edi|10|50x25x10",
+                        "group_label": "SL/BD/Edi - 10 kg - 50x25x10 cm",
+                        "berat": 10,
+                        "panjang": 50,
+                        "lebar": 25,
+                        "tinggi": 10,
+                        "berat_volume": "1.60",
+                        "pembagi": "7800.00",
+                        "volume_used_total": "10.00",
+                        "berat_volume_total": "1.60",
+                        "berat_total": "10.00",
+                        "volume_total": "12500.00",
+                        "volume_used": "10.00",
+                        "jalur": 5,
+                        "price": "10.00",
+                        "price_total": "10.00",
+                        "keterangan": "Meja Kayu",
+                        "created_at": "2025-09-02T05:27:20.000000Z",
+                        "updated_at": "2025-09-02T05:27:20.000000Z",
+                        "jalur_label": "Kereta Lokal",
+                        "transport": {
+                            "id": 5,
+                            "name": "Kereta Lokal",
+                            "value": 7800,
+                            "status": 1,
+                            "created_at": "2025-09-02T04:44:01.000000Z",
+                            "updated_at": "2025-09-02T04:44:01.000000Z"
+                        }
+                    },
+                    "receipt": {
+                        "id": 10,
+                        "customer_id": "019903c3-d125-7316-9e3b-575fa7280743",
+                        "warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "destination_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                        "invoice_code": "INV.2509021227025",
+                        "receipt_date": "2025-08-30T17:00:00.000000Z",
+                        "price_all": "10.00",
+                        "volume_all": "10.00",
+                        "jalur": 1,
+                        "created_at": "2025-09-02T05:27:20.000000Z",
+                        "updated_at": "2025-09-02T05:27:20.000000Z",
+                        "customer": {
+                            "id": "019903c3-d125-7316-9e3b-575fa7280743",
+                            "negara_id": "019903c3-c9dc-7146-a788-aaf896e78fab",
+                            "kode": "CUST000004",
+                            "nama": "Endra Karsana Zulkarnain",
+                            "no_telp": "025 1486 849",
+                            "alamat": "Jln. Gajah Mada No. 178",
+                            "jenis": 1,
+                            "keterangan": null,
+                            "latitude": null,
+                            "longitude": null,
+                            "provinsi_id": null,
+                            "kota_id": null,
+                            "kecamatan_id": null,
+                            "desa_id": null,
+                            "created_at": "2025-09-01T05:33:08.000000Z",
+                            "updated_at": "2025-09-01T05:33:08.000000Z"
+                        },
+                        "destination_warehouse": {
+                            "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                            "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                            "kode": "WGQV",
+                            "title": "Gudang Bandung",
+                            "no_telp": "0763 2969 090",
+                            "alamat": "Jr. Babadak No. 188",
+                            "longitude": "107.751046",
+                            "latitude": "1.633127",
+                            "keterangan": "Adipisci qui recusandae dignissimos consequuntur sunt non laudantium.",
+                            "created_at": "2025-09-01T05:33:07.000000Z",
+                            "updated_at": "2025-09-01T05:33:07.000000Z"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

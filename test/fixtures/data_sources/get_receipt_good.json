@@ -1,0 +1,232 @@
+{
+    "status": "Success",
+    "message": "detail receipt",
+    "data": {
+        "id": 8,
+        "invoice_code": "INV.2509021208049",
+        "receipt_date": "2025-08-30T17:00:00.000000Z",
+        "customer": {
+            "id": "019903c3-d11f-72d5-a8f3-9b22a2b533a1",
+            "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+            "kode": "CUST000003",
+            "nama": "Lukita Mahdi Wasita M.Ak",
+            "no_telp": "(+62) 206 4009 414",
+            "alamat": "Psr. B.Agam Dlm No. 927",
+            "jenis": 1,
+            "keterangan": null,
+            "latitude": null,
+            "longitude": null,
+            "provinsi_id": null,
+            "kota_id": null,
+            "kecamatan_id": null,
+            "desa_id": null,
+            "created_at": "2025-09-01T05:33:08.000000Z",
+            "updated_at": "2025-09-01T05:33:08.000000Z"
+        },
+        "items": [
+            {
+                "id": 8,
+                "receipt_id": 8,
+                "item_name": "PK/SL/Edi",
+                "quantity": 10,
+                "group_code": "PK/SL/Edi|10|100x50x75",
+                "group_label": "PK/SL/Edi - 10 kg - 100x50x75 cm",
+                "berat": 10,
+                "panjang": 100,
+                "lebar": 50,
+                "tinggi": 75,
+                "berat_volume": "107.10",
+                "pembagi": "3500.00",
+                "volume_used_total": "1080.00",
+                "berat_volume_total": "1071.00",
+                "berat_total": "100.00",
+                "volume_total": "3750000.00",
+                "volume_used": "108.00",
+                "jalur": 2,
+                "price": "58.00",
+                "price_total": "580.00",
+                "keterangan": "Meja Kayu",
+                "created_at": "2025-09-02T05:08:30.000000Z",
+                "updated_at": "2025-09-02T05:09:02.000000Z",
+                "jalur_label": "Darat Domestik",
+                "receipt_units": [
+                    {
+                        "id": 105,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000105",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 106,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000106",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 107,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000107",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 108,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000108",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 109,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000109",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 110,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000110",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 111,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000111",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 112,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000112",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 113,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000113",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    },
+                    {
+                        "id": 114,
+                        "receipt_item_id": 8,
+                        "unique_code": "A00000000114",
+                        "status": 7,
+                        "enter_at": "2025-09-02 00:00:00",
+                        "printed": 0,
+                        "printed_at": null,
+                        "last_shipment_id": 11,
+                        "current_warehouse_id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+                        "batch_tracking_number": "TRI.2509021210705",
+                        "created_at": "2025-09-02T05:08:30.000000Z",
+                        "updated_at": "2025-09-02T05:24:29.000000Z",
+                        "status_label": "Diterima Penerima"
+                    }
+                ],
+                "transport": {
+                    "id": 2,
+                    "name": "Darat Domestik",
+                    "value": 3500,
+                    "status": 1,
+                    "created_at": "2025-09-02T04:42:59.000000Z",
+                    "updated_at": "2025-09-02T04:42:59.000000Z"
+                }
+            }
+        ],
+        "locations": {
+            "8": [
+                {
+                    "warehouse": "Gudang Salatiga",
+                    "count": 10
+                }
+            ]
+        },
+        "umur_item": [
+            {
+                "item_id": 8,
+                "quantity": 10,
+                "delivered_count": 10,
+                "last_delivery_date": "2025-09-02 00:00:00",
+                "days_diff": 2
+            }
+        ]
+    }
+}

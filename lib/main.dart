@@ -1,10 +1,32 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'next_page.dart';
-import 'uhf_result_model.dart';
+import 'core/routes/router.dart';
+import 'core/themes/theme.dart';
+import 'core/utils/constants.dart';
+import 'core/utils/helpers.dart';
+import 'features/auth/data/data_sources/auth_local_data_sources.dart';
+import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/core/presentation/cubit/core_cubit.dart';
+import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'service_locator.dart';
 
-void main() {
+late Faker faker;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupServiceLocator();
+  faker = Faker();
+  final storage = getIt.get<FlutterSecureStorage>();
+  final authLocal = getIt.get<AuthLocalDataSources>();
+  initialLocation = await storage.read(key: onboardingKey) == null
+      ? onboardingRoute
+      : await authLocal.getAccessToken() != null
+          ? menuRoute
+          : loginRoute;
+
   runApp(const MyApp());
 }
 
@@ -13,93 +35,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  static const platform = MethodChannel(
-    'com.example.tri_express/android_channel',
-  );
-  final _tagInfos = <UHFResultModel>[];
-
-  @override
-  void initState() {
-    super.initState();
-    platform.setMethodCallHandler((call) async {
-      switch (call.method) {
-        case 'getTagInfo':
-          final map = Map<String, dynamic>.from(call.arguments);
-          final tagInfo = UHFResultModel.fromJson(map);
-          final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
-
-          setState(() {
-            index != -1
-                ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
-                : _tagInfos.add(tagInfo);
-          });
-
-          break;
-        case 'startInventory':
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('${call.arguments}'),
-            ),
-          );
-          break;
-        case 'endInventory':
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text('${call.arguments}'),
-            ),
-          );
-          break;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: ListView.separated(
-        itemBuilder:
-            (context, index) => ListTile(
-              title: Text(_tagInfos[index].epcId),
-              subtitle: Text('Frequency: ${_tagInfos[index].frequency}'),
-              trailing: Text('RSSI: ${_tagInfos[index].rssi}'),
-            ),
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemCount: _tagInfos.length,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const NextPage()),
-            ),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CoreCubit>(create: (context) => getIt.get<CoreCubit>()),
+        BlocProvider<AuthCubit>(create: (context) => getIt.get<AuthCubit>()),
+        BlocProvider<InventoryCubit>(
+            create: (context) => getIt.get<InventoryCubit>()),
+      ],
+      child: MaterialApp.router(
+        builder: (context, child) => Overlay(
+          initialEntries: <OverlayEntry>[
+            OverlayEntry(builder: (context) {
+              TopSnackbar.init(context);
+              return child!;
+            }),
+          ],
+        ),
+        routerConfig: router,
+        theme: theme,
+        title: 'Tri Express',
       ),
     );
   }

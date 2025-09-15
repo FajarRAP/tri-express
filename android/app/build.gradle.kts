@@ -45,6 +45,4 @@ flutter {
 
 dependencies {
     implementation(fileTree("libs"))
-//    implementation(fileTree("libs").files.last())
-//    println("BOKEP ${fileTree("libs").files.last()}")
 }
