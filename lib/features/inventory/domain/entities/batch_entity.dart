@@ -27,7 +27,7 @@ class BatchEntity {
   final List<GoodEntity> goods;
   final WarehouseEntity origin;
   final WarehouseEntity destination;
-  final DateTime deliveryAt;
+  final DateTime? deliveryAt;
   final DateTime estimateAt;
   final DateTime? receiveAt;
   final DateTime shipmentAt;

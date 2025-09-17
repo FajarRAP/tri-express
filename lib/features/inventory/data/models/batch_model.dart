@@ -32,7 +32,9 @@ class BatchModel extends BatchEntity {
       goods: goods.map((e) => GoodModel.fromJson(e).toEntity()).toList(),
       origin: WarehouseModel.fromJson(json['warehouse']).toEntity(),
       destination: WarehouseModel.fromJson(json['next_warehouse']).toEntity(),
-      deliveryAt: DateTime.parse(json['delivery_date']),
+      deliveryAt: json['delivery_date'] == null
+          ? null
+          : DateTime.parse(json['delivery_date']),
       estimateAt: DateTime.parse(json['estimate_date']),
       receiveAt: json['receive_date'] == null
           ? null
