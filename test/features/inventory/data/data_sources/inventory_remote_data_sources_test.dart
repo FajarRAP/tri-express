@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -21,7 +22,7 @@ void main() {
   });
 
   group(
-    'fetch delivery Shipments',
+    'fetch delivery shipments remote data sources test',
     () {
       const params = FetchDeliveryShipmentsUseCaseParams(page: 1, perPage: 10);
       test(
@@ -29,9 +30,10 @@ void main() {
         () async {
           // arrange
           final jsonString =
-              fixtureReader('data_sources/get_delivery_Shipments.json');
+              fixtureReader('data_sources/get_delivery_shipments.json');
           final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any())).thenAnswer(
+          when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters'))).thenAnswer(
             (_) async => Response(
               data: jsonMap,
               requestOptions: RequestOptions(),
@@ -42,6 +44,38 @@ void main() {
           // act
           final result = await inventoryRemoteDataSources
               .fetchDeliveryShipments(params: params);
+
+          // assert
+          expect(result, isA<List<BatchEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch on the way shipments remote data sources test',
+    () {
+      const params =
+          FetchOnTheWayShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
+      test(
+        'should return List<BatchEntity> when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_on_the_way_shipments.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters'))).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result = await inventoryRemoteDataSources
+              .fetchOnTheWayShipments(params: params);
 
           // assert
           expect(result, isA<List<BatchEntity>>());
