@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../fonts/fonts.dart';
 import '../themes/colors.dart';
 
 class OptionChip extends StatelessWidget {
@@ -24,9 +23,11 @@ class OptionChip extends StatelessWidget {
         width: double.infinity,
         child: Text(
           text,
-          style: label[regular].copyWith(
+          style: TextStyle(
             color: isActive ? light : black,
+            fontSize: 12,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
       selectedColor: primary,
