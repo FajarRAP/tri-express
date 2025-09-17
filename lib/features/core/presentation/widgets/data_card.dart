@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
 
 class DataCard extends StatelessWidget {
@@ -7,12 +8,12 @@ class DataCard extends StatelessWidget {
     super.key,
     required this.number,
     required this.icon,
-    required this.label,
+    required this.text,
   });
 
   final int number;
   final IconData icon;
-  final String label;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -29,44 +30,15 @@ class DataCard extends StatelessWidget {
         children: <Widget>[
           Text(
             '$number',
-            style: TextStyle(
-              color: black,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: paragraphMedium[medium].copyWith(color: black),
           ),
           Text(
-            label,
-            style: TextStyle(
+            text,
+            style: label[regular].copyWith(
               color: grayTertiary,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          // Row(
-          //   children: <Widget>[
-          //     Row(
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: <Widget>[
-          //         Icon(
-          //           icon,
-          //           color: grayTertiary,
-          //           size: 16,
-          //         ),
-          //         const SizedBox(width: 6),
-          //         Text(
-          //           label,
-          //           style: TextStyle(
-          //             color: grayTertiary,
-          //             fontSize: 14,
-          //             fontWeight: FontWeight.w400,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
