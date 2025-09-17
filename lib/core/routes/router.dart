@@ -7,7 +7,6 @@ import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/core/presentation/pages/scan_barcode_page.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
-import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
@@ -95,23 +94,6 @@ final router = GoRouter(
         GoRoute(
           path: '/on-the-way',
           builder: (context, state) => const OnTheWayPage(),
-          routes: <RouteBase>[
-            GoRoute(
-              path: 'batch-detail/:batchId',
-              builder: (context, state) => BatchDetailPage(
-                batchId: '${state.pathParameters['batchId']}',
-                title: '${state.extra}',
-              ),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'item/:itemId',
-                  builder: (context, state) => ItemDetailPage(
-                    itemId: '${state.pathParameters['itemId']}',
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
         GoRoute(
           path: '/scan-barcode',
