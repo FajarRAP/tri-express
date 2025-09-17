@@ -36,7 +36,6 @@ final theme = ThemeData(
     backgroundColor: light,
     constraints: BoxConstraints(
       maxHeight: 550,
-      minHeight: 400,
     ),
     dragHandleColor: Color(0xFFE0E0E0),
     dragHandleSize: Size(48, 5),
