@@ -6,6 +6,7 @@ import '../../features/core/presentation/pages/home_page.dart';
 import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/core/presentation/pages/scan_barcode_page.dart';
+import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/presentation/pages/batch_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
@@ -16,6 +17,7 @@ import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
+import '../../features/inventory/presentation/pages/receive_goods/receive_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_scan_page.dart';
@@ -38,6 +40,7 @@ const menuRoute = '/menu';
 const receiveGoodsRoute = '/receive-goods';
 const receiveGoodsFilterRoute = '$receiveGoodsRoute/filter';
 const receiveGoodsScanRoute = '$receiveGoodsRoute/scan';
+const receiveGoodsDetailRoute = '$receiveGoodsRoute/detail';
 const prepareGoodsRoute = '/prepare-goods';
 const prepareGoodsFilterRoute = '$prepareGoodsRoute/filter';
 const prepareGoodsScanRoute = '$prepareGoodsRoute/scan';
@@ -136,6 +139,21 @@ final router = GoRouter(
         GoRoute(
           path: 'scan',
           builder: (context, state) => const ReceiveGoodsScanPage(),
+        ),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final good = extras['good'] as GoodEntity;
+            final batchName = extras['batchName'] as String;
+            final receiveAt = extras['receiveAt'] as DateTime;
+
+            return ReceiveGoodsDetailPage(
+              batchName: batchName,
+              good: good,
+              receiveAt: receiveAt,
+            );
+          },
         ),
       ],
     ),
