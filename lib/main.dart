@@ -1,4 +1,5 @@
 import 'package:faker/faker.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,13 +12,19 @@ import 'features/auth/data/data_sources/auth_local_data_sources.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'firebase_options.dart';
 import 'service_locator.dart';
 
 late Faker faker;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   setupServiceLocator();
+
   faker = Faker();
   final storage = getIt.get<FlutterSecureStorage>();
   final authLocal = getIt.get<AuthLocalDataSources>();
