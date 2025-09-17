@@ -29,6 +29,6 @@ class BatchEntity {
   final WarehouseEntity destination;
   final DateTime deliveryAt;
   final DateTime estimateAt;
-  final DateTime receiveAt;
+  final DateTime? receiveAt;
   final DateTime shipmentAt;
 }

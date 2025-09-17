@@ -34,7 +34,9 @@ class BatchModel extends BatchEntity {
       destination: WarehouseModel.fromJson(json['next_warehouse']).toEntity(),
       deliveryAt: DateTime.parse(json['delivery_date']),
       estimateAt: DateTime.parse(json['estimate_date']),
-      receiveAt: DateTime.parse(json['receive_date']),
+      receiveAt: json['receive_date'] == null
+          ? null
+          : DateTime.parse(json['receive_date']),
       shipmentAt: DateTime.parse(json['shipment_date']),
     );
   }
