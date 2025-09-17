@@ -8,10 +8,14 @@ class BatchEntity {
     required this.status,
     required this.transportMode,
     required this.trackingNumber,
+    required this.totalAllUnits,
     required this.goods,
     required this.origin,
     required this.destination,
-    required this.sendAt,
+    required this.deliveryAt,
+    required this.estimateAt,
+    required this.receiveAt,
+    required this.shipmentAt,
   });
 
   final String id;
@@ -19,8 +23,12 @@ class BatchEntity {
   final String status;
   final String transportMode;
   final String trackingNumber;
+  final int totalAllUnits;
   final List<GoodEntity> goods;
   final WarehouseEntity origin;
   final WarehouseEntity destination;
-  final DateTime sendAt;
+  final DateTime deliveryAt;
+  final DateTime estimateAt;
+  final DateTime receiveAt;
+  final DateTime shipmentAt;
 }

@@ -22,15 +22,20 @@ void main() {
       updatedAt: DateTime.now());
 
   final tBatchModel = BatchModel(
-      id: 'id',
-      name: 'name',
-      status: 'status',
-      transportMode: 'mode',
-      trackingNumber: 'trackingNumber',
-      goods: [],
-      origin: tWarehouseModel,
-      destination: tWarehouseModel,
-      sendAt: DateTime.now());
+    id: 'id',
+    name: 'name',
+    status: 'status',
+    transportMode: 'mode',
+    trackingNumber: 'trackingNumber',
+    goods: [],
+    origin: tWarehouseModel,
+    destination: tWarehouseModel,
+    totalAllUnits: 1,
+    deliveryAt: DateTime.now(),
+    estimateAt: DateTime.now(),
+    receiveAt: DateTime.now(),
+    shipmentAt: DateTime.now(),
+  );
 
   test(
     'should be a subclass of batch entity',

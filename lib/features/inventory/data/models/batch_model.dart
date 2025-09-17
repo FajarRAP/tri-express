@@ -9,11 +9,35 @@ class BatchModel extends BatchEntity {
     required super.status,
     required super.transportMode,
     required super.trackingNumber,
+    required super.totalAllUnits,
     required super.goods,
     required super.origin,
     required super.destination,
-    required super.sendAt,
+    required super.deliveryAt,
+    required super.estimateAt,
+    required super.receiveAt,
+    required super.shipmentAt,
   });
+
+  factory BatchModel.fromJson(Map<String, dynamic> json) {
+    final goods = List<Map<String, dynamic>>.from(json['items'] ?? []);
+
+    return BatchModel(
+      id: '${json['shipment_id']}',
+      name: json['batch_code'],
+      status: json['status_label'],
+      transportMode: json['type_label'],
+      trackingNumber: json['tracking_number'],
+      totalAllUnits: json['total_units'],
+      goods: goods.map((e) => GoodModel.fromJson(e).toEntity()).toList(),
+      origin: WarehouseModel.fromJson(json['warehouse']).toEntity(),
+      destination: WarehouseModel.fromJson(json['next_warehouse']).toEntity(),
+      deliveryAt: DateTime.parse(json['delivery_date']),
+      estimateAt: DateTime.parse(json['estimate_date']),
+      receiveAt: DateTime.parse(json['receive_date']),
+      shipmentAt: DateTime.parse(json['shipment_date']),
+    );
+  }
 
   BatchEntity toEntity() {
     return BatchEntity(
@@ -22,26 +46,14 @@ class BatchModel extends BatchEntity {
       status: status,
       transportMode: transportMode,
       trackingNumber: trackingNumber,
+      totalAllUnits: totalAllUnits,
       goods: goods,
       origin: origin,
       destination: destination,
-      sendAt: sendAt,
-    );
-  }
-
-  factory BatchModel.fromJson(Map<String, dynamic> json) {
-    final goods = List<Map<String, dynamic>>.from(json['shipment_items'] ?? []);
-
-    return BatchModel(
-      id: '${json['id']}',
-      name: json['batch_code'],
-      status: json['status_label'],
-      transportMode: json['type_label'],
-      trackingNumber: json['tracking_number'],
-      goods: goods.map(GoodModel.fromJson).toList(),
-      origin: WarehouseModel.fromJson(json['warehouse']),
-      destination: WarehouseModel.fromJson(json['next_warehouse']),
-      sendAt: DateTime.parse(json['shipment_date']),
+      deliveryAt: deliveryAt,
+      estimateAt: estimateAt,
+      receiveAt: receiveAt,
+      shipmentAt: shipmentAt,
     );
   }
 }
