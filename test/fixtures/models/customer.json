@@ -1,0 +1,18 @@
+{
+    "id": "019903c3-d125-7316-9e3b-575fa7280743",
+    "negara_id": "019903c3-c9dc-7146-a788-aaf896e78fab",
+    "kode": "CUST000004",
+    "nama": "Endra Karsana Zulkarnain",
+    "no_telp": "025 1486 849",
+    "alamat": "Jln. Gajah Mada No. 178",
+    "jenis": 1,
+    "keterangan": null,
+    "latitude": null,
+    "longitude": null,
+    "provinsi_id": null,
+    "kota_id": null,
+    "kecamatan_id": null,
+    "desa_id": null,
+    "created_at": "2025-09-01T05:33:08.000000Z",
+    "updated_at": "2025-09-01T05:33:08.000000Z"
+}
