@@ -5,12 +5,13 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
-import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
+import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
-import '../../../../../uhf_result_model.dart';
+import '../../../../core/domain/entities/uhf_result_entity.dart';
 import '../../widgets/good_card_checkbox.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
@@ -23,7 +24,7 @@ class PickUpGoodsScanPage extends StatefulWidget {
 
 class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage> {
   late final UHFMethodHandler _uhfMethodHandler;
-  final _tagInfos = <UHFResultModel>[];
+  final _tagInfos = <UHFResultEntity>[];
   final _selectedItemIds = <String>{};
   var _isInventoryRunning = false;
   var _isSelectAll = false;
@@ -31,7 +32,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage> {
   @override
   void initState() {
     super.initState();
-    _uhfMethodHandler = UHFMethodHandler(platform);
+    _uhfMethodHandler = const UHFMethodHandler(platform);
     platform.setMethodCallHandler(
       (call) async => await _uhfMethodHandler.methodHandler(
         call,
@@ -100,7 +101,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage> {
                     const SizedBox(height: 24),
                     Row(
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'Cari resi atau invoice',
@@ -161,10 +162,6 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage> {
                 value: _isSelectAll,
                 side: const BorderSide(color: primary),
                 controlAffinity: ListTileControlAffinity.leading,
-                visualDensity: VisualDensity(
-                  horizontal: VisualDensity.minimumDensity,
-                  vertical: VisualDensity.minimumDensity,
-                ),
               ),
             ),
             Expanded(
@@ -192,7 +189,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage> {
     if (_tagInfos.isNotEmpty) {
       return SliverFillRemaining(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Center(
             child: Text(
               'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',

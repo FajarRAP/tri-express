@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
-import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
+import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
-import '../../../../../uhf_result_model.dart';
+import '../../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../../core/domain/entities/uhf_result_entity.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
@@ -22,14 +25,17 @@ class ReceiveGoodsScanPage extends StatefulWidget {
 }
 
 class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
+  late final AuthCubit _authCubit;
   late final UHFMethodHandler _uhfMethodHandler;
-  final _tagInfos = <UHFResultModel>[];
+
+  final _tagInfos = <UHFResultEntity>[];
   var _isInventoryRunning = false;
 
   @override
   void initState() {
     super.initState();
-    _uhfMethodHandler = UHFMethodHandler(platform);
+    _authCubit = context.read<AuthCubit>();
+    _uhfMethodHandler = const UHFMethodHandler(platform);
     platform.setMethodCallHandler(
       (call) async => await _uhfMethodHandler.methodHandler(
         call,
@@ -72,7 +78,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              'Barang di Gudang \$Warehouse',
+                              'Barang di ${_authCubit.user.warehouse?.name}',
                               style: paragraphMedium[bold].copyWith(
                                 color: light,
                               ),
@@ -86,7 +92,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '\$Number',
+                              '${_tagInfos.length}',
                               style: paragraphSmall[medium].copyWith(
                                 color: light,
                               ),
@@ -98,7 +104,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
                     const SizedBox(height: 24),
                     Row(
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'Cari resi atau invoice',
@@ -135,6 +141,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
         ),
         padding: const EdgeInsets.all(8),
         child: TripleFloatingActionButtons(
+          onReset: () => setState(_tagInfos.clear),
           onSave: () => showModalBottomSheet(
             context: context,
             builder: (context) => ActionConfirmationBottomSheet(
@@ -152,10 +159,10 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
   }
 
   Widget _buildList() {
-    if (_tagInfos.isNotEmpty) {
+    if (_tagInfos.isEmpty) {
       return SliverFillRemaining(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Center(
             child: Text(
               'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
@@ -170,6 +177,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 80),
       sliver: SliverList.separated(
+        // itemBuilder: (context, index) => Text(_tagInfos[index].epcId),
         itemBuilder: (context, index) => BatchCardItem(
           onTap: () => showModalBottomSheet(
             context: context,
@@ -182,7 +190,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
           batch: batch,
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemCount: null,
+        itemCount: _tagInfos.length,
       ),
     );
   }

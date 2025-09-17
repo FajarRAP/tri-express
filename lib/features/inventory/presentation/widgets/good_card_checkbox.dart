@@ -75,7 +75,7 @@ class GoodCardCheckbox extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
+                        const Icon(
                           Icons.calendar_today,
                           color: black,
                           size: 16,

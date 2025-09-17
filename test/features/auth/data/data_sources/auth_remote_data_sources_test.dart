@@ -27,31 +27,31 @@ void main() {
         () async {
           // arrange
           const json = <String, dynamic>{
-            "status": "Success",
-            "message": "Detail Profil",
-            "data": {
-              "user": {
-                "id": "019903c3-cc2c-70cb-a1c5-3a67463e6a7e",
-                "gudang_id": null,
-                "name": "superadmin",
-                "email": "superadmin@domain.com",
-                "no_telp": "+3786838692312",
-                "email_verified_at": "2025-09-01T05:33:07.000000Z",
-                "avatar": null,
-                "status": 1,
-                "created_at": "2025-09-01T05:33:07.000000Z",
-                "updated_at": "2025-09-01T05:33:07.000000Z",
-                "roles": [
+            'status': 'Success',
+            'message': 'Detail Profil',
+            'data': {
+              'user': {
+                'id': '019903c3-cc2c-70cb-a1c5-3a67463e6a7e',
+                'gudang_id': null,
+                'name': 'superadmin',
+                'email': 'superadmin@domain.com',
+                'no_telp': '+3786838692312',
+                'email_verified_at': '2025-09-01T05:33:07.000000Z',
+                'avatar': null,
+                'status': 1,
+                'created_at': '2025-09-01T05:33:07.000000Z',
+                'updated_at': '2025-09-01T05:33:07.000000Z',
+                'roles': [
                   {
-                    "uuid": "019903c3-caf3-7095-84c4-d3130f098c10",
-                    "name": "superadmin",
-                    "guard_name": "web",
-                    "created_at": "2025-09-01T05:33:07.000000Z",
-                    "updated_at": "2025-09-01T05:33:07.000000Z",
-                    "pivot": {
-                      "model_type": "App\\Models\\User",
-                      "model_uuid": "019903c3-cc2c-70cb-a1c5-3a67463e6a7e",
-                      "role_id": "019903c3-caf3-7095-84c4-d3130f098c10"
+                    'uuid': '019903c3-caf3-7095-84c4-d3130f098c10',
+                    'name': 'superadmin',
+                    'guard_name': 'web',
+                    'created_at': '2025-09-01T05:33:07.000000Z',
+                    'updated_at': '2025-09-01T05:33:07.000000Z',
+                    'pivot': {
+                      'model_type': 'App\\Models\\User',
+                      'model_uuid': '019903c3-cc2c-70cb-a1c5-3a67463e6a7e',
+                      'role_id': '019903c3-caf3-7095-84c4-d3130f098c10'
                     }
                   }
                 ]
@@ -101,7 +101,7 @@ void main() {
         'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.get(any())).thenThrow(InternalException());
+          when(() => mockDio.get(any())).thenThrow(const InternalException());
 
           // act
           final result = authRemoteDataSources.fetchCurrentUser();
@@ -116,43 +116,43 @@ void main() {
   group(
     'login: ',
     () {
-      final params = LoginParams(email: 'email', password: 'password');
+      const params = LoginParams(email: 'email', password: 'password');
       test(
         'should return UserModel when the request status code is 200',
         () async {
           // arrange
           const json = <String, dynamic>{
-            "status": "Success",
-            "message": "success login",
-            "data": {
-              "user": {
-                "id": "019903c3-cc2c-70cb-a1c5-3a67463e6a7e",
-                "gudang_id": null,
-                "name": "superadmin",
-                "email": "superadmin@domain.com",
-                "no_telp": "+3786838692312",
-                "email_verified_at": "2025-09-01T05:33:07.000000Z",
-                "avatar": null,
-                "status": 1,
-                "created_at": "2025-09-01T05:33:07.000000Z",
-                "updated_at": "2025-09-01T05:33:07.000000Z",
-                "roles": [
+            'status': 'Success',
+            'message': 'success login',
+            'data': {
+              'user': {
+                'id': '019903c3-cc2c-70cb-a1c5-3a67463e6a7e',
+                'gudang_id': null,
+                'name': 'superadmin',
+                'email': 'superadmin@domain.com',
+                'no_telp': '+3786838692312',
+                'email_verified_at': '2025-09-01T05:33:07.000000Z',
+                'avatar': null,
+                'status': 1,
+                'created_at': '2025-09-01T05:33:07.000000Z',
+                'updated_at': '2025-09-01T05:33:07.000000Z',
+                'roles': [
                   {
-                    "uuid": "019903c3-caf3-7095-84c4-d3130f098c10",
-                    "name": "superadmin",
-                    "guard_name": "web",
-                    "created_at": "2025-09-01T05:33:07.000000Z",
-                    "updated_at": "2025-09-01T05:33:07.000000Z",
-                    "pivot": {
-                      "model_type": "App\\Models\\User",
-                      "model_uuid": "019903c3-cc2c-70cb-a1c5-3a67463e6a7e",
-                      "role_id": "019903c3-caf3-7095-84c4-d3130f098c10"
+                    'uuid': '019903c3-caf3-7095-84c4-d3130f098c10',
+                    'name': 'superadmin',
+                    'guard_name': 'web',
+                    'created_at': '2025-09-01T05:33:07.000000Z',
+                    'updated_at': '2025-09-01T05:33:07.000000Z',
+                    'pivot': {
+                      'model_type': 'App\\Models\\User',
+                      'model_uuid': '019903c3-cc2c-70cb-a1c5-3a67463e6a7e',
+                      'role_id': '019903c3-caf3-7095-84c4-d3130f098c10'
                     }
                   }
                 ]
               },
-              "token": "5|tJic7kx7GY9otkdf4TBhOAQCvGKH1QLoWiTcjeFTa56bafd5",
-              "role": "superadmin"
+              'token': '5|tJic7kx7GY9otkdf4TBhOAQCvGKH1QLoWiTcjeFTa56bafd5',
+              'role': 'superadmin'
             }
           };
           when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
@@ -198,7 +198,7 @@ void main() {
         'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.post(any())).thenThrow(InternalException());
+          when(() => mockDio.post(any())).thenThrow(const InternalException());
 
           // act
           final result = authRemoteDataSources.login(params: params);
@@ -218,11 +218,11 @@ void main() {
         () async {
           // arrange
           const json = <String, dynamic>{
-                "status": "Success",
-                "message": 200,
-                "data":
-                    "You have successfully logged out and the token was successfully deleted"
-              };
+            'status': 'Success',
+            'message': 200,
+            'data':
+                'You have successfully logged out and the token was successfully deleted'
+          };
           when(() => mockDio.post(any())).thenAnswer(
             (_) async => Response(
               data: json,
@@ -266,7 +266,7 @@ void main() {
         'should return InternalException when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockDio.post(any())).thenThrow(InternalException());
+          when(() => mockDio.post(any())).thenThrow(const InternalException());
 
           // act
           final result = authRemoteDataSources.logout();

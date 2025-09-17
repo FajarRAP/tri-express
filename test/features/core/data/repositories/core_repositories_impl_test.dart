@@ -39,7 +39,7 @@ void main() {
           final result = await coreRepositories.completeOnboarding();
 
           // assert
-          await expectLater(result, Right(null));
+          await expectLater(result, const Right(null));
           verify(() => mockAuthLocalDataSources.completeOnboarding()).called(1);
         },
       );
@@ -49,7 +49,7 @@ void main() {
         () async {
           // arrange
           when(() => mockAuthLocalDataSources.completeOnboarding())
-              .thenThrow(CacheException());
+              .thenThrow(const CacheException());
 
           // act
           final result = await coreRepositories.completeOnboarding();

@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:tri_express/features/inventory/domain/use_cases/fetch_receive_goods_use_case.dart';
 
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/use_cases/fetch_delivery_goods_use_case.dart';
+import '../../domain/use_cases/fetch_receive_goods_use_case.dart';
 import '../models/batch_model.dart';
 
 abstract class InventoryRemoteDataSources {

@@ -15,6 +15,22 @@ class WarehouseModel extends WarehouseEntity {
     required super.updatedAt,
   });
 
+  factory WarehouseModel.fromJson(Map<String, dynamic> json) {
+    return WarehouseModel(
+      id: json['id'],
+      countryId: json['negara_id'],
+      address: json['alamat'],
+      description: json['keterangan'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      name: json['title'],
+      phone: json['no_telp'],
+      warehouseCode: json['kode'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+    );
+  }
+
   WarehouseEntity toEntity() {
     return WarehouseEntity(
       id: id,
@@ -28,22 +44,6 @@ class WarehouseModel extends WarehouseEntity {
       warehouseCode: warehouseCode,
       createdAt: createdAt,
       updatedAt: updatedAt,
-    );
-  }
-
-  factory WarehouseModel.fromJson(Map<String, dynamic> json) {
-    return WarehouseModel(
-      id: json["id"],
-      countryId: json["negara_id"],
-      address: json["alamat"],
-      description: json["keterangan"],
-      latitude: json["latitude"],
-      longitude: json["longitude"],
-      name: json["title"],
-      phone: json["no_telp"],
-      warehouseCode: json["kode"],
-      createdAt: DateTime.parse(json["created_at"]),
-      updatedAt: DateTime.parse(json["updated_at"]),
     );
   }
 }

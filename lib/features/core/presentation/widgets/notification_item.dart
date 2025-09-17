@@ -28,7 +28,7 @@ class NotificationItem extends StatelessWidget {
                   style: paragraphSmall[bold].copyWith(color: black),
                   text: 'cn/mn/sto',
                 ),
-                TextSpan(
+                const TextSpan(
                   text: ' dijadwalkan tiba di Gudang hari ini.',
                 ),
                 TextSpan(

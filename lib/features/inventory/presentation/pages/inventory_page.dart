@@ -53,7 +53,7 @@ class InventoryPage extends StatelessWidget {
                     const SizedBox(height: 24),
                     Row(
                       children: <Widget>[
-                        Expanded(
+                        const Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: 'Cari resi atau invoice',

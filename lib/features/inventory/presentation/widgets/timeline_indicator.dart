@@ -43,9 +43,9 @@ class TimelineIndicator extends StatelessWidget {
         Expanded(
           child: Stack(
             children: <Widget>[
-              VerticalDivider(color: primary, thickness: 2),
+              const VerticalDivider(color: primary, thickness: 2),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: primary,
                   shape: BoxShape.circle,
                 ),

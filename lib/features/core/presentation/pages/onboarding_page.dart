@@ -39,11 +39,11 @@ class OnboardingPage extends StatelessWidget {
               bottom: 0,
               right: 0,
               child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(30),
+                ),
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: light,
-                  ),
+                  decoration: const BoxDecoration(color: light),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 40,

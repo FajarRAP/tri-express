@@ -5,13 +5,14 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
-import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
+import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
-import '../../../../../uhf_result_model.dart';
+import '../../../../core/domain/entities/uhf_result_entity.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
@@ -24,7 +25,7 @@ class SendGoodsScanPage extends StatefulWidget {
 
 class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
   late final UHFMethodHandler _uhfMethodHandler;
-  final _tagInfos = <UHFResultModel>[];
+  final _tagInfos = <UHFResultEntity>[];
   final _selectedBatchIds = <String>[];
   var _isInventoryRunning = false;
   var _isSelectAll = false;
@@ -32,7 +33,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
   @override
   void initState() {
     super.initState();
-    _uhfMethodHandler = UHFMethodHandler(platform);
+    _uhfMethodHandler = const UHFMethodHandler(platform);
     platform.setMethodCallHandler(
       (call) async => await _uhfMethodHandler.methodHandler(
         call,
@@ -60,9 +61,9 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            actions: <Widget>[
+            actions: const <Widget>[
               NotificationIconButton(),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
             ],
             expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
             flexibleSpace: FlexibleSpaceBar(
@@ -73,7 +74,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(
+                    const Text(
                       'Pengiriman ke Gudang Yogyakarta',
                       style: const TextStyle(
                         color: black,
@@ -82,7 +83,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    SizedBox(
+                    const SizedBox(
                       width: double.infinity,
                       child: PrimaryGradientCard(
                         child: Column(
@@ -113,7 +114,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                       children: <Widget>[
                         Expanded(
                           child: TextFormField(
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
                             ),
@@ -172,10 +173,6 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                 value: _isSelectAll,
                 side: const BorderSide(color: primary),
                 controlAffinity: ListTileControlAffinity.leading,
-                visualDensity: VisualDensity(
-                  horizontal: VisualDensity.minimumDensity,
-                  vertical: VisualDensity.minimumDensity,
-                ),
               ),
             ),
             Expanded(

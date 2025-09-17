@@ -28,18 +28,18 @@ void main() {
         () async {
           // arrange
           const json = <String, dynamic>{
-            "status": "Success",
-            "message": "data summary",
-            "data": [
+            'status': 'Success',
+            'message': 'data summary',
+            'data': [
               {
-                "id": "01991817-f390-72c0-b2bf-bbb8dd108cf2",
-                "title": "Night Landscape",
-                "foto": "banner/VtNM9FxD94U7zd0zRqS79mVFMFDUmsrJSK7kBMC9.jpg",
-                "status": 1,
-                "created_at": "2025-09-05T04:17:26.000000Z",
-                "updated_at": "2025-09-05T04:17:46.000000Z",
-                "foto_url":
-                    "http://159.65.13.17/storage/banner/VtNM9FxD94U7zd0zRqS79mVFMFDUmsrJSK7kBMC9.jpg"
+                'id': '01991817-f390-72c0-b2bf-bbb8dd108cf2',
+                'title': 'Night Landscape',
+                'foto': 'banner/VtNM9FxD94U7zd0zRqS79mVFMFDUmsrJSK7kBMC9.jpg',
+                'status': 1,
+                'created_at': '2025-09-05T04:17:26.000000Z',
+                'updated_at': '2025-09-05T04:17:46.000000Z',
+                'foto_url':
+                    'http://159.65.13.17/storage/banner/VtNM9FxD94U7zd0zRqS79mVFMFDUmsrJSK7kBMC9.jpg'
               }
             ]
           };
@@ -64,9 +64,9 @@ void main() {
         () async {
           // arrange
           const json = <String, dynamic>{
-            "status": "Success",
-            "message": "data summary",
-            "data": {"ontheway": 0, "diterima": 0, "dikirim": 0}
+            'status': 'Success',
+            'message': 'data summary',
+            'data': {'ontheway': 0, 'diterima': 0, 'dikirim': 0}
           };
           when(() => mockDio.get(any())).thenAnswer((_) async => Response(
               data: json, requestOptions: RequestOptions(), statusCode: 200));

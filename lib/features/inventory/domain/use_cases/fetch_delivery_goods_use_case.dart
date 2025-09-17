@@ -19,11 +19,11 @@ class FetchDeliveryGoodsUseCase
 }
 
 class FetchDeliveryGoodsUseCaseParams {
-  final int? currentPage;
-  final int? perPage;
-
   const FetchDeliveryGoodsUseCaseParams({
     this.currentPage,
     this.perPage,
   });
+
+  final int? currentPage;
+  final int? perPage;
 }

@@ -7,10 +7,6 @@ class LoginResponseModel {
     required this.refreshToken,
   });
 
-  final UserModel user;
-  final String accessToken;
-  final String? refreshToken;
-
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
       user: UserModel.fromJson(json['user']),
@@ -18,4 +14,8 @@ class LoginResponseModel {
       refreshToken: json['refresh_token'],
     );
   }
+
+  final UserModel user;
+  final String accessToken;
+  final String? refreshToken;
 }

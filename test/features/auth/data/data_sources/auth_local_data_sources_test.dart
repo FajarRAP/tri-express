@@ -50,7 +50,7 @@ void main() {
           // arrange
           when(() => mockStorage.write(
               key: any(named: 'key'),
-              value: any(named: 'value'))).thenThrow(CacheException());
+              value: any(named: 'value'))).thenThrow(const CacheException());
 
           // act
           final call = dataSources.cacheToken(
@@ -85,7 +85,7 @@ void main() {
         'should return CacheException when clear token fails',
         () async {
           // arrange
-          when(() => mockStorage.deleteAll()).thenThrow(CacheException());
+          when(() => mockStorage.deleteAll()).thenThrow(const CacheException());
 
           // act
           final call = dataSources.clearToken();
@@ -133,7 +133,7 @@ void main() {
         () async {
           // arrange
           when(() => mockStorage.read(key: any(named: 'key')))
-              .thenThrow(CacheException());
+              .thenThrow(const CacheException());
 
           // act
           final call = dataSources.getAccessToken();
@@ -181,7 +181,7 @@ void main() {
         () async {
           // arrange
           when(() => mockStorage.read(key: any(named: 'key')))
-              .thenThrow(CacheException());
+              .thenThrow(const CacheException());
 
           // act
           final call = dataSources.getRefreshToken();

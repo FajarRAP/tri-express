@@ -30,10 +30,10 @@ class TripleFloatingActionButtons extends StatelessWidget {
           heroTag: 'scan_again',
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: danger),
+            side: const BorderSide(color: danger),
           ),
           tooltip: 'Scan Ulang',
-          child: Icon(Icons.restore),
+          child: const Icon(Icons.restore),
         ),
         FloatingActionButton.small(
           onPressed: onScan,
@@ -43,7 +43,7 @@ class TripleFloatingActionButtons extends StatelessWidget {
           heroTag: 'start_stop_scan',
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: primary),
+            side: const BorderSide(color: primary),
           ),
           tooltip: 'Scan',
           child: isScanning
@@ -58,10 +58,10 @@ class TripleFloatingActionButtons extends StatelessWidget {
           heroTag: 'save',
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: primary),
+            side: const BorderSide(color: primary),
           ),
           tooltip: 'Simpan',
-          child: Icon(Icons.save),
+          child: const Icon(Icons.save),
         ),
       ],
     );
