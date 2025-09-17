@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
 
 class InfoTile extends StatelessWidget {
@@ -20,19 +21,14 @@ class InfoTile extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
+            fontSize: 12,
             color: gray,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
           ),
         ),
         Text(
           value,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: black,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: label[medium].copyWith(color: black),
         ),
       ],
     );
