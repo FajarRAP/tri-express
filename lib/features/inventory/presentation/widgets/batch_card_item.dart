@@ -39,7 +39,7 @@ class BatchCardItem extends StatelessWidget {
                           style: paragraphMedium[medium],
                         ),
                         Text(
-                          '${batch.goods.length} Koli',
+                          '${batch.totalAllUnits} Koli',
                           style: label[bold],
                         ),
                       ],
@@ -78,17 +78,18 @@ class BatchCardItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   color: black,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  batch.sendAt.toLocal().toDDMMMMYYYY,
-                  style: paragraphSmall[regular],
+                Expanded(
+                  child: Text(
+                    batch.shipmentAt.toLocal().toDDMMMMYYYY,
+                    style: paragraphSmall[regular],
+                  ),
                 ),
-                const Spacer(),
                 Icon(
                   Icons.keyboard_arrow_down,
                   color: Colors.grey.shade600,

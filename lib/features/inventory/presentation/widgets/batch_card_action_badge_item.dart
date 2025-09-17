@@ -103,14 +103,14 @@ class BatchCardActionBadgeItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   color: black,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  batch.sendAt.toLocal().toDDMMMMYYYY,
+                  batch.shipmentAt.toLocal().toDDMMMMYYYY,
                   style: paragraphSmall[regular],
                 ),
                 const Spacer(),
