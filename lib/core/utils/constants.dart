@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../features/inventory/domain/entities/batch_entity.dart';
+import '../../features/inventory/domain/entities/customer_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/warehouse_entity.dart';
 import '../routes/router.dart';
@@ -58,30 +59,41 @@ final _warehouse = WarehouseEntity(
   createdAt: DateTime.now(),
   updatedAt: DateTime.now(),
 );
+
+const _customer = CustomerEntity(
+  id: 'id',
+  code: 'code',
+  address: 'address',
+  name: 'name',
+  phoneNumber: 'phoneNumber',
+);
+
+final _good = GoodEntity(
+  id: 'id',
+  receiptNumber: 'receiptNumber',
+  invoiceNumber: 'invoiceNumber',
+  name: 'name',
+  transportMode: 'transportMode',
+  totalItem: 1,
+  customer: _customer,
+  origin: _warehouse,
+  destination: _warehouse,
+  uniqueCodes: [],
+);
+
+final goods = [for (var i = 0; i < 20; i++) _good];
 final batch = BatchEntity(
   id: 'id',
   name: 'name',
   status: 'status',
   trackingNumber: 'trackingNumber',
   transportMode: 'Darat',
-  goods: [
-    for (var i = 0; i < 3; i++)
-      GoodEntity(
-        id: 'id-$i',
-        name: 'name-$i',
-        receiptNumber: 'TRI.2507231450302$i',
-      )
-  ],
+  totalAllUnits: 1,
+  goods: goods,
   origin: _warehouse,
   destination: _warehouse,
-  sendAt: DateTime.now(),
+  deliveryAt: DateTime.now(),
+  estimateAt: DateTime.now(),
+  receiveAt: DateTime.now(),
+  shipmentAt: DateTime.now(),
 );
-
-final goods = [
-  for (var i = 0; i < 20; i++)
-    GoodEntity(
-      id: 'id-$i',
-      name: 'name-$i',
-      receiptNumber: 'TRI.2507231450302$i',
-    )
-];
