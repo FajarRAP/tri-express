@@ -15,14 +15,14 @@ class PrimaryGradientCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: <Color>[
             primary,
             primaryGradientEnd,
           ],
         ),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       child: child,
     );
   }
