@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../fonts/fonts.dart';
 import '../themes/colors.dart';
-import 'handle_bar.dart';
 
 class DropdownModal extends StatelessWidget {
   const DropdownModal({
@@ -19,9 +18,6 @@ class DropdownModal extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const SizedBox(height: 12),
-        const HandleBar(),
-        const SizedBox(height: 24),
         Text(
           'Pilih $title',
           style: paragraphLarge[bold].copyWith(color: black),
