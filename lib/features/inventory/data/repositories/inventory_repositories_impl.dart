@@ -6,6 +6,7 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../data_sources/inventory_remote_data_sources.dart';
 
@@ -42,9 +43,24 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments() {
-    // TODO: implement fetchOnTheWayShipments
-    throw UnimplementedError();
+  Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments(
+      {required FetchOnTheWayShipmentsUseCaseParams params}) async {
+    try {
+      final result = await inventoryRemoteDataSources.fetchOnTheWayShipments(
+          params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
   }
 
   @override

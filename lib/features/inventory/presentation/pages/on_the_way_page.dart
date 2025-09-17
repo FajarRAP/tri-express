@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/fonts/fonts.dart';
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/debouncer.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
 import '../../../../core/widgets/primary_gradient_card.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../cubit/inventory_cubit.dart';
 import '../widgets/batch_card_item.dart';
 import '../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
@@ -15,78 +19,152 @@ class OnTheWayPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authCubit = context.read<AuthCubit>();
+    final inventoryCubit = context.read<InventoryCubit>();
+    final debouncer = Debouncer(delay: const Duration(milliseconds: 300));
+
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            actions: <Widget>[
-              NotificationIconButton(),
-              const SizedBox(width: 16),
-            ],
-            expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      child: PrimaryGradientCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Dalam Pengiriman ke \$Warehouse',
-                              style: paragraphMedium[bold].copyWith(
-                                color: light,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (scrollState) {
+          if (scrollState.runtimeType == ScrollEndNotification &&
+              inventoryCubit.state is! ListPaginateLast) {
+            inventoryCubit.fetchOnTheWayShipmentsPaginate();
+          }
+
+          return false;
+        },
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              actions: const <Widget>[
+                NotificationIconButton(),
+                SizedBox(width: 16),
+              ],
+              expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(
+                        width: double.infinity,
+                        child: PrimaryGradientCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Dalam Pengiriman ke ${authCubit.user.warehouse?.name}',
+                                style: paragraphMedium[bold].copyWith(
+                                  color: light,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '\$Number',
-                              style: heading5[bold].copyWith(color: light),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              BlocBuilder<InventoryCubit, InventoryState>(
+                                buildWhen: (previous, current) =>
+                                    current is FetchOnTheWayShipments,
+                                builder: (context, state) {
+                                  if (state is FetchOnTheWayShipmentsLoaded) {
+                                    return Text(
+                                      '${state.batches.length}',
+                                      style:
+                                          heading5[bold].copyWith(color: light),
+                                    );
+                                  }
+
+                                  return Text(
+                                    '...',
+                                    style:
+                                        heading5[bold].copyWith(color: light),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Cari resi atau invoice',
-                        prefixIcon: const Icon(Icons.search_outlined),
+                      const SizedBox(height: 24),
+                      TextField(
+                        onChanged: (value) => debouncer.run(() => inventoryCubit
+                            .fetchOnTheWayShipments(search: value)),
+                        decoration: const InputDecoration(
+                          hintText: 'Cari resi atau invoice',
+                          prefixIcon: const Icon(Icons.search_outlined),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            floating: true,
-            pinned: true,
-            snap: true,
-            title: const Text('On The Way'),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverList.separated(
-              itemBuilder: (context, index) => BatchCardItem(
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                    onSelected: (selectedReceiptNumbers) => context.push(
-                        '$itemDetailRoute/${selectedReceiptNumbers.first}'),
-                    batch: batch,
+                    ],
                   ),
                 ),
-                batch: batch,
               ),
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemCount: null,
+              floating: true,
+              pinned: true,
+              snap: true,
+              title: const Text('On The Way'),
             ),
-          )
-        ],
+            BlocBuilder<InventoryCubit, InventoryState>(
+              bloc: inventoryCubit..fetchOnTheWayShipments(),
+              buildWhen: (previous, current) =>
+                  current is FetchOnTheWayShipments,
+              builder: (context, state) {
+                if (state is FetchOnTheWayShipmentsLoading) {
+                  return const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                  );
+                }
+
+                if (state is FetchOnTheWayShipmentsLoaded) {
+                  if (state.batches.isEmpty) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: Center(
+                          child: Text(
+                            'Belum ada barang.',
+                            style: label[medium].copyWith(
+                              color: primaryGradientEnd,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    sliver: SliverList.separated(
+                      itemBuilder: (context, index) => BatchCardItem(
+                        onTap: () => showModalBottomSheet(
+                          context: context,
+                          builder: (context) =>
+                              ShipmentReceiptNumbersBottomSheet(
+                            onSelected: (selectedGood) =>
+                                context.push(onTheWayDetailRoute, extra: {
+                              'batchName': state.batches[index].name,
+                              'good': selectedGood.first,
+                              'shipmentAt': state.batches[index].shipmentAt,
+                            }),
+                            batch: state.batches[index],
+                          ),
+                        ),
+                        batch: state.batches[index],
+                      ),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemCount: state.batches.length,
+                    ),
+                  );
+                }
+
+                return const SizedBox();
+              },
+            )
+          ],
+        ),
       ),
     );
   }

@@ -9,13 +9,17 @@ class ListPaginate extends InventoryState {}
 
 class FetchDeliveryShipments extends InventoryState {}
 
-class FetchReceiveShipments extends InventoryState {}
+class FetchOnTheWayShipments extends InventoryState {}
 
 class FetchPrepareShipments extends InventoryState {}
+
+class FetchReceiveShipments extends InventoryState {}
 
 class FetchPickUpShipments extends InventoryState {}
 
 class FetchShipmentReceiptNumbers extends InventoryState {}
+
+class SearchShipments extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
 
@@ -99,6 +103,34 @@ class FetchPickUpShipmentsLoaded extends FetchPickUpShipments {
 
 class FetchPickUpShipmentsError extends FetchPickUpShipments {
   FetchPickUpShipmentsError({required this.message});
+
+  final String message;
+}
+
+class FetchOnTheWayShipmentsLoading extends FetchOnTheWayShipments {}
+
+class FetchOnTheWayShipmentsLoaded extends FetchOnTheWayShipments {
+  FetchOnTheWayShipmentsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class FetchOnTheWayShipmentsError extends FetchOnTheWayShipments {
+  FetchOnTheWayShipmentsError({required this.message});
+
+  final String message;
+}
+
+class SearchShipmentsLoading extends SearchShipments {}
+
+class SearchShipmentsLoaded extends SearchShipments {
+  SearchShipmentsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class SearchShipmentsError extends SearchShipments {
+  SearchShipmentsError({required this.message});
 
   final String message;
 }
