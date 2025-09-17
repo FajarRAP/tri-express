@@ -9,6 +9,7 @@ import '../../features/core/presentation/pages/scan_barcode_page.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
+import '../../features/inventory/presentation/pages/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_page.dart';
@@ -51,6 +52,7 @@ const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute/confirmation';
 const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
 
 const onTheWayRoute = '/on-the-way';
+const onTheWayDetailRoute = '/on-the-way-detail';
 const batchDetailRoute = '/batch-detail';
 const itemDetailRoute = '/item';
 
@@ -185,6 +187,23 @@ final router = GoRouter(
           builder: (context, state) => const PickUpGoodsScanPage(),
         ),
       ],
+    ),
+
+    // On The Way Detail
+    GoRoute(
+      path: '/on-the-way-detail',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final good = extras['good'] as GoodEntity;
+        final batchName = extras['batchName'] as String;
+        final shipmentAt = extras['shipmentAt'] as DateTime;
+
+        return OnTheWayDetailPage(
+          batchName: batchName,
+          good: good,
+          shipmentAt: shipmentAt,
+        );
+      },
     ),
     // Good Detail
     GoRoute(
