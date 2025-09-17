@@ -5,7 +5,7 @@ import 'colors.dart';
 const fontFamily = 'HelveticaNeue';
 
 final theme = ThemeData(
-  appBarTheme: AppBarTheme(
+  appBarTheme: const AppBarTheme(
     centerTitle: true,
     scrolledUnderElevation: 0.0,
     titleTextStyle: const TextStyle(
@@ -14,7 +14,7 @@ final theme = ThemeData(
       fontWeight: FontWeight.w700,
     ),
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     selectedItemColor: primary,
     selectedLabelStyle: const TextStyle(
       color: primary,
@@ -32,13 +32,28 @@ final theme = ThemeData(
     seedColor: primary,
     primary: primary,
   ),
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: light,
+    constraints: BoxConstraints(
+      maxHeight: 550,
+      minHeight: 400,
+    ),
+    dragHandleColor: Color(0xFFE0E0E0),
+    dragHandleSize: Size(48, 5),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    showDragHandle: true,
+  ),
   checkboxTheme: CheckboxThemeData(
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(4),
     ),
     side: const BorderSide(color: gray),
-    visualDensity: VisualDensity(
+    visualDensity: const VisualDensity(
       horizontal: VisualDensity.minimumDensity,
       vertical: VisualDensity.minimumDensity,
     ),
@@ -104,7 +119,7 @@ final theme = ThemeData(
     ),
     prefixIconColor: gray,
   ),
-  tabBarTheme: TabBarThemeData(
+  tabBarTheme: const TabBarThemeData(
     dividerColor: Colors.transparent,
     indicatorColor: primary,
     indicatorSize: TabBarIndicatorSize.tab,
