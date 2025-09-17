@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: DataCard(
                                 icon: Icons.local_shipping_outlined,
-                                label: 'On the way',
+                                text: 'On the way',
                                 number: state.summary[0],
                               ),
                             ),
@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: DataCard(
                                 icon: Icons.inventory_2_outlined,
-                                label: 'Koli diterima',
+                                text: 'Koli diterima',
                                 number: state.summary[1],
                               ),
                             ),
@@ -74,7 +74,7 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: DataCard(
                                 icon: Icons.send_outlined,
-                                label: 'Koli terkirim',
+                                text: 'Koli terkirim',
                                 number: state.summary[2],
                               ),
                             ),
