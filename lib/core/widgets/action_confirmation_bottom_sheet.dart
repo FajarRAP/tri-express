@@ -5,7 +5,6 @@ import '../fonts/fonts.dart';
 import '../themes/colors.dart';
 import 'buttons/outline_primary_button.dart';
 import 'buttons/primary_button.dart';
-import 'handle_bar.dart';
 
 class ActionConfirmationBottomSheet extends StatelessWidget {
   const ActionConfirmationBottomSheet({
@@ -20,13 +19,11 @@ class ActionConfirmationBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const HandleBar(),
-          const SizedBox(height: 24),
           Text(
             'Konfirmasi Aksi',
             style: paragraphLarge[semibold],
