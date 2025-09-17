@@ -25,8 +25,8 @@ import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
 import 'features/inventory/domain/repositories/inventory_repositories.dart';
-import 'features/inventory/domain/use_cases/fetch_delivery_goods_use_case.dart';
-import 'features/inventory/domain/use_cases/fetch_receive_goods_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_receive_shipments_use_case.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -89,8 +89,8 @@ void setupServiceLocator() {
     ..registerLazySingleton<InventoryRepositories>(() =>
         InventoryRepositoriesImpl(inventoryRemoteDataSources: getIt.get()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
-        fetchDeliveryGoodsUseCase:
-            FetchDeliveryGoodsUseCase(inventoryRepositories: getIt.get()),
-        fetchReceiveGoodsUseCase:
-            FetchReceiveGoodsUseCase(inventoryRepositories: getIt.get())));
+        fetchDeliveryShipmentsUseCase:
+            FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt.get()),
+        fetchReceiveShipmentsUseCase:
+            FetchReceiveShipmentsUseCase(inventoryRepositories: getIt.get())));
 }

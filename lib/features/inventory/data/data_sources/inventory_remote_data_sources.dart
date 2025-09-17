@@ -3,23 +3,23 @@ import 'package:dio/dio.dart';
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
-import '../../domain/use_cases/fetch_delivery_goods_use_case.dart';
-import '../../domain/use_cases/fetch_receive_goods_use_case.dart';
+import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../models/batch_model.dart';
 
 abstract class InventoryRemoteDataSources {
-  Future fetchDeliveryGood({required String id});
-  Future<List<BatchEntity>> fetchDeliveryGoods(
-      {required FetchDeliveryGoodsUseCaseParams params});
+  Future fetchDeliveryShipment({required String id});
+  Future<List<BatchEntity>> fetchDeliveryShipments(
+      {required FetchDeliveryShipmentsUseCaseParams params});
   Future fetchInvoice({required String id});
   Future fetchInvoices();
-  Future fetchOnTheWayGood({required String id});
-  Future fetchOnTheWayGoods();
-  Future fetchPrepareGood({required String id});
-  Future fetchPrepareGoods();
-  Future fetchReceiveGood({required String id});
-  Future<List<BatchEntity>> fetchReceiveGoods(
-      {required FetchReceiveGoodsUseCaseParams params});
+  Future fetchOnTheWayShipment({required String id});
+  Future fetchOnTheWayShipments();
+  Future fetchPrepareShipment({required String id});
+  Future fetchPrepareShipments();
+  Future fetchReceiveShipment({required String id});
+  Future<List<BatchEntity>> fetchReceiveShipments(
+      {required FetchReceiveShipmentsUseCaseParams params});
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -28,19 +28,19 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   final Dio dio;
 
   @override
-  Future fetchDeliveryGood({required String id}) {
-    // TODO: implement fetchDeliveryGood
+  Future fetchDeliveryShipment({required String id}) {
+    // TODO: implement fetchDeliveryShipment
     throw UnimplementedError();
   }
 
   @override
-  Future<List<BatchEntity>> fetchDeliveryGoods(
-      {required FetchDeliveryGoodsUseCaseParams params}) async {
+  Future<List<BatchEntity>> fetchDeliveryShipments(
+      {required FetchDeliveryShipmentsUseCaseParams params}) async {
     try {
       final response = await dio.get(
         '/delivery',
         queryParameters: {
-          'page': params.currentPage,
+          'page': params.page,
           'per_page': params.perPage,
         },
       );
@@ -68,38 +68,38 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
-  Future fetchOnTheWayGood({required String id}) {
-    // TODO: implement fetchOnTheWayGood
+  Future fetchOnTheWayShipment({required String id}) {
+    // TODO: implement fetchOnTheWayShipment
     throw UnimplementedError();
   }
 
   @override
-  Future fetchOnTheWayGoods() {
-    // TODO: implement fetchOnTheWayGoods
+  Future fetchOnTheWayShipments() {
+    // TODO: implement fetchOnTheWayShipments
     throw UnimplementedError();
   }
 
   @override
-  Future fetchPrepareGood({required String id}) {
-    // TODO: implement fetchPrepareGood
+  Future fetchPrepareShipment({required String id}) {
+    // TODO: implement fetchPrepareShipment
     throw UnimplementedError();
   }
 
   @override
-  Future fetchPrepareGoods() {
-    // TODO: implement fetchPrepareGoods
+  Future fetchPrepareShipments() {
+    // TODO: implement fetchPrepareShipments
     throw UnimplementedError();
   }
 
   @override
-  Future fetchReceiveGood({required String id}) {
-    // TODO: implement fetchReceiveGood
+  Future fetchReceiveShipment({required String id}) {
+    // TODO: implement fetchReceiveShipment
     throw UnimplementedError();
   }
 
   @override
-  Future<List<BatchEntity>> fetchReceiveGoods(
-      {required FetchReceiveGoodsUseCaseParams params}) async {
+  Future<List<BatchEntity>> fetchReceiveShipments(
+      {required FetchReceiveShipmentsUseCaseParams params}) async {
     try {
       final response = await dio.get(
         '/receive',

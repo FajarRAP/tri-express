@@ -7,13 +7,13 @@ final class InventoryInitial extends InventoryState {}
 
 class ListPaginate extends InventoryState {}
 
-class FetchDeliveryGoods extends InventoryState {}
+class FetchDeliveryShipments extends InventoryState {}
 
-class FetchReceiveGoods extends InventoryState {}
+class FetchReceiveShipments extends InventoryState {}
 
-class FetchPrepareGoods extends InventoryState {}
+class FetchPrepareShipments extends InventoryState {}
 
-class FetchPickUpGoods extends InventoryState {}
+class FetchPickUpShipments extends InventoryState {}
 
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
@@ -33,16 +33,16 @@ class ListPaginateError extends ListPaginate {
   final String message;
 }
 
-class FetchDeliveryGoodsLoading extends FetchDeliveryGoods {}
+class FetchDeliveryShipmentsLoading extends FetchDeliveryShipments {}
 
-class FetchDeliveryGoodsLoaded extends FetchDeliveryGoods {
-  FetchDeliveryGoodsLoaded({required this.batches});
+class FetchDeliveryShipmentsLoaded extends FetchDeliveryShipments {
+  FetchDeliveryShipmentsLoaded({required this.batches});
 
   final List<BatchEntity> batches;
 }
 
-class FetchDeliveryGoodsError extends FetchDeliveryGoods {
-  FetchDeliveryGoodsError({required this.message});
+class FetchDeliveryShipmentsError extends FetchDeliveryShipments {
+  FetchDeliveryShipmentsError({required this.message});
 
   final String message;
 }
@@ -61,44 +61,44 @@ class FetchShipmentReceiptNumbersError extends FetchShipmentReceiptNumbers {
   final String message;
 }
 
-class FetchReceiveGoodsLoading extends FetchReceiveGoods {}
+class FetchReceiveShipmentsLoading extends FetchReceiveShipments {}
 
-class FetchReceiveGoodsLoaded extends FetchReceiveGoods {
-  FetchReceiveGoodsLoaded({required this.batches});
+class FetchReceiveShipmentsLoaded extends FetchReceiveShipments {
+  FetchReceiveShipmentsLoaded({required this.batches});
 
   final List<BatchEntity> batches;
 }
 
-class FetchReceiveGoodsError extends FetchReceiveGoods {
-  FetchReceiveGoodsError({required this.message});
+class FetchReceiveShipmentsError extends FetchReceiveShipments {
+  FetchReceiveShipmentsError({required this.message});
 
   final String message;
 }
 
-class FetchPrepareGoodsLoading extends FetchPrepareGoods {}
+class FetchPrepareShipmentsLoading extends FetchPrepareShipments {}
 
-class FetchPrepareGoodsLoaded extends FetchPrepareGoods {
-  FetchPrepareGoodsLoaded({required this.batches});
+class FetchPrepareShipmentsLoaded extends FetchPrepareShipments {
+  FetchPrepareShipmentsLoaded({required this.batches});
 
   final List<BatchEntity> batches;
 }
 
-class FetchPrepareGoodsError extends FetchPrepareGoods {
-  FetchPrepareGoodsError({required this.message});
+class FetchPrepareShipmentsError extends FetchPrepareShipments {
+  FetchPrepareShipmentsError({required this.message});
 
   final String message;
 }
 
-class FetchPickUpGoodsLoading extends FetchPickUpGoods {}
+class FetchPickUpShipmentsLoading extends FetchPickUpShipments {}
 
-class FetchPickUpGoodsLoaded extends FetchPickUpGoods {
-  FetchPickUpGoodsLoaded({required this.batches});
+class FetchPickUpShipmentsLoaded extends FetchPickUpShipments {
+  FetchPickUpShipmentsLoaded({required this.batches});
 
   final List<BatchEntity> batches;
 }
 
-class FetchPickUpGoodsError extends FetchPickUpGoods {
-  FetchPickUpGoodsError({required this.message});
+class FetchPickUpShipmentsError extends FetchPickUpShipments {
+  FetchPickUpShipmentsError({required this.message});
 
   final String message;
 }

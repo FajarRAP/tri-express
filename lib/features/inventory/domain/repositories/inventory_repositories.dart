@@ -2,21 +2,15 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/failure/failure.dart';
 import '../entities/batch_entity.dart';
-import '../use_cases/fetch_delivery_goods_use_case.dart';
-import '../use_cases/fetch_receive_goods_use_case.dart';
+import '../use_cases/fetch_delivery_shipments_use_case.dart';
+import '../use_cases/fetch_receive_shipments_use_case.dart';
 
 abstract class InventoryRepositories {
-  Future<Either<Failure, List<BatchEntity>>> fetchPrepareGoods();
-  Future<Either<Failure, Object>> fetchPrepareGood({required String id});
-  Future<Either<Failure, List>> fetchInvoices();
-  Future<Either<Failure, Object>> fetchInvoice({required String id});
-  Future<Either<Failure, List<BatchEntity>>> fetchDeliveryGoods(
-      {required FetchDeliveryGoodsUseCaseParams params});
-  Future<Either<Failure, Object>> fetchDeliveryGood({required String id});
-  Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayGoods();
-  Future<Either<Failure, Object>> fetchOnTheWayGood({required String id});
-  Future<Either<Failure, List<BatchEntity>>> fetchReceiveGoods(
-      {required FetchReceiveGoodsUseCaseParams params});
-  Future<Either<Failure, Object>> fetchReceiveGood({required String id});
-  Future<Either<Failure, List<String>>> fetchShipmentReceiptNumbers();
+  Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
+      {required FetchDeliveryShipmentsUseCaseParams params});
+  Future<Either<Failure, List<BatchEntity>>> fetchInventories();
+  Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments();
+  Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipmentss();
+  Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
+      {required FetchReceiveShipmentsUseCaseParams params});
 }

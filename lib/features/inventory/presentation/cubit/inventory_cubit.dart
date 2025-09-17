@@ -2,53 +2,53 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../domain/entities/batch_entity.dart';
-import '../../domain/use_cases/fetch_delivery_goods_use_case.dart';
-import '../../domain/use_cases/fetch_receive_goods_use_case.dart';
+import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 
 part 'inventory_state.dart';
 
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
-    required FetchDeliveryGoodsUseCase fetchDeliveryGoodsUseCase,
-    required FetchReceiveGoodsUseCase fetchReceiveGoodsUseCase,
-  })  : _fetchDeliveryGoodsUseCase = fetchDeliveryGoodsUseCase,
-        _fetchReceiveGoodsUseCase = fetchReceiveGoodsUseCase,
+    required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
+    required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
+  })  : _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
+        _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         super(InventoryInitial());
 
-  final FetchDeliveryGoodsUseCase _fetchDeliveryGoodsUseCase;
-  final FetchReceiveGoodsUseCase _fetchReceiveGoodsUseCase;
+  final FetchDeliveryShipmentsUseCase _fetchDeliveryShipmentsUseCase;
+  final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
 
   var _currentPage = 1;
   final _deliveryBatches = <BatchEntity>[];
   final _receiveBatches = <BatchEntity>[];
 
-  Future<void> fetchDeliveryGoods() async {
-    emit(FetchDeliveryGoodsLoading());
+  Future<void> fetchDeliveryShipments() async {
+    emit(FetchDeliveryShipmentsLoading());
 
     final params =
-        FetchDeliveryGoodsUseCaseParams(currentPage: _currentPage = 1);
-    final result = await _fetchDeliveryGoodsUseCase(params);
+        FetchDeliveryShipmentsUseCaseParams(page: _currentPage = 1);
+    final result = await _fetchDeliveryShipmentsUseCase(params);
 
     result.fold(
-      (failure) => emit(FetchDeliveryGoodsError(message: failure.message)),
-      (batches) => emit(FetchDeliveryGoodsLoaded(
+      (failure) => emit(FetchDeliveryShipmentsError(message: failure.message)),
+      (batches) => emit(FetchDeliveryShipmentsLoaded(
           batches: _deliveryBatches
             ..clear()
             ..addAll(batches))),
     );
   }
 
-  Future<void> fetchDeliveryGoodsPaginate() async {
+  Future<void> fetchDeliveryShipmentsPaginate() async {
     emit(ListPaginateLoading());
 
-    final params = FetchDeliveryGoodsUseCaseParams(currentPage: ++_currentPage);
-    final result = await _fetchDeliveryGoodsUseCase(params);
+    final params = FetchDeliveryShipmentsUseCaseParams(page: ++_currentPage);
+    final result = await _fetchDeliveryShipmentsUseCase(params);
 
     result.fold(
         (failure) => emit(ListPaginateError(message: failure.message)),
         (batches) => batches.isEmpty
             ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-            : emit(FetchDeliveryGoodsLoaded(
+            : emit(FetchDeliveryShipmentsLoaded(
                 batches: _deliveryBatches..addAll(batches))));
   }
 
@@ -60,55 +60,55 @@ class InventoryCubit extends Cubit<InventoryState> {
     emit(FetchShipmentReceiptNumbersLoaded(receiptNumbers: []));
   }
 
-  Future<void> fetchPrepareGoods() async {
-    emit(FetchPrepareGoodsLoading());
+  Future<void> fetchPrepareShipments() async {
+    emit(FetchPrepareShipmentsLoading());
 
     await Future.delayed(const Duration(seconds: 1));
 
-    emit(FetchPrepareGoodsLoaded(batches: []));
+    emit(FetchPrepareShipmentsLoaded(batches: []));
   }
 
-  Future<void> fetchReceiveGoods({String? search}) async {
-    emit(FetchReceiveGoodsLoading());
+  Future<void> fetchReceiveShipments({String? search}) async {
+    emit(FetchReceiveShipmentsLoading());
 
-    final params = FetchReceiveGoodsUseCaseParams(
+    final params = FetchReceiveShipmentsUseCaseParams(
       page: _currentPage = 1,
       search: search,
     );
-    final result = await _fetchReceiveGoodsUseCase(params);
+    final result = await _fetchReceiveShipmentsUseCase(params);
 
     result.fold(
-      (failure) => emit(FetchReceiveGoodsError(message: failure.message)),
-      (batches) => emit(FetchReceiveGoodsLoaded(
+      (failure) => emit(FetchReceiveShipmentsError(message: failure.message)),
+      (batches) => emit(FetchReceiveShipmentsLoaded(
           batches: _receiveBatches
             ..clear()
             ..addAll(batches))),
     );
   }
 
-  Future<void> fetchReceiveGoodsPaginate({String? search}) async {
+  Future<void> fetchReceiveShipmentsPaginate({String? search}) async {
     emit(ListPaginateLoading());
 
-    final params = FetchReceiveGoodsUseCaseParams(
+    final params = FetchReceiveShipmentsUseCaseParams(
       page: ++_currentPage,
       search: search,
     );
-    final result = await _fetchReceiveGoodsUseCase(params);
+    final result = await _fetchReceiveShipmentsUseCase(params);
 
     result.fold(
       (failure) => emit(ListPaginateError(message: failure.message)),
       (batches) => batches.isEmpty
           ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(FetchReceiveGoodsLoaded(
+          : emit(FetchReceiveShipmentsLoaded(
               batches: _receiveBatches..addAll(batches))),
     );
   }
 
-  Future<void> fetchPickUpGoods({String? search}) async {
-    emit(FetchPickUpGoodsLoading());
+  Future<void> fetchPickUpShipments({String? search}) async {
+    emit(FetchPickUpShipmentsLoading());
 
     await Future.delayed(const Duration(seconds: 1));
 
-    emit(FetchPickUpGoodsLoaded(batches: []));
+    emit(FetchPickUpShipmentsLoaded(batches: []));
   }
 }

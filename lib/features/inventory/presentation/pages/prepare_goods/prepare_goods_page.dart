@@ -74,10 +74,10 @@ class PrepareGoodsPage extends StatelessWidget {
             ),
           ),
           BlocBuilder<InventoryCubit, InventoryState>(
-            bloc: inventoryCubit..fetchPrepareGoods(),
-            buildWhen: (previous, current) => current is FetchPrepareGoods,
+            bloc: inventoryCubit..fetchPrepareShipments(),
+            buildWhen: (previous, current) => current is FetchPrepareShipments,
             builder: (context, state) {
-              if (state is FetchPrepareGoodsLoading) {
+              if (state is FetchPrepareShipmentsLoading) {
                 return const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator.adaptive(),
@@ -85,7 +85,7 @@ class PrepareGoodsPage extends StatelessWidget {
                 );
               }
 
-              if (state is FetchPrepareGoodsLoaded) {
+              if (state is FetchPrepareShipmentsLoaded) {
                 if (state.batches.isNotEmpty) {
                   return SliverFillRemaining(
                     child: Padding(

@@ -57,10 +57,10 @@ class ReceiveGoodsPage extends StatelessWidget {
             title: const Text('Terima Barang'),
           ),
           BlocBuilder<InventoryCubit, InventoryState>(
-            bloc: inventoryCubit..fetchReceiveGoods(),
-            buildWhen: (previous, current) => current is FetchReceiveGoods,
+            bloc: inventoryCubit..fetchReceiveShipments(),
+            buildWhen: (previous, current) => current is FetchReceiveShipments,
             builder: (context, state) {
-              if (state is FetchReceiveGoodsLoading) {
+              if (state is FetchReceiveShipmentsLoading) {
                 return const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator.adaptive(),
@@ -68,7 +68,7 @@ class ReceiveGoodsPage extends StatelessWidget {
                 );
               }
 
-              if (state is FetchReceiveGoodsLoaded) {
+              if (state is FetchReceiveShipmentsLoaded) {
                 if (state.batches.isEmpty) {
                   return SliverFillRemaining(
                     child: Padding(

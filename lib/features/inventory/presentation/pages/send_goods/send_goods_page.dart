@@ -20,16 +20,16 @@ class SendGoodsPage extends StatelessWidget {
 
     return Scaffold(
       body: BlocBuilder<InventoryCubit, InventoryState>(
-        bloc: inventoryCubit..fetchDeliveryGoods(),
-        buildWhen: (previous, current) => current is FetchDeliveryGoods,
+        bloc: inventoryCubit..fetchDeliveryShipments(),
+        buildWhen: (previous, current) => current is FetchDeliveryShipments,
         builder: (context, state) {
-          if (state is FetchDeliveryGoodsLoading) {
+          if (state is FetchDeliveryShipmentsLoading) {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
             );
           }
 
-          if (state is FetchDeliveryGoodsLoaded) {
+          if (state is FetchDeliveryShipmentsLoaded) {
             if (state.batches.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 48),
@@ -44,7 +44,7 @@ class SendGoodsPage extends StatelessWidget {
             }
 
             return RefreshIndicator(
-              onRefresh: inventoryCubit.fetchDeliveryGoods,
+              onRefresh: inventoryCubit.fetchDeliveryShipments,
               child: CustomScrollView(
                 slivers: <Widget>[
                   SliverAppBar(

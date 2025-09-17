@@ -57,10 +57,10 @@ class PickUpGoodsPage extends StatelessWidget {
             title: const Text('Ambil di Gudang'),
           ),
           BlocBuilder<InventoryCubit, InventoryState>(
-            bloc: inventoryCubit..fetchPickUpGoods(),
-            buildWhen: (previous, current) => current is FetchPickUpGoods,
+            bloc: inventoryCubit..fetchPickUpShipments(),
+            buildWhen: (previous, current) => current is FetchPickUpShipments,
             builder: (context, state) {
-              if (state is FetchPickUpGoodsLoading) {
+              if (state is FetchPickUpShipmentsLoading) {
                 return const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator.adaptive(),
@@ -68,7 +68,7 @@ class PickUpGoodsPage extends StatelessWidget {
                 );
               }
 
-              if (state is FetchPickUpGoodsLoaded) {
+              if (state is FetchPickUpShipmentsLoaded) {
                 if (state.batches.isEmpty) {
                   return SliverFillRemaining(
                     child: Padding(
