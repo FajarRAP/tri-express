@@ -23,9 +23,9 @@ class ReceiveGoodsPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            actions: <Widget>[
+            actions: const <Widget>[
               NotificationIconButton(),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
             ],
             expandedHeight: kToolbarHeight + kSpaceBarHeight,
             flexibleSpace: FlexibleSpaceBar(
@@ -34,11 +34,11 @@ class ReceiveGoodsPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: <Widget>[
-                    Expanded(
+                    const Expanded(
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Cari resi atau invoice',
-                          prefixIcon: const Icon(Icons.search_outlined),
+                          prefixIcon: Icon(Icons.search_outlined),
                         ),
                       ),
                     ),
@@ -91,12 +91,19 @@ class ReceiveGoodsPage extends StatelessWidget {
                   sliver: SliverList.separated(
                     itemBuilder: (context, index) => BatchCardItem(
                       onTap: () => showModalBottomSheet(
-                        context: context,
                         builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                          onSelected: (selectedReceiptNumbers) => context.push(
-                              '$itemDetailRoute/${selectedReceiptNumbers.first}'),
+                          onSelected: (selectedGood) => context.push(
+                            receiveGoodsDetailRoute,
+                            extra: {
+                              'good': selectedGood.first,
+                              'batchName': state.batches[index].name,
+                              'receiveAt': state.batches[index].receiveAt,
+                            },
+                          ),
                           batch: state.batches[index],
                         ),
+                        context: context,
+                        isScrollControlled: true,
                       ),
                       batch: state.batches[index],
                     ),
