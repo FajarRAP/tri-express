@@ -42,10 +42,13 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _prepareBatches = <BatchEntity>[];
   final _receiveBatches = <BatchEntity>[];
 
-  Future<void> fetchDeliveryShipments() async {
+  Future<void> fetchDeliveryShipments({String? search}) async {
     emit(FetchDeliveryShipmentsLoading());
 
-    final params = FetchDeliveryShipmentsUseCaseParams(page: _currentPage = 1);
+    final params = FetchDeliveryShipmentsUseCaseParams(
+      page: _currentPage = 1,
+      search: search,
+    );
     final result = await _fetchDeliveryShipmentsUseCase(params);
 
     result.fold(
@@ -57,10 +60,13 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchDeliveryShipmentsPaginate() async {
+  Future<void> fetchDeliveryShipmentsPaginate({String? search}) async {
     emit(ListPaginateLoading());
 
-    final params = FetchDeliveryShipmentsUseCaseParams(page: ++_currentPage);
+    final params = FetchDeliveryShipmentsUseCaseParams(
+      page: ++_currentPage,
+      search: search,
+    );
     final result = await _fetchDeliveryShipmentsUseCase(params);
 
     result.fold(
