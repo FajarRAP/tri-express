@@ -32,136 +32,140 @@ class PrepareGoodsPage extends StatelessWidget {
           }
           return false;
         },
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              actions: const <Widget>[
-                NotificationIconButton(),
-                SizedBox(width: 16),
-              ],
-              expandedHeight: kToolbarHeight + kSpaceBarHeight,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          onChanged: (value) => debouncer.run(() =>
-                              inventoryCubit.fetchPrepareShipments(
-                                  search: search = value)),
-                          decoration: const InputDecoration(
-                            hintText: 'Cari resi atau invoice',
-                            prefixIcon: const Icon(Icons.search_outlined),
+        child: RefreshIndicator(
+          onRefresh: inventoryCubit.fetchPrepareShipments,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                actions: const <Widget>[
+                  NotificationIconButton(),
+                  SizedBox(width: 16),
+                ],
+                expandedHeight: kToolbarHeight + kSpaceBarHeight,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            onChanged: (value) => debouncer.run(() =>
+                                inventoryCubit.fetchPrepareShipments(
+                                    search: search = value)),
+                            decoration: const InputDecoration(
+                              hintText: 'Cari resi atau invoice',
+                              prefixIcon: const Icon(Icons.search_outlined),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      DecoratedIconButton(
-                        onTap: () => context.push(prepareGoodsFilterRoute),
-                        icon: const Icon(Icons.add_outlined),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              floating: true,
-              pinned: true,
-              snap: true,
-              title: const Text('Persiapan Barang'),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverToBoxAdapter(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: lightBlue,
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    'Pastikan data di menu Preparation sesuai kapasitas angkutan untuk mencegah overload barang',
-                    style: label[medium].copyWith(color: primaryGradientEnd),
-                  ),
-                ),
-              ),
-            ),
-            BlocBuilder<InventoryCubit, InventoryState>(
-              bloc: inventoryCubit..fetchPrepareShipments(),
-              buildWhen: (previous, current) =>
-                  current is FetchPrepareShipments,
-              builder: (context, state) {
-                if (state is FetchPrepareShipmentsLoading) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: CircularProgressIndicator.adaptive(),
+                        const SizedBox(width: 10),
+                        DecoratedIconButton(
+                          onTap: () => context.push(prepareGoodsFilterRoute),
+                          icon: const Icon(Icons.add_outlined),
+                        ),
+                      ],
                     ),
-                  );
-                }
-
-                if (state is FetchPrepareShipmentsLoaded) {
-                  if (state.batches.isEmpty) {
-                    return SliverFillRemaining(
+                  ),
+                ),
+                floating: true,
+                pinned: true,
+                snap: true,
+                title: const Text('Persiapan Barang'),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverToBoxAdapter(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: lightBlue,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      'Pastikan data di menu Preparation sesuai kapasitas angkutan untuk mencegah overload barang',
+                      style: label[medium].copyWith(color: primaryGradientEnd),
+                    ),
+                  ),
+                ),
+              ),
+              BlocBuilder<InventoryCubit, InventoryState>(
+                bloc: inventoryCubit..fetchPrepareShipments(),
+                buildWhen: (previous, current) =>
+                    current is FetchPrepareShipments,
+                builder: (context, state) {
+                  if (state is FetchPrepareShipmentsLoading) {
+                    return const SliverFillRemaining(
                       hasScrollBody: false,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: Center(
-                          child: Text(
-                            'Klik tombol “+” untuk mempersiapkan barang yang ingin dikirim',
-                            style: label[medium]
-                                .copyWith(color: primaryGradientEnd),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
                       ),
                     );
                   }
 
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverList.separated(
-                      itemBuilder: (context, index) => BatchCardActionBadgeItem(
-                        onTap: () => showModalBottomSheet(
-                          context: context,
-                          builder: (context) =>
-                              ShipmentReceiptNumbersBottomSheet(
-                            onSelected: (selectedGood) => context.push(
-                              prepareGoodsDetailRoute,
-                              extra: {
-                                'good': selectedGood.first,
-                                'batchName': state.batches[index].name,
-                                'nextWarehouse':
-                                    state.batches[index].destination,
-                                'estimateAt': state.batches[index].estimateAt,
-                                'shipmentAt': state.batches[index].shipmentAt,
-                              },
+                  if (state is FetchPrepareShipmentsLoaded) {
+                    if (state.batches.isEmpty) {
+                      return SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Center(
+                            child: Text(
+                              'Klik tombol “+” untuk mempersiapkan barang yang ingin dikirim',
+                              style: label[medium]
+                                  .copyWith(color: primaryGradientEnd),
+                              textAlign: TextAlign.center,
                             ),
-                            batch: state.batches[index],
                           ),
                         ),
-                        onDelete: () => showModalBottomSheet(
-                          context: context,
-                          builder: (context) => ActionConfirmationBottomSheet(
-                            onPressed: context.pop,
-                            message:
-                                'Apakah anda yakin akan menghapus barang ini?',
-                          ),
-                        ),
-                        batch: state.batches[index],
-                      ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemCount: state.batches.length,
-                    ),
-                  );
-                }
+                      );
+                    }
 
-                return const SliverToBoxAdapter();
-              },
-            ),
-          ],
+                    return SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      sliver: SliverList.separated(
+                        itemBuilder: (context, index) =>
+                            BatchCardActionBadgeItem(
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) =>
+                                ShipmentReceiptNumbersBottomSheet(
+                              onSelected: (selectedGood) => context.push(
+                                prepareGoodsDetailRoute,
+                                extra: {
+                                  'good': selectedGood.first,
+                                  'batchName': state.batches[index].name,
+                                  'nextWarehouse':
+                                      state.batches[index].destination,
+                                  'estimateAt': state.batches[index].estimateAt,
+                                  'shipmentAt': state.batches[index].shipmentAt,
+                                },
+                              ),
+                              batch: state.batches[index],
+                            ),
+                          ),
+                          onDelete: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) => ActionConfirmationBottomSheet(
+                              onPressed: context.pop,
+                              message:
+                                  'Apakah anda yakin akan menghapus barang ini?',
+                            ),
+                          ),
+                          batch: state.batches[index],
+                        ),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
+                        itemCount: state.batches.length,
+                      ),
+                    );
+                  }
+
+                  return const SliverToBoxAdapter();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -31,131 +31,134 @@ class OnTheWayPage extends StatelessWidget {
 
           return false;
         },
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              actions: const <Widget>[
-                NotificationIconButton(),
-                SizedBox(width: 16),
-              ],
-              expandedHeight: kToolbarHeight + kSpaceBarHeight + 56,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: PrimaryGradientCard(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'Dalam Pengiriman ke ${authCubit.user.warehouse?.name}',
-                                style: paragraphMedium[bold].copyWith(
-                                  color: light,
+        child: RefreshIndicator(
+          onRefresh: inventoryCubit.fetchOnTheWayShipments,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                actions: const <Widget>[
+                  NotificationIconButton(),
+                  SizedBox(width: 16),
+                ],
+                expandedHeight: kToolbarHeight + kSpaceBarHeight + 56,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        SizedBox(
+                          width: double.infinity,
+                          child: PrimaryGradientCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'Dalam Pengiriman ke ${authCubit.user.warehouse?.name}',
+                                  style: paragraphMedium[bold].copyWith(
+                                    color: light,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              BlocBuilder<InventoryCubit, InventoryState>(
-                                buildWhen: (previous, current) =>
-                                    current is FetchOnTheWayShipments,
-                                builder: (context, state) {
-                                  if (state is FetchOnTheWayShipmentsLoaded) {
+                                const SizedBox(height: 8),
+                                BlocBuilder<InventoryCubit, InventoryState>(
+                                  buildWhen: (previous, current) =>
+                                      current is FetchOnTheWayShipments,
+                                  builder: (context, state) {
+                                    if (state is FetchOnTheWayShipmentsLoaded) {
+                                      return Text(
+                                        '${state.batches.length}',
+                                        style: heading5[bold].copyWith(
+                                          color: light,
+                                        ),
+                                      );
+                                    }
+          
                                     return Text(
-                                      '${state.batches.length}',
+                                      '...',
                                       style: heading5[bold].copyWith(
                                         color: light,
                                       ),
                                     );
-                                  }
-
-                                  return Text(
-                                    '...',
-                                    style: heading5[bold].copyWith(
-                                      color: light,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
+                floating: true,
+                pinned: true,
+                snap: true,
+                title: const Text('On The Way'),
               ),
-              floating: true,
-              pinned: true,
-              snap: true,
-              title: const Text('On The Way'),
-            ),
-            BlocBuilder<InventoryCubit, InventoryState>(
-              bloc: inventoryCubit..fetchOnTheWayShipments(),
-              buildWhen: (previous, current) =>
-                  current is FetchOnTheWayShipments,
-              builder: (context, state) {
-                if (state is FetchOnTheWayShipmentsLoading) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                  );
-                }
-
-                if (state is FetchOnTheWayShipmentsLoaded) {
-                  if (state.batches.isEmpty) {
-                    return SliverFillRemaining(
+              BlocBuilder<InventoryCubit, InventoryState>(
+                bloc: inventoryCubit..fetchOnTheWayShipments(),
+                buildWhen: (previous, current) =>
+                    current is FetchOnTheWayShipments,
+                builder: (context, state) {
+                  if (state is FetchOnTheWayShipmentsLoading) {
+                    return const SliverFillRemaining(
                       hasScrollBody: false,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: Center(
-                          child: Text(
-                            'Belum ada barang.',
-                            style: label[medium].copyWith(
-                              color: primaryGradientEnd,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
                       ),
                     );
                   }
-
-                  return SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                    sliver: SliverList.separated(
-                      itemBuilder: (context, index) => BatchCardItem(
-                        onTap: () => showModalBottomSheet(
-                          context: context,
-                          builder: (context) =>
-                              ShipmentReceiptNumbersBottomSheet(
-                            onSelected: (selectedGood) =>
-                                context.push(onTheWayDetailRoute, extra: {
-                              'batchName': state.batches[index].name,
-                              'good': selectedGood.first,
-                              'shipmentAt': state.batches[index].shipmentAt,
-                            }),
-                            batch: state.batches[index],
+          
+                  if (state is FetchOnTheWayShipmentsLoaded) {
+                    if (state.batches.isEmpty) {
+                      return SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Center(
+                            child: Text(
+                              'Belum ada barang.',
+                              style: label[medium].copyWith(
+                                color: primaryGradientEnd,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                        batch: state.batches[index],
+                      );
+                    }
+          
+                    return SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      sliver: SliverList.separated(
+                        itemBuilder: (context, index) => BatchCardItem(
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) =>
+                                ShipmentReceiptNumbersBottomSheet(
+                              onSelected: (selectedGood) =>
+                                  context.push(onTheWayDetailRoute, extra: {
+                                'batchName': state.batches[index].name,
+                                'good': selectedGood.first,
+                                'shipmentAt': state.batches[index].shipmentAt,
+                              }),
+                              batch: state.batches[index],
+                            ),
+                          ),
+                          batch: state.batches[index],
+                        ),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
+                        itemCount: state.batches.length,
                       ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemCount: state.batches.length,
-                    ),
-                  );
-                }
-
-                return const SliverToBoxAdapter();
-              },
-            )
-          ],
+                    );
+                  }
+          
+                  return const SliverToBoxAdapter();
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
