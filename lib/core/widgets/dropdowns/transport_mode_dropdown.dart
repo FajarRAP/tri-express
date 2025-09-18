@@ -30,7 +30,7 @@ class _TransportModeDropdownState extends State<TransportModeDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownModal(
-      title: 'Jalur',
+      title: 'Jalur Pengiriman',
       child: Expanded(
         child: BlocBuilder<CoreCubit, CoreState>(
           bloc: _coreCubit,
