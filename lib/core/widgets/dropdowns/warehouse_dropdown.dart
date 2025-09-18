@@ -10,9 +10,11 @@ class WarehouseDropdown extends StatefulWidget {
   const WarehouseDropdown({
     super.key,
     required this.onTap,
+    this.titleSuffix = '',
   });
 
   final void Function(DropdownEntity warehouse) onTap;
+  final String titleSuffix;
 
   @override
   State<WarehouseDropdown> createState() => _WarehouseDropdownState();
@@ -30,7 +32,7 @@ class _WarehouseDropdownState extends State<WarehouseDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownModal(
-      title: 'Gudang Asal',
+      title: 'Gudang ${widget.titleSuffix}'.trim(),
       child: Expanded(
         child: BlocBuilder<CoreCubit, CoreState>(
           bloc: _coreCubit,
