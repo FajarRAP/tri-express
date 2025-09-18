@@ -6,7 +6,6 @@ import '../../../../core/fonts/fonts.dart';
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constants.dart';
-import '../../../../core/utils/debouncer.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
 import '../../../../core/widgets/primary_gradient_card.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
@@ -21,7 +20,6 @@ class OnTheWayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
     final inventoryCubit = context.read<InventoryCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 300));
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
@@ -40,7 +38,7 @@ class OnTheWayPage extends StatelessWidget {
                 NotificationIconButton(),
                 SizedBox(width: 16),
               ],
-              expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
+              expandedHeight: kToolbarHeight + kSpaceBarHeight + 56,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   alignment: Alignment.bottomCenter,
@@ -68,29 +66,22 @@ class OnTheWayPage extends StatelessWidget {
                                   if (state is FetchOnTheWayShipmentsLoaded) {
                                     return Text(
                                       '${state.batches.length}',
-                                      style:
-                                          heading5[bold].copyWith(color: light),
+                                      style: heading5[bold].copyWith(
+                                        color: light,
+                                      ),
                                     );
                                   }
 
                                   return Text(
                                     '...',
-                                    style:
-                                        heading5[bold].copyWith(color: light),
+                                    style: heading5[bold].copyWith(
+                                      color: light,
+                                    ),
                                   );
                                 },
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      TextField(
-                        onChanged: (value) => debouncer.run(() => inventoryCubit
-                            .fetchOnTheWayShipments(search: value)),
-                        decoration: const InputDecoration(
-                          hintText: 'Cari resi atau invoice',
-                          prefixIcon: const Icon(Icons.search_outlined),
                         ),
                       ),
                     ],
@@ -134,6 +125,7 @@ class OnTheWayPage extends StatelessWidget {
                       ),
                     );
                   }
+
                   return SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                     sliver: SliverList.separated(
@@ -160,7 +152,7 @@ class OnTheWayPage extends StatelessWidget {
                   );
                 }
 
-                return const SizedBox();
+                return const SliverToBoxAdapter();
               },
             )
           ],
