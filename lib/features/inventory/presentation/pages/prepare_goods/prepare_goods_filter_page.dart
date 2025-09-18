@@ -23,11 +23,12 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   late final TextEditingController _warehouseController;
   DropdownEntity? _selectedTransportMode;
   DropdownEntity? _selectedWarehouse;
+  DateTime? _selectedEstimateDate;
 
   @override
   void initState() {
     super.initState();
-    _batchNameController = TextEditingController(text: 'NAMA BATCHNYA');
+    _batchNameController = TextEditingController();
     _estimateDateController = TextEditingController();
     _transportModeController = TextEditingController();
     _warehouseController = TextEditingController();
@@ -66,11 +67,13 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                     setState(() => _selectedWarehouse = warehouse);
                     context.pop();
                   },
+                  titleSuffix: 'Tujuan',
                 ),
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
-                labelText: 'Pilih Gudang Asal',
+                hintText: 'Pilih Gudang Tujuan',
+                labelText: 'Pilih Gudang Tujuan',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
               readOnly: true,
@@ -89,6 +92,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
               ),
               controller: _transportModeController,
               decoration: const InputDecoration(
+                hintText: 'Pilih Jalur Pengiriman',
                 labelText: 'Pilih Jalur Pengiriman',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
@@ -106,6 +110,19 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onTap: () async {
+                final selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (selectedDate == null) return;
+
+                _selectedEstimateDate = selectedDate;
+                _estimateDateController.text = selectedDate.toDDMMMMYYYY;
+              },
+              controller: _estimateDateController,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Estimasi Tiba',
