@@ -118,6 +118,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final firstIndex = index * 2;
                     final secondIndex = firstIndex + 1;
+                    final isOdd = secondIndex < good.uniqueCodes.length;
 
                     return Row(
                       children: <Widget>[
@@ -128,10 +129,12 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: Text(
-                            good.uniqueCodes[secondIndex],
-                            style: label[medium].copyWith(color: black),
-                          ),
+                          child: isOdd
+                              ? Text(
+                                  good.uniqueCodes[secondIndex],
+                                  style: label[medium].copyWith(color: black),
+                                )
+                              : const SizedBox(),
                         ),
                       ],
                     );
