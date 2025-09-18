@@ -6,7 +6,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -79,6 +81,98 @@ void main() {
 
           // assert
           expect(result, isA<List<BatchEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch inventories remote data sources test',
+    () {
+      const params =
+          FetchInventoriesUseCaseParams(page: 1, perPage: 10, search: '');
+      test(
+        'should return List<BatchEntity> when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString = fixtureReader('data_sources/get_inventories.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters'))).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result =
+              await inventoryRemoteDataSources.fetchInventories(params: params);
+
+          // assert
+          expect(result, isA<List<BatchEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch prepare shipments remote data sources test',
+    () {
+      const params =
+          FetchPrepareShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
+      test(
+        'should return List<BatchEntity> when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_prepare_shipments.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters'))).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result = await inventoryRemoteDataSources.fetchPrepareShipments(
+              params: params);
+
+          // assert
+          expect(result, isA<List<BatchEntity>>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch inventories count remote data sources test',
+    () {
+      test(
+        'should return int when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_inventories_count.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.get(any())).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result =
+              await inventoryRemoteDataSources.fetchInventoriesCount();
+
+          // assert
+          expect(result, isA<int>());
         },
       );
     },
