@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +13,7 @@ import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/warehouse_entity.dart';
 import '../../features/inventory/presentation/pages/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
+import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
@@ -24,6 +27,7 @@ import '../../features/inventory/presentation/pages/receive_goods/receive_goods_
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_scan_page.dart';
+import '../../features/inventory/presentation/pages/send_goods/send_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_scan_page.dart';
@@ -51,6 +55,7 @@ const prepareGoodsDetailRoute = '$prepareGoodsRoute/detail';
 const sendGoodsRoute = '/send-goods';
 const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
 const sendGoodsScanRoute = '$sendGoodsRoute/scan';
+const sendGoodsDetailRoute = '$sendGoodsRoute/detail';
 const pickUpGoodsRoute = '/pick-up-goods';
 const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute/confirmation';
 const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
@@ -58,7 +63,7 @@ const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
 const onTheWayRoute = '/on-the-way';
 const onTheWayDetailRoute = '/on-the-way-detail';
 const batchDetailRoute = '/batch-detail';
-const itemDetailRoute = '/item';
+const itemDetailRoute = '/item-detail';
 
 const inventoryRoute = '/inventory';
 const inventoryDetailRoute = '/inventory-detail';
@@ -70,16 +75,42 @@ const notificationRoute = '/notification';
 const scanBarcodeRoute = '/scan-barcode';
 const scanBarcodeInnerRoute = '/scan-barcode-inner';
 
+class GoRouterObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    final isScan = route.settings.name == 'scan';
+    final method = isScan ? inScannablePageMethod : notInScannablePageMethod;
+
+    platform.invokeMethod(method);
+    log('didPush: ${route.settings.name}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    final isPrevScan = previousRoute?.settings.name == 'scan';
+    final method =
+        isPrevScan ? inScannablePageMethod : notInScannablePageMethod;
+    platform.invokeMethod(method);
+    log('didPop: ${route.settings.name}');
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    log('didRemove: $route');
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    log('didReplace: $newRoute');
+  }
+}
+
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: initialLocation,
-  redirect: (context, state) {
-    scannablePage.contains(state.uri.path)
-        ? platform.invokeMethod<bool>(inScannablePageMethod)
-        : platform.invokeMethod<bool>(notInScannablePageMethod);
-
-    return null;
-  },
+  observers: [
+    GoRouterObserver(),
+  ],
   routes: <RouteBase>[
     GoRoute(
       path: '/onboarding',
@@ -195,6 +226,19 @@ final router = GoRouter(
           path: 'scan',
           builder: (context, state) => const SendGoodsScanPage(),
         ),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final good = extras['good'] as GoodEntity;
+            final batch = extras['batch'] as BatchEntity;
+
+            return SendGoodsDetailPage(
+              batch: batch,
+              good: good,
+            );
+          },
+        )
       ],
     ),
     // Pick Up Goods
@@ -243,6 +287,11 @@ final router = GoRouter(
           good: good,
         );
       },
+    ),
+
+    GoRoute(
+      path: '/item-detail',
+      builder: (context, state) => const ItemDetailPage(itemId: ''),
     ),
 
     GoRoute(
