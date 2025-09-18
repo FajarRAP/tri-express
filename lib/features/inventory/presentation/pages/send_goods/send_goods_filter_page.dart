@@ -63,8 +63,8 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
-                hintText: 'Pilih Gudang Asal',
-                labelText: 'Pilih Gudang Asal',
+                hintText: 'Pilih Gudang Tujuan',
+                labelText: 'Pilih Gudang Tujuan',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
               readOnly: true,
