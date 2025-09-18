@@ -1,0 +1,343 @@
+{
+    "status": "Success",
+    "message": "data prepare",
+    "data": {
+        "meta": {
+            "current_page": 1,
+            "last_page": 1,
+            "per_page": 15,
+            "total": 1
+        },
+        "data": [
+            {
+                "shipment_id": 51,
+                "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                "warehouse": {
+                    "id": "019903c3-ca54-7183-96d2-381bce035072",
+                    "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                    "kode": "MHUO",
+                    "title": "Gudang Pekalongan",
+                    "no_telp": "(+62) 758 8958 1894",
+                    "alamat": "Jr. Krakatau No. 972",
+                    "longitude": "126.409562",
+                    "latitude": "-9.319892",
+                    "keterangan": "Eligendi eos quis reiciendis eum est.",
+                    "created_at": "2025-09-01T05:33:07.000000Z",
+                    "updated_at": "2025-09-01T05:33:07.000000Z"
+                },
+                "next_warehouse_id": "019903c3-ca64-73c3-be09-135d99930c5a",
+                "next_warehouse": {
+                    "id": "019903c3-ca64-73c3-be09-135d99930c5a",
+                    "negara_id": "019903c3-c9b4-70c5-85af-9bfd0dd9d1b6",
+                    "kode": "WKMZ",
+                    "title": "Gudang Depok",
+                    "no_telp": "0457 8195 6157",
+                    "alamat": "Ds. Bara Tambar No. 334",
+                    "longitude": "127.014287",
+                    "latitude": "-10.549663",
+                    "keterangan": "Enim fugiat nisi mollitia occaecati.",
+                    "created_at": "2025-09-01T05:33:07.000000Z",
+                    "updated_at": "2025-09-01T05:33:07.000000Z"
+                },
+                "shipment_date": "2025-09-13T17:00:00.000000Z",
+                "delivery_date": null,
+                "estimate_date": "2025-09-14",
+                "receive_date": null,
+                "tracking_number": "SHIP.2509142043858",
+                "batch_code": "coba2",
+                "marking_code": null,
+                "shipment_code": "TU/MHUO/WKMZ",
+                "status": 1,
+                "status_label": "Siap Dikirim",
+                "type": 2,
+                "type_label": "Udara",
+                "receive_qty": 0,
+                "delivery_qty": 0,
+                "prepare_qty": 15,
+                "total_units": 15,
+                "items": [
+                    {
+                        "batch_tracking_number": "TRI.2509142043235",
+                        "count": 15,
+                        "count_all": 15,
+                        "receipt_item": {
+                            "id": 71,
+                            "receipt_id": 57,
+                            "item_name": "coba",
+                            "quantity": 15,
+                            "group_code": "coba|12|11x12x22",
+                            "group_label": "coba - 12 kg - 11x12x22 cm",
+                            "berat": 12,
+                            "panjang": 11,
+                            "lebar": 12,
+                            "tinggi": 22,
+                            "berat_volume": "0.40",
+                            "pembagi": "7800.00",
+                            "volume_used_total": "180.00",
+                            "berat_volume_total": "6.00",
+                            "berat_total": "180.00",
+                            "volume_total": "43560.00",
+                            "volume_used": "12.00",
+                            "jalur": 5,
+                            "price": "12.00",
+                            "price_total": "180.00",
+                            "keterangan": "tes",
+                            "created_at": "2025-09-12T08:46:23.000000Z",
+                            "updated_at": "2025-09-12T08:46:23.000000Z",
+                            "jalur_label": "Kereta Lokal",
+                            "transport": {
+                                "id": 5,
+                                "name": "Kereta Lokal",
+                                "value": 7800,
+                                "status": 1,
+                                "created_at": "2025-09-02T04:44:01.000000Z",
+                                "updated_at": "2025-09-02T04:44:01.000000Z"
+                            }
+                        },
+                        "receipt": {
+                            "id": 57,
+                            "customer_id": "019903c3-d112-7024-a11b-4ff980a4ed52",
+                            "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                            "destination_warehouse_id": "019903c3-ca64-73c3-be09-135d99930c5a",
+                            "invoice_code": "INV.2509121546117",
+                            "receipt_date": "2025-09-11T17:00:00.000000Z",
+                            "price_all": "180.00",
+                            "volume_all": "180.00",
+                            "jalur": 1,
+                            "created_at": "2025-09-12T08:46:23.000000Z",
+                            "updated_at": "2025-09-12T08:46:23.000000Z",
+                            "customer": {
+                                "id": "019903c3-d112-7024-a11b-4ff980a4ed52",
+                                "negara_id": "019903c3-c9c1-7206-9cf5-ff4916c11633",
+                                "kode": "CUST000002",
+                                "nama": "Prayoga Napitupulu",
+                                "no_telp": "0295 2937 386",
+                                "alamat": "Kpg. Monginsidi No. 867",
+                                "jenis": 1,
+                                "keterangan": null,
+                                "latitude": null,
+                                "longitude": null,
+                                "provinsi_id": null,
+                                "kota_id": null,
+                                "kecamatan_id": null,
+                                "desa_id": null,
+                                "created_at": "2025-09-01T05:33:08.000000Z",
+                                "updated_at": "2025-09-01T05:33:08.000000Z"
+                            },
+                            "warehouse": {
+                                "id": "019903c3-ca54-7183-96d2-381bce035072",
+                                "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                                "kode": "MHUO",
+                                "title": "Gudang Pekalongan",
+                                "no_telp": "(+62) 758 8958 1894",
+                                "alamat": "Jr. Krakatau No. 972",
+                                "longitude": "126.409562",
+                                "latitude": "-9.319892",
+                                "keterangan": "Eligendi eos quis reiciendis eum est.",
+                                "created_at": "2025-09-01T05:33:07.000000Z",
+                                "updated_at": "2025-09-01T05:33:07.000000Z"
+                            },
+                            "destination_warehouse": {
+                                "id": "019903c3-ca64-73c3-be09-135d99930c5a",
+                                "negara_id": "019903c3-c9b4-70c5-85af-9bfd0dd9d1b6",
+                                "kode": "WKMZ",
+                                "title": "Gudang Depok",
+                                "no_telp": "0457 8195 6157",
+                                "alamat": "Ds. Bara Tambar No. 334",
+                                "longitude": "127.014287",
+                                "latitude": "-10.549663",
+                                "keterangan": "Enim fugiat nisi mollitia occaecati.",
+                                "created_at": "2025-09-01T05:33:07.000000Z",
+                                "updated_at": "2025-09-01T05:33:07.000000Z"
+                            }
+                        },
+                        "units": [
+                            {
+                                "unique_code": "A00000000688",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000689",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000690",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000691",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000692",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000693",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000694",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000695",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000696",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000697",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000698",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000699",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000700",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000701",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000702",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            }
+                        ],
+                        "units_all": [
+                            {
+                                "unique_code": "A00000000688",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000689",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000690",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000691",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000692",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000693",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000694",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000695",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000696",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000697",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000698",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000699",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000700",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000701",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            },
+                            {
+                                "unique_code": "A00000000702",
+                                "status": 1,
+                                "status_label": "Siap Dikirim",
+                                "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
