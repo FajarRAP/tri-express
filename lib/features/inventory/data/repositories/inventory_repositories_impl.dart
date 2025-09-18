@@ -100,7 +100,7 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipmentss(
+  Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipments(
       {required FetchPrepareShipmentsUseCaseParams params}) async {
     try {
       final result = await inventoryRemoteDataSources.fetchPrepareShipments(
