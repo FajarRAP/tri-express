@@ -6,7 +6,9 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../data_sources/inventory_remote_data_sources.dart';
 
@@ -37,9 +39,43 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchInventories() {
-    // TODO: implement fetchInventories
-    throw UnimplementedError();
+  Future<Either<Failure, List<BatchEntity>>> fetchInventories(
+      {required FetchInventoriesUseCaseParams params}) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchInventories(params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> fetchInventoriesCount() async {
+    try {
+      final result = await inventoryRemoteDataSources.fetchInventoriesCount();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
   }
 
   @override
@@ -64,9 +100,24 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipmentss() {
-    // TODO: implement fetchPrepareShipmentss
-    throw UnimplementedError();
+  Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipmentss(
+      {required FetchPrepareShipmentsUseCaseParams params}) async {
+    try {
+      final result = await inventoryRemoteDataSources.fetchPrepareShipments(
+          params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
   }
 
   @override

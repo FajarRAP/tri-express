@@ -9,17 +9,19 @@ class ListPaginate extends InventoryState {}
 
 class FetchDeliveryShipments extends InventoryState {}
 
+class FetchInventories extends InventoryState {}
+
+class FetchInventoriesCount extends InventoryState {}
+
 class FetchOnTheWayShipments extends InventoryState {}
+
+class FetchPickUpShipments extends InventoryState {}
 
 class FetchPrepareShipments extends InventoryState {}
 
 class FetchReceiveShipments extends InventoryState {}
 
-class FetchPickUpShipments extends InventoryState {}
-
 class FetchShipmentReceiptNumbers extends InventoryState {}
-
-class SearchShipments extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
 
@@ -121,16 +123,30 @@ class FetchOnTheWayShipmentsError extends FetchOnTheWayShipments {
   final String message;
 }
 
-class SearchShipmentsLoading extends SearchShipments {}
+class FetchInventoriesLoading extends FetchInventories {}
 
-class SearchShipmentsLoaded extends SearchShipments {
-  SearchShipmentsLoaded({required this.batches});
+class FetchInventoriesLoaded extends FetchInventories {
+  FetchInventoriesLoaded({required this.batches});
 
   final List<BatchEntity> batches;
 }
 
-class SearchShipmentsError extends SearchShipments {
-  SearchShipmentsError({required this.message});
+class FetchInventoriesError extends FetchInventories {
+  FetchInventoriesError({required this.message});
+
+  final String message;
+}
+
+class FetchInventoriesCountLoading extends FetchInventoriesCount {}
+
+class FetchInventoriesCountLoaded extends FetchInventoriesCount {
+  FetchInventoriesCountLoaded({required this.count});
+
+  final int count;
+}
+
+class FetchInventoriesCountError extends FetchInventoriesCount {
+  FetchInventoriesCountError({required this.message});
 
   final String message;
 }

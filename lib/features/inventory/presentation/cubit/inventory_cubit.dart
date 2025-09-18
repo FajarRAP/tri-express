@@ -1,9 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/use_case/use_case.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
+import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 
 part 'inventory_state.dart';
@@ -11,20 +15,31 @@ part 'inventory_state.dart';
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
     required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
+    required FetchInventoriesUseCase fetchInventoriesUseCase,
+    required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
     required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
+    required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
   })  : _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
+        _fetchInventoriesUseCase = fetchInventoriesUseCase,
+        _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
+        _fetchPrepareShipmentsUseCase = fetchPrepareShipmentsUseCase,
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         super(InventoryInitial());
 
   final FetchDeliveryShipmentsUseCase _fetchDeliveryShipmentsUseCase;
+  final FetchInventoriesUseCase _fetchInventoriesUseCase;
+  final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
   final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
+  final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
   final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
 
   var _currentPage = 1;
   final _deliveryBatches = <BatchEntity>[];
+  final _inventories = <BatchEntity>[];
   final _onTheWayBatches = <BatchEntity>[];
+  final _prepareBatches = <BatchEntity>[];
   final _receiveBatches = <BatchEntity>[];
 
   Future<void> fetchDeliveryShipments() async {
@@ -54,6 +69,53 @@ class InventoryCubit extends Cubit<InventoryState> {
             ? emit(ListPaginateLast(currentPage: _currentPage = 1))
             : emit(FetchDeliveryShipmentsLoaded(
                 batches: _deliveryBatches..addAll(batches))));
+  }
+
+  Future<void> fetchInventories({String? search}) async {
+    emit(FetchInventoriesLoading());
+
+    final params = FetchInventoriesUseCaseParams(
+      page: _currentPage = 1,
+      search: search,
+    );
+    final result = await _fetchInventoriesUseCase(params);
+
+    result.fold(
+      (failure) => emit(FetchInventoriesError(message: failure.message)),
+      (batches) => emit(FetchInventoriesLoaded(
+          batches: _inventories
+            ..clear()
+            ..addAll(batches))),
+    );
+  }
+
+  Future<void> fetchInventoriesCount() async {
+    emit(FetchInventoriesCountLoading());
+
+    final result = await _fetchInventoriesCountUseCase(NoParams());
+
+    result.fold(
+      (failure) => emit(FetchInventoriesCountError(message: failure.message)),
+      (count) => emit(FetchInventoriesCountLoaded(count: count)),
+    );
+  }
+
+  Future<void> fetchInventoriesPaginate({String? search}) async {
+    emit(ListPaginateLoading());
+
+    final params = FetchInventoriesUseCaseParams(
+      page: ++_currentPage,
+      search: search,
+    );
+    final result = await _fetchInventoriesUseCase(params);
+
+    result.fold(
+      (failure) => emit(ListPaginateError(message: failure.message)),
+      (batches) => batches.isEmpty
+          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
+          : emit(
+              FetchInventoriesLoaded(batches: _inventories..addAll(batches))),
+    );
   }
 
   Future<void> fetchOnTheWayShipments({String? search}) async {
@@ -89,6 +151,42 @@ class InventoryCubit extends Cubit<InventoryState> {
           ? emit(ListPaginateLast(currentPage: _currentPage = 1))
           : emit(FetchOnTheWayShipmentsLoaded(
               batches: _onTheWayBatches..addAll(batches))),
+    );
+  }
+
+  Future<void> fetchPrepareShipments({String? search}) async {
+    emit(FetchPrepareShipmentsLoading());
+
+    final params = FetchPrepareShipmentsUseCaseParams(
+      page: _currentPage = 1,
+      search: search,
+    );
+    final result = await _fetchPrepareShipmentsUseCase(params);
+
+    result.fold(
+      (failure) => emit(FetchPrepareShipmentsError(message: failure.message)),
+      (batches) => emit(FetchPrepareShipmentsLoaded(
+          batches: _prepareBatches
+            ..clear()
+            ..addAll(batches))),
+    );
+  }
+
+  Future<void> fetchPrepareShipmentsPaginate({String? search}) async {
+    emit(ListPaginateLoading());
+
+    final params = FetchPrepareShipmentsUseCaseParams(
+      page: ++_currentPage,
+      search: search,
+    );
+    final result = await _fetchPrepareShipmentsUseCase(params);
+
+    result.fold(
+      (failure) => emit(ListPaginateError(message: failure.message)),
+      (batches) => batches.isEmpty
+          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
+          : emit(FetchPrepareShipmentsLoaded(
+              batches: _prepareBatches..addAll(batches))),
     );
   }
 
@@ -128,6 +226,5 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchPrepareShipments() async {}
   Future<void> fetchPickUpShipments({String? search}) async {}
 }
