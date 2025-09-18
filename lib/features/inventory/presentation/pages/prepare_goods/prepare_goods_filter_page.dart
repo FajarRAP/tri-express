@@ -119,7 +119,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                 );
                 if (selectedDate == null) return;
 
-                _selectedEstimateDate = selectedDate;
+                setState(() => _selectedEstimateDate = selectedDate);
                 _estimateDateController.text = selectedDate.toDDMMMMYYYY;
               },
               controller: _estimateDateController,
@@ -132,22 +132,26 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onChanged: (value) => setState(() {}),
               controller: _batchNameController,
               decoration: const InputDecoration(
                 labelText: 'Batch',
+                hintText: 'Masukkan nama batch',
               ),
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed:
-                    _selectedWarehouse == null || _selectedTransportMode == null
-                        ? null
-                        : () => context.push(
-                              prepareGoodsScanRoute,
-                              extra: _batchNameController.text,
-                            ),
+                onPressed: _selectedWarehouse == null ||
+                        _selectedTransportMode == null ||
+                        _selectedEstimateDate == null ||
+                        _batchNameController.text.isEmpty
+                    ? null
+                    : () => context.push(
+                          prepareGoodsScanRoute,
+                          extra: _batchNameController.text,
+                        ),
                 child: const Text('Simpan'),
               ),
             ),

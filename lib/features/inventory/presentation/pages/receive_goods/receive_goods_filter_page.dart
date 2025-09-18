@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class ReceiveGoodsFilterPage extends StatefulWidget {
   const ReceiveGoodsFilterPage({super.key});
@@ -52,6 +52,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                     setState(() => _selectedWarehouse = warehouse);
                     context.pop();
                   },
+                  titleSuffix: 'Asal',
                 ),
               ),
               controller: _warehouseController,

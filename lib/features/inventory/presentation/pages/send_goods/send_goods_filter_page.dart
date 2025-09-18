@@ -59,6 +59,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                     setState(() => _selectedWarehouse = warehouse);
                     context.pop();
                   },
+                  titleSuffix: 'Tujuan',
                 ),
               ),
               controller: _warehouseController,
@@ -97,6 +98,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                 suffixIcon: Icon(Icons.calendar_month_outlined),
               ),
               initialValue: DateTime.now().toDDMMMMYYYY,
+              readOnly: true,
             ),
             const SizedBox(height: 24),
             SizedBox(
