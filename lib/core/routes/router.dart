@@ -6,14 +6,17 @@ import '../../features/core/presentation/pages/home_page.dart';
 import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/core/presentation/pages/scan_barcode_page.dart';
+import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
+import '../../features/inventory/domain/entities/warehouse_entity.dart';
+import '../../features/inventory/presentation/pages/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
-import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_scan_page.dart';
+import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
@@ -44,6 +47,7 @@ const receiveGoodsDetailRoute = '$receiveGoodsRoute/detail';
 const prepareGoodsRoute = '/prepare-goods';
 const prepareGoodsFilterRoute = '$prepareGoodsRoute/filter';
 const prepareGoodsScanRoute = '$prepareGoodsRoute/scan';
+const prepareGoodsDetailRoute = '$prepareGoodsRoute/detail';
 const sendGoodsRoute = '/send-goods';
 const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
 const sendGoodsScanRoute = '$sendGoodsRoute/scan';
@@ -57,6 +61,7 @@ const batchDetailRoute = '/batch-detail';
 const itemDetailRoute = '/item';
 
 const inventoryRoute = '/inventory';
+const inventoryDetailRoute = '/inventory-detail';
 
 const settingRoute = '/setting';
 
@@ -156,6 +161,25 @@ final router = GoRouter(
             batchName: '${state.extra}',
           ),
         ),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final good = extras['good'] as GoodEntity;
+            final batchName = extras['batchName'] as String;
+            final nextWarehouse = extras['nextWarehouse'] as WarehouseEntity;
+            final estimateAt = extras['estimateAt'] as DateTime;
+            final shipmentAt = extras['shipmentAt'] as DateTime;
+
+            return PrepareGoodsDetailPage(
+              batchName: batchName,
+              good: good,
+              nextWarehouse: nextWarehouse,
+              estimateAt: estimateAt,
+              shipmentAt: shipmentAt,
+            );
+          },
+        ),
       ],
     ),
     // Send Goods
@@ -205,12 +229,20 @@ final router = GoRouter(
         );
       },
     ),
-    // Good Detail
+
+    // Inventory Detail
     GoRoute(
-      path: '/item/:itemId',
-      builder: (context, state) => ItemDetailPage(
-        itemId: '${state.pathParameters['itemId']}',
-      ),
+      path: '/inventory-detail',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final good = extras['good'] as GoodEntity;
+        final batch = extras['batch'] as BatchEntity;
+
+        return InventoryDetailPage(
+          batch: batch,
+          good: good,
+        );
+      },
     ),
 
     GoRoute(
