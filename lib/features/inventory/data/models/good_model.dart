@@ -25,7 +25,7 @@ class GoodModel extends GoodEntity {
       invoiceNumber: json['receipt']['invoice_code'],
       name: json['receipt_item']['item_name'],
       transportMode: json['receipt_item']['jalur_label'],
-      totalItem: json['count_all'],
+      totalItem: json['count'],
       customer: CustomerModel.fromJson(json['receipt']['customer']).toEntity(),
       origin: WarehouseModel.fromJson(json['receipt']['warehouse']).toEntity(),
       destination:
