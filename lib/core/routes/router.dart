@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/core/presentation/pages/home_page.dart';
+import '../../features/core/presentation/pages/mobile_scanner_simple_page.dart';
 import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
-import '../../features/core/presentation/pages/scan_barcode_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/warehouse_entity.dart';
@@ -135,7 +135,9 @@ final router = GoRouter(
         ),
         GoRoute(
           path: '/scan-barcode',
-          builder: (context, state) => const ScanBarcodePage(),
+          builder: (context, state) => MobileScannerSimplePage(
+            onDetect: (barcode) {},
+          ),
         ),
         GoRoute(
           path: '/inventory',
@@ -166,7 +168,7 @@ final router = GoRouter(
             final extras = state.extra as Map<String, dynamic>;
             final good = extras['good'] as GoodEntity;
             final batchName = extras['batchName'] as String;
-            final receiveAt = extras['receiveAt'] as DateTime;
+            final receiveAt = extras['receiveAt'] as DateTime?;
 
             return ReceiveGoodsDetailPage(
               batchName: batchName,
@@ -301,7 +303,8 @@ final router = GoRouter(
 
     GoRoute(
       path: '/scan-barcode-inner',
-      builder: (context, state) => const ScanBarcodePage(),
+      builder: (context, state) =>
+          MobileScannerSimplePage(onDetect: context.pop),
     ),
   ],
 );
