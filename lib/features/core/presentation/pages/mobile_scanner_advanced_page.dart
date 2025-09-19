@@ -20,15 +20,15 @@ enum _PopupMenuItems {
 }
 
 /// Implementation of Mobile Scanner example with advanced configuration
-class MobileScannerAdvanced extends StatefulWidget {
+class MobileScannerAdvancedPage extends StatefulWidget {
   /// Constructor for advanced Mobile Scanner example
-  const MobileScannerAdvanced({super.key});
+  const MobileScannerAdvancedPage({super.key});
 
   @override
-  State<MobileScannerAdvanced> createState() => _MobileScannerAdvancedState();
+  State<MobileScannerAdvancedPage> createState() => _MobileScannerAdvancedState();
 }
 
-class _MobileScannerAdvancedState extends State<MobileScannerAdvanced> {
+class _MobileScannerAdvancedState extends State<MobileScannerAdvancedPage> {
   MobileScannerController? controller;
 
   // A scan window does work on web, but not the overlay to preview the scan
