@@ -21,6 +21,8 @@ class BatchModel extends BatchEntity {
 
   factory BatchModel.fromJson(Map<String, dynamic> json) {
     final goods = List<Map<String, dynamic>>.from(json['items'] ?? []);
+    final goodEntities =
+        goods.map((e) => GoodModel.fromJson(e).toEntity()).toList();
 
     return BatchModel(
       id: '${json['shipment_id']}',
@@ -28,15 +30,16 @@ class BatchModel extends BatchEntity {
       status: json['status_label'],
       transportMode: json['type_label'],
       trackingNumber: json['tracking_number'],
-      totalAllUnits: json['total_units'],
-      goods: goods.map((e) => GoodModel.fromJson(e).toEntity()).toList(),
+      totalAllUnits: json['total_units'] ??
+          goodEntities.fold<int>(0, (prev, e) => prev + e.totalItem),
+      goods: goodEntities,
       origin: WarehouseModel.fromJson(json['warehouse']).toEntity(),
       destination: WarehouseModel.fromJson(json['next_warehouse']).toEntity(),
-      deliveryAt: json['delivery_date'] == null
+      deliveryAt: json['delivery_date'] == null || json['delivery_date'] == ''
           ? null
           : DateTime.parse(json['delivery_date']),
       estimateAt: DateTime.parse(json['estimate_date']),
-      receiveAt: json['receive_date'] == null
+      receiveAt: json['receive_date'] == null || json['receive_date'] == ''
           ? null
           : DateTime.parse(json['receive_date']),
       shipmentAt: DateTime.parse(json['shipment_date']),
