@@ -17,7 +17,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
 
   final String batchName;
   final GoodEntity good;
-  final DateTime receiveAt;
+  final DateTime? receiveAt;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 InfoTile(
                   title: 'Tanggal Terima',
-                  value: receiveAt.toDDMMMMYYYY,
+                  value: receiveAt == null ? '-' : receiveAt!.toDDMMMMYYYY,
                 ),
                 const SizedBox(height: 8),
                 InfoTile(
