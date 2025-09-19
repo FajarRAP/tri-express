@@ -15,6 +15,8 @@ class FetchInventoriesCount extends InventoryState {}
 
 class FetchOnTheWayShipments extends InventoryState {}
 
+class FetchPreviewReceiveShipments extends InventoryState {}
+
 class FetchPickUpShipments extends InventoryState {}
 
 class FetchPrepareShipments extends InventoryState {}
@@ -22,6 +24,8 @@ class FetchPrepareShipments extends InventoryState {}
 class FetchReceiveShipments extends InventoryState {}
 
 class FetchShipmentReceiptNumbers extends InventoryState {}
+
+class UHFAction extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
 
@@ -150,3 +154,23 @@ class FetchInventoriesCountError extends FetchInventoriesCount {
 
   final String message;
 }
+
+class FetchPreviewReceiveShipmentsLoading
+    extends FetchPreviewReceiveShipments {}
+
+class FetchPreviewReceiveShipmentsLoaded extends FetchPreviewReceiveShipments {
+  FetchPreviewReceiveShipmentsLoaded({required this.batches});
+
+  final List<BatchEntity> batches;
+}
+
+class FetchPreviewReceiveShipmentsError extends FetchPreviewReceiveShipments {
+  FetchPreviewReceiveShipmentsError({required this.message});
+  final String message;
+}
+
+class ResetUHFScan extends UHFAction {}
+
+class OnUHFScan extends UHFAction {}
+
+class QRCodeScan extends UHFAction {}

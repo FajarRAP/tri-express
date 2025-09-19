@@ -5,6 +5,7 @@ import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
@@ -22,6 +23,8 @@ abstract class InventoryRemoteDataSources {
       {required FetchPrepareShipmentsUseCaseParams params});
   Future<List<BatchEntity>> fetchReceiveShipments(
       {required FetchReceiveShipmentsUseCaseParams params});
+  Future<List<BatchEntity>> fetchPreviewReceiveShipments(
+      {required FetchPreviewReceiveShipmentsUseCaseParams params});
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -148,6 +151,27 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       );
       final contents =
           List<Map<String, dynamic>>.from(response.data['data']['data']);
+
+      return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<BatchEntity>> fetchPreviewReceiveShipments(
+      {required FetchPreviewReceiveShipmentsUseCaseParams params}) async {
+    try {
+      final response = await dio.post(
+        '/receive/preview',
+        data: {
+          'codes': params.uniqueCodes,
+        },
+      );
+
+      final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
     } on DioException catch (de) {

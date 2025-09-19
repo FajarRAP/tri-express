@@ -9,6 +9,7 @@ import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_s
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -173,6 +174,45 @@ void main() {
 
           // assert
           expect(result, isA<int>());
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch preview receive shipments remote data sources test',
+    () {
+      const params = FetchPreviewReceiveShipmentsUseCaseParams(
+        uniqueCodes: [
+          'A00000000787',
+          'A00000000788',
+          'A00000000789',
+          'A00000000790',
+          'A00000000791'
+        ],
+      );
+      test(
+        'should return int when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/get_shipments_from_codes.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result = await inventoryRemoteDataSources
+              .fetchPreviewReceiveShipments(params: params);
+
+          // assert
+          expect(result, isA<List<BatchEntity>>());
+          verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
         },
       );
     },
