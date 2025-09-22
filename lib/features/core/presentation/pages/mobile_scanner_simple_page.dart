@@ -20,27 +20,28 @@ class MobileScannerSimplePage extends StatefulWidget {
 }
 
 class _MobileScannerSimpleState extends State<MobileScannerSimplePage> {
+  late MobileScannerController _controller;
   Barcode? _barcode;
 
-  // Widget _barcodePreview(Barcode? value) {
-  //   if (value == null) {
-  //     return const Text(
-  //       'Scan something!',
-  //       overflow: TextOverflow.fade,
-  //       style: TextStyle(color: light),
-  //     );
-  //   }
+  @override
+  void initState() {
+    super.initState();
+    _controller = MobileScannerController();
+  }
 
-  //   return Text(
-  //     value.displayValue ?? 'No display value.',
-  //     overflow: TextOverflow.fade,
-  //     style: const TextStyle(color: light),
-  //   );
-  // }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _handleBarcode(BarcodeCapture barcodes) {
     if (!mounted) return;
-    // setState(() => _barcode = barcodes.barcodes.firstOrNull);
+
+    final barcode = barcodes.barcodes.firstOrNull;
+    if (barcode == null) return;
+
+    _controller.stop();
     _barcode = barcodes.barcodes.firstOrNull;
     widget.onDetect(_barcode);
   }
@@ -50,7 +51,10 @@ class _MobileScannerSimpleState extends State<MobileScannerSimplePage> {
     return Scaffold(
       body: Stack(
         children: [
-          MobileScanner(onDetect: _handleBarcode),
+          MobileScanner(
+            onDetect: _handleBarcode,
+            controller: _controller,
+          ),
           CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
