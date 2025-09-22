@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -212,6 +213,46 @@ void main() {
 
           // assert
           expect(result, isA<List<BatchEntity>>());
+          verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
+        },
+      );
+    },
+  );
+
+  group(
+    'fetch preview receive shipments remote data sources test',
+    () {
+      final params = CreateReceiveShipmentsUseCaseParams(
+        receivedAt: DateTime.now(),
+        uniqueCodes: [
+          'A00000000787',
+          'A00000000788',
+          'A00000000789',
+          'A00000000790',
+          'A00000000791'
+        ],
+      );
+      test(
+        'should return String when the request status code is 200',
+        () async {
+          // arrange
+          final jsonString =
+              fixtureReader('data_sources/create_receive_shipments.json');
+          final jsonMap = jsonDecode(jsonString);
+          when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+            (_) async => Response(
+              data: jsonMap,
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+            ),
+          );
+
+          // act
+          final result = await inventoryRemoteDataSources
+              .createReceiveShipments(params: params);
+
+          // assert
+          expect(result, isA<String>());
           verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
         },
       );

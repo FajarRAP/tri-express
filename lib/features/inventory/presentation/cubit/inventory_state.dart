@@ -25,6 +25,8 @@ class FetchReceiveShipments extends InventoryState {}
 
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
+class CreateShipments extends InventoryState {}
+
 class UHFAction extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
@@ -166,6 +168,20 @@ class FetchPreviewReceiveShipmentsLoaded extends FetchPreviewReceiveShipments {
 
 class FetchPreviewReceiveShipmentsError extends FetchPreviewReceiveShipments {
   FetchPreviewReceiveShipmentsError({required this.message});
+  final String message;
+}
+
+class CreateShipmentsLoading extends CreateShipments {}
+
+class CreateShipmentsLoaded extends CreateShipments {
+  CreateShipmentsLoaded({required this.message});
+
+  final String message;
+}
+
+class CreateShipmentsError extends CreateShipments {
+  CreateShipmentsError({required this.message});
+
   final String message;
 }
 

@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
 import '../../domain/entities/batch_entity.dart';
+import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
@@ -15,6 +16,7 @@ part 'inventory_state.dart';
 
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
+    required CreateReceiveShipmentsUseCase createReceiveShipmentsUseCase,
     required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
     required FetchInventoriesUseCase fetchInventoriesUseCase,
     required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
@@ -23,7 +25,8 @@ class InventoryCubit extends Cubit<InventoryState> {
         fetchPreviewReceiveShipmentsUseCase,
     required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
-  })  : _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
+  })  : _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
+        _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
         _fetchInventoriesUseCase = fetchInventoriesUseCase,
         _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
@@ -33,6 +36,7 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         super(InventoryInitial());
 
+  final CreateReceiveShipmentsUseCase _createReceiveShipmentsUseCase;
   final FetchDeliveryShipmentsUseCase _fetchDeliveryShipmentsUseCase;
   final FetchInventoriesUseCase _fetchInventoriesUseCase;
   final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
@@ -50,6 +54,22 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _receiveBatches = <BatchEntity>[];
 
   final _previewBatches = <BatchEntity>[];
+
+  Future<void> createReceiveShipments(
+      {required DateTime receivedAt, required List<String> uniqueCodes}) async {
+    emit(CreateShipmentsLoading());
+
+    final params = CreateReceiveShipmentsUseCaseParams(
+      receivedAt: receivedAt,
+      uniqueCodes: uniqueCodes,
+    );
+    final result = await _createReceiveShipmentsUseCase(params);
+
+    result.fold(
+      (failure) => emit(CreateShipmentsError(message: failure.message)),
+      (message) => emit(CreateShipmentsLoaded(message: message)),
+    );
+  }
 
   Future<void> fetchDeliveryShipments({String? search}) async {
     emit(FetchDeliveryShipmentsLoading());
