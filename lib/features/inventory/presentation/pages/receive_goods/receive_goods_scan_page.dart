@@ -47,7 +47,6 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          
           SliverAppBar(
             expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
             flexibleSpace: FlexibleSpaceBar(
@@ -91,8 +90,9 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                           onTap: () async {
                             final result = await context
                                 .push<Barcode>(scanBarcodeInnerRoute);
+                            if (result == null) return;
 
-                            onQRScan('${result?.displayValue}');
+                            onQRScan('${result.displayValue}');
                           },
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
@@ -127,18 +127,31 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                 ..go(menuRoute)
                 ..push(receiveGoodsRoute);
             }
+
+            if (state is CreateShipmentsError) {
+              TopSnackbar.dangerSnackbar(message: state.message);
+            }
           },
           child: TripleFloatingActionButtons(
             onReset: onReset,
             onScan: onScan,
             onSave: () => showModalBottomSheet(
               context: context,
-              builder: (context) => ActionConfirmationBottomSheet(
-                onPressed: () => _inventoryCubit.createReceiveShipments(
-                  receivedAt: DateTime.now(),
-                  uniqueCodes: uhfResults.map((e) => e.epcId).toList(),
-                ),
-                message: 'Apakah anda yakin akan menyimpan barang ini?',
+              builder: (context) => BlocBuilder<InventoryCubit, InventoryState>(
+                builder: (context, state) {
+                  final onPressed = switch (state) {
+                    CreateShipmentsLoading() => null,
+                    _ => () => _inventoryCubit.createReceiveShipments(
+                          receivedAt: DateTime.now(),
+                          uniqueCodes: uhfResults.map((e) => e.epcId).toList(),
+                        ),
+                  };
+
+                  return ActionConfirmationBottomSheet(
+                    onPressed: onPressed,
+                    message: 'Apakah anda yakin akan menyimpan barang ini?',
+                  );
+                },
               ),
             ),
             isScanning: isInventoryRunning,
@@ -191,9 +204,8 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                     onSelected: (selectedGoods) => context.push(
                       receiveGoodsDetailRoute,
                       extra: {
+                        'batch': state.batches[index],
                         'good': selectedGoods.first,
-                        'batchName': state.batches[index].name,
-                        'receiveAt': state.batches[index].receiveAt,
                       },
                     ),
                     batch: state.batches[index],
