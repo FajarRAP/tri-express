@@ -4,20 +4,19 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/base_card.dart';
+import '../../../domain/entities/batch_entity.dart';
 import '../../../domain/entities/good_entity.dart';
 import '../../widgets/info_tile.dart';
 
 class ReceiveGoodsDetailPage extends StatelessWidget {
   const ReceiveGoodsDetailPage({
     super.key,
-    required this.batchName,
+    required this.batch,
     required this.good,
-    required this.receiveAt,
   });
 
-  final String batchName;
+  final BatchEntity batch;
   final GoodEntity good;
-  final DateTime? receiveAt;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,9 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 InfoTile(
                   title: 'Tanggal Terima',
-                  value: receiveAt == null ? '-' : receiveAt!.toDDMMMMYYYY,
+                  value: batch.receivedAt == null
+                      ? '-'
+                      : batch.receivedAt!.toDDMMMMYYYY,
                 ),
                 const SizedBox(height: 8),
                 InfoTile(
@@ -56,7 +57,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 InfoTile(
                   title: 'Batch',
-                  value: batchName,
+                  value: batch.name,
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -118,7 +119,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final firstIndex = index * 2;
                     final secondIndex = firstIndex + 1;
-                    final isOdd = secondIndex < good.uniqueCodes.length;
+                    final isOdd = secondIndex >= good.uniqueCodes.length;
 
                     return Row(
                       children: <Widget>[
@@ -130,11 +131,11 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                         ),
                         Expanded(
                           child: isOdd
-                              ? Text(
+                              ? const SizedBox()
+                              : Text(
                                   good.uniqueCodes[secondIndex],
                                   style: label[medium].copyWith(color: black),
-                                )
-                              : const SizedBox(),
+                                ),
                         ),
                       ],
                     );
