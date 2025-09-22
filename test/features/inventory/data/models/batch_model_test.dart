@@ -24,16 +24,20 @@ void main() {
   final tBatchModel = BatchModel(
     id: 'id',
     name: 'name',
-    status: 'status',
+    status: 1,
+    statusLabel: 'status',
     transportMode: 'mode',
     trackingNumber: 'trackingNumber',
     goods: [],
     origin: tWarehouseModel,
     destination: tWarehouseModel,
+    receivedUnits: 1,
+    preparedUnits: 1,
+    deliveredUnits: 1,
     totalAllUnits: 1,
     deliveryAt: DateTime.now(),
     estimateAt: DateTime.now(),
-    receiveAt: DateTime.now(),
+    receivedAt: DateTime.now(),
     shipmentAt: DateTime.now(),
   );
 
