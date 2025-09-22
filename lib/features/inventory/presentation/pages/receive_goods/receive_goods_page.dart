@@ -9,6 +9,7 @@ import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
@@ -113,12 +114,11 @@ class ReceiveGoodsPage extends StatelessWidget {
                           onTap: () => showModalBottomSheet(
                             builder: (context) =>
                                 ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) => context.push(
+                              onSelected: (selectedGoods) => context.push(
                                 receiveGoodsDetailRoute,
                                 extra: {
-                                  'good': selectedGood.first,
-                                  'batchName': state.batches[index].name,
-                                  'receiveAt': state.batches[index].receiveAt,
+                                  'batch': state.batches[index],
+                                  'good': selectedGoods.first,
                                 },
                               ),
                               batch: state.batches[index],
@@ -127,6 +127,7 @@ class ReceiveGoodsPage extends StatelessWidget {
                             isScrollControlled: true,
                           ),
                           batch: state.batches[index],
+                          quantity: _renderQuantity(state.batches[index]),
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
@@ -142,6 +143,30 @@ class ReceiveGoodsPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _renderQuantity(BatchEntity batch) {
+    if (batch.receivedUnits < batch.totalAllUnits) {
+      return RichText(
+        text: TextSpan(
+          children: <InlineSpan>[
+            TextSpan(
+              text: '${batch.receivedUnits}',
+              style: label[regular].copyWith(color: black),
+            ),
+            TextSpan(
+              text: '/${batch.totalAllUnits} Koli',
+              style: label[bold].copyWith(color: black),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Text(
+      '${batch.totalAllUnits} Koli',
+      style: label[bold].copyWith(color: black),
     );
   }
 }
