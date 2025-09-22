@@ -14,7 +14,6 @@ import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
-import '../../../../core/domain/entities/uhf_result_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/scanned_item_card.dart';
@@ -27,53 +26,28 @@ class ReceiveGoodsScanPage extends StatefulWidget {
   State<ReceiveGoodsScanPage> createState() => _ReceiveGoodsScanPageState();
 }
 
-class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
+class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
+    with UHFMethodHandlerMixin {
   late final AuthCubit _authCubit;
   late final InventoryCubit _inventoryCubit;
-  late final UHFMethodHandler _uhfMethodHandler;
-
-  final _tagInfos = <UHFResultEntity>[];
-  var _isInventoryRunning = false;
 
   @override
   void initState() {
     super.initState();
     _authCubit = context.read<AuthCubit>();
     _inventoryCubit = context.read<InventoryCubit>();
-    _uhfMethodHandler = const UHFMethodHandler(platform);
-    platform.setMethodCallHandler(
-      (call) async => await _uhfMethodHandler.methodHandler(
-        call,
-        onGetTag: (tagInfo) {
-          final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
-
-          setState(() => index != -1
-              ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
-              : _tagInfos.add(tagInfo));
-        },
-        onToggleInventory: (toggleCase, response) {
-          setState(() => _isInventoryRunning = response.statusCode == 1);
-
-          if (!_isInventoryRunning) {
-            final epcIds = _tagInfos.map((e) => e.epcId).toList();
-            _inventoryCubit.fetchPreviewReceiveShipments(uniqueCodes: epcIds);
-          } else {
-            _inventoryCubit.onUHFScan();
-          }
-
-          call.method == startInventoryMethod
-              ? TopSnackbar.successSnackbar(message: response.message)
-              : TopSnackbar.dangerSnackbar(message: response.message);
-        },
-      ),
-    );
+    initUHFMethodHandler(platform);
   }
+
+  @override
+  InventoryCubit get inventoryCubit => _inventoryCubit;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
+          
           SliverAppBar(
             expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
             flexibleSpace: FlexibleSpaceBar(
@@ -117,20 +91,8 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
                           onTap: () async {
                             final result = await context
                                 .push<Barcode>(scanBarcodeInnerRoute);
-                            final entity = UHFResultEntity(
-                              epcId: '${result?.displayValue}',
-                              tidId: '-',
-                              frequency: 0,
-                              rssi: 0,
-                              count: 0,
-                            );
-                            final index = _tagInfos
-                                .indexWhere((e) => e.epcId == entity.epcId);
 
-                            setState(() => index != -1
-                                ? _tagInfos[index].updateInfo(tagInfo: entity)
-                                : _tagInfos.add(entity));
-                            _inventoryCubit.qrCodeScan();
+                            onQRScan('${result?.displayValue}');
                           },
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
@@ -157,33 +119,39 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: TripleFloatingActionButtons(
-          onReset: () {
-            setState(_tagInfos.clear);
-            _inventoryCubit.resetUHFScan();
-          },
-          onScan: () async {
-            final result = await _uhfMethodHandler.invokeHandleInventory();
-            setState(() => _isInventoryRunning = result == 1);
-          },
-          onSave: () => showModalBottomSheet(
-            context: context,
-            builder: (context) => ActionConfirmationBottomSheet(
-              onPressed: () => context
+        child: BlocListener<InventoryCubit, InventoryState>(
+          listener: (context, state) {
+            if (state is CreateShipmentsLoaded) {
+              TopSnackbar.successSnackbar(message: state.message);
+              context
                 ..go(menuRoute)
-                ..push(receiveGoodsRoute),
-              message: 'Apakah anda yakin akan menyimpan barang ini?',
+                ..push(receiveGoodsRoute);
+            }
+          },
+          child: TripleFloatingActionButtons(
+            onReset: onReset,
+            onScan: onScan,
+            onSave: () => showModalBottomSheet(
+              context: context,
+              builder: (context) => ActionConfirmationBottomSheet(
+                onPressed: () => _inventoryCubit.createReceiveShipments(
+                  receivedAt: DateTime.now(),
+                  uniqueCodes: uhfResults.map((e) => e.epcId).toList(),
+                ),
+                message: 'Apakah anda yakin akan menyimpan barang ini?',
+              ),
             ),
+            isScanning: isInventoryRunning,
           ),
-          isScanning: _isInventoryRunning,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 
   Widget _buildList() {
-    if (_tagInfos.isEmpty) {
+    if (uhfResults.isEmpty) {
       return SliverFillRemaining(
         hasScrollBody: false,
         child: Padding(
@@ -245,9 +213,9 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
             sliver: SliverList.builder(
               itemBuilder: (context, index) => ScannedItemCard(
                 number: index + 1,
-                item: _tagInfos[index],
+                item: uhfResults[index],
               ),
-              itemCount: _tagInfos.length,
+              itemCount: uhfResults.length,
             ),
           );
         }
@@ -269,7 +237,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage> {
               'Total Koli Aktual',
               '${s.batches.fold<int>(0, (prev, e) => prev + e.totalAllUnits)}'
             ),
-          OnUHFScan() => ('Total Koli Terscan', '${_tagInfos.length}'),
+          OnUHFScan() => ('Total Koli Terscan', '${uhfResults.length}'),
           _ => ('Mulai scan untuk melihat total koli', '...'),
         };
 
