@@ -6,16 +6,20 @@ class BatchModel extends BatchEntity {
   const BatchModel({
     required super.id,
     required super.name,
-    required super.status,
+    required super.statusLabel,
     required super.transportMode,
     required super.trackingNumber,
+    required super.status,
+    required super.receivedUnits,
+    required super.preparedUnits,
+    required super.deliveredUnits,
     required super.totalAllUnits,
     required super.goods,
     required super.origin,
     required super.destination,
     required super.deliveryAt,
     required super.estimateAt,
-    required super.receiveAt,
+    required super.receivedAt,
     required super.shipmentAt,
   });
 
@@ -27,9 +31,13 @@ class BatchModel extends BatchEntity {
     return BatchModel(
       id: '${json['shipment_id']}',
       name: json['batch_code'],
-      status: json['status_label'],
+      statusLabel: json['status_label'],
       transportMode: json['type_label'],
       trackingNumber: json['tracking_number'],
+      status: json['status'],
+      receivedUnits: json['receive_qty'] ?? 0,
+      preparedUnits: json['prepare_qty'] ?? 0,
+      deliveredUnits: json['delivery_qty'] ?? 0,
       totalAllUnits: json['total_units'] ??
           goodEntities.fold<int>(0, (prev, e) => prev + e.totalItem),
       goods: goodEntities,
@@ -39,7 +47,7 @@ class BatchModel extends BatchEntity {
           ? null
           : DateTime.parse(json['delivery_date']),
       estimateAt: DateTime.parse(json['estimate_date']),
-      receiveAt: json['receive_date'] == null || json['receive_date'] == ''
+      receivedAt: json['receive_date'] == null || json['receive_date'] == ''
           ? null
           : DateTime.parse(json['receive_date']),
       shipmentAt: DateTime.parse(json['shipment_date']),
@@ -50,16 +58,20 @@ class BatchModel extends BatchEntity {
     return BatchEntity(
       id: id,
       name: name,
-      status: status,
+      statusLabel: statusLabel,
       transportMode: transportMode,
       trackingNumber: trackingNumber,
+      status: status,
+      receivedUnits: receivedUnits,
+      preparedUnits: preparedUnits,
+      deliveredUnits: deliveredUnits,
       totalAllUnits: totalAllUnits,
       goods: goods,
       origin: origin,
       destination: destination,
       deliveryAt: deliveryAt,
       estimateAt: estimateAt,
-      receiveAt: receiveAt,
+      receivedAt: receivedAt,
       shipmentAt: shipmentAt,
     );
   }
