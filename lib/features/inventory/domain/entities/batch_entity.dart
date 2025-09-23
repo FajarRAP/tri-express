@@ -16,10 +16,10 @@ class BatchEntity {
     required this.goods,
     required this.origin,
     required this.destination,
-    required this.deliveryAt,
+    required this.deliveredAt,
     required this.estimateAt,
     required this.receivedAt,
-    required this.shipmentAt,
+    required this.shippedAt,
   });
 
   final String id;
@@ -35,8 +35,8 @@ class BatchEntity {
   final List<GoodEntity> goods;
   final WarehouseEntity origin;
   final WarehouseEntity destination;
-  final DateTime? deliveryAt;
+  final DateTime? deliveredAt;
   final DateTime estimateAt;
   final DateTime? receivedAt;
-  final DateTime shipmentAt;
+  final DateTime shippedAt;
 }

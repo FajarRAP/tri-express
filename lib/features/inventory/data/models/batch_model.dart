@@ -17,10 +17,10 @@ class BatchModel extends BatchEntity {
     required super.goods,
     required super.origin,
     required super.destination,
-    required super.deliveryAt,
+    required super.deliveredAt,
     required super.estimateAt,
     required super.receivedAt,
-    required super.shipmentAt,
+    required super.shippedAt,
   });
 
   factory BatchModel.fromJson(Map<String, dynamic> json) {
@@ -43,14 +43,14 @@ class BatchModel extends BatchEntity {
       goods: goodEntities,
       origin: WarehouseModel.fromJson(json['warehouse']).toEntity(),
       destination: WarehouseModel.fromJson(json['next_warehouse']).toEntity(),
-      deliveryAt: json['delivery_date'] == null || json['delivery_date'] == ''
+      deliveredAt: json['delivery_date'] == null || json['delivery_date'] == ''
           ? null
           : DateTime.parse(json['delivery_date']),
       estimateAt: DateTime.parse(json['estimate_date']),
       receivedAt: json['receive_date'] == null || json['receive_date'] == ''
           ? null
           : DateTime.parse(json['receive_date']),
-      shipmentAt: DateTime.parse(json['shipment_date']),
+      shippedAt: DateTime.parse(json['shipment_date']),
     );
   }
 
@@ -69,10 +69,10 @@ class BatchModel extends BatchEntity {
       goods: goods,
       origin: origin,
       destination: destination,
-      deliveryAt: deliveryAt,
+      deliveredAt: deliveredAt,
       estimateAt: estimateAt,
       receivedAt: receivedAt,
-      shipmentAt: shipmentAt,
+      shippedAt: shippedAt,
     );
   }
 }

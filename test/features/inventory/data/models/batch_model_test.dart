@@ -35,10 +35,10 @@ void main() {
     preparedUnits: 1,
     deliveredUnits: 1,
     totalAllUnits: 1,
-    deliveryAt: DateTime.now(),
+    deliveredAt: DateTime.now(),
     estimateAt: DateTime.now(),
     receivedAt: DateTime.now(),
-    shipmentAt: DateTime.now(),
+    shippedAt: DateTime.now(),
   );
 
   test(
