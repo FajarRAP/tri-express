@@ -3,8 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:tri_express/core/exceptions/internal_exception.dart';
+import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
+import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
+import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
@@ -258,4 +262,66 @@ void main() {
       );
     },
   );
+
+  group('fetch preview prepare shipments remote data sources test', () {
+    const params = ['A00000000787', 'A00000000788', 'A00000000789'];
+
+    test('should return List<GoodEntity> when request status code is 200',
+        () async {
+      // arrange
+      final jsonString = fixtureReader('data_sources/get_prepare_batch.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources
+          .fetchPreviewPrepareShipments(uniqueCodes: params);
+
+      // assert
+      expect(result, isA<List<GoodEntity>>());
+      expect(result, isNot(isA<List<GoodModel>>()));
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPreviewPrepareShipments(
+          uniqueCodes: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPreviewPrepareShipments(
+          uniqueCodes: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
 }

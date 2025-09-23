@@ -4,6 +4,7 @@ import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/exceptions/server_exception.dart';
 import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
+import '../../domain/entities/good_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
@@ -144,11 +145,11 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
-      {required FetchReceiveShipmentsUseCaseParams params}) async {
+  Future<Either<Failure, List<GoodEntity>>> fetchPreviewPrepareShipments(
+      {required List<String> uniqueCodes}) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchReceiveShipments(
-          params: params);
+      final result = await inventoryRemoteDataSources
+          .fetchPreviewPrepareShipments(uniqueCodes: uniqueCodes);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -170,6 +171,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
     try {
       final result = await inventoryRemoteDataSources
           .fetchPreviewReceiveShipments(params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
+      {required FetchReceiveShipmentsUseCaseParams params}) async {
+    try {
+      final result = await inventoryRemoteDataSources.fetchReceiveShipments(
+          params: params);
 
       return Right(result);
     } on ServerException catch (se) {

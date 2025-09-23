@@ -3,13 +3,15 @@ import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
 import '../../domain/entities/batch_entity.dart';
+import '../../domain/entities/good_entity.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
-import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 
 part 'inventory_state.dart';
@@ -23,6 +25,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
     required FetchPreviewReceiveShipmentsUseCase
         fetchPreviewReceiveShipmentsUseCase,
+    required FetchPreviewPrepareShipmentsUseCase
+        fetchPreviewPrepareShipmentsUseCase,
     required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
   })  : _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
@@ -32,6 +36,8 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
         _fetchPreviewReceiveShipmentsUseCase =
             fetchPreviewReceiveShipmentsUseCase,
+        _fetchPreviewPrepareShipmentsUseCase =
+            fetchPreviewPrepareShipmentsUseCase,
         _fetchPrepareShipmentsUseCase = fetchPrepareShipmentsUseCase,
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         super(InventoryInitial());
@@ -43,6 +49,8 @@ class InventoryCubit extends Cubit<InventoryState> {
   final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
   final FetchPreviewReceiveShipmentsUseCase
       _fetchPreviewReceiveShipmentsUseCase;
+  final FetchPreviewPrepareShipmentsUseCase
+      _fetchPreviewPrepareShipmentsUseCase;
   final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
   final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
 
@@ -54,6 +62,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _receiveBatches = <BatchEntity>[];
 
   final _previewBatches = <BatchEntity>[];
+  final previewGoods = <GoodEntity>[];
 
   Future<void> createReceiveShipments(
       {required DateTime receivedAt, required List<String> uniqueCodes}) async {
@@ -171,25 +180,6 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchPreviewReceiveShipments(
-      {required List<String> uniqueCodes}) async {
-    emit(FetchPreviewReceiveShipmentsLoading());
-
-    final params = FetchPreviewReceiveShipmentsUseCaseParams(
-      uniqueCodes: uniqueCodes,
-    );
-    final result = await _fetchPreviewReceiveShipmentsUseCase(params);
-
-    result.fold(
-      (failure) =>
-          emit(FetchPreviewReceiveShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewReceiveShipmentsLoaded(
-          batches: _previewBatches
-            ..clear()
-            ..addAll(batches))),
-    );
-  }
-
   Future<void> fetchOnTheWayShipmentsPaginate({String? search}) async {
     emit(ListPaginateLoading());
 
@@ -207,6 +197,8 @@ class InventoryCubit extends Cubit<InventoryState> {
               batches: _onTheWayBatches..addAll(batches))),
     );
   }
+
+  Future<void> fetchPickUpShipments({String? search}) async {}
 
   Future<void> fetchPrepareShipments({String? search}) async {
     emit(FetchPrepareShipmentsLoading());
@@ -241,6 +233,50 @@ class InventoryCubit extends Cubit<InventoryState> {
           ? emit(ListPaginateLast(currentPage: _currentPage = 1))
           : emit(FetchPrepareShipmentsLoaded(
               batches: _prepareBatches..addAll(batches))),
+    );
+  }
+
+  Future<void> fetchPreviewPrepareShipments(
+      {required List<String> uniqueCodes}) async {
+    emit(FetchPreviewPrepareShipmentsLoading());
+
+    // final result = await _fetchPreviewPrepareShipmentsUseCase(uniqueCodes);
+    final result = await _fetchPreviewPrepareShipmentsUseCase([
+      'A00000001758',
+      'A00000001759',
+      'A00000001760',
+      'A00000001761',
+      'A00000001762',
+      'A00000000167',
+      'A00000000168',
+    ]);
+
+    result.fold(
+      (failure) =>
+          emit(FetchPreviewPrepareShipmentsError(message: failure.message)),
+      (goods) => emit(FetchPreviewPrepareShipmentsLoaded(
+          goods: previewGoods
+            ..clear()
+            ..addAll(goods))),
+    );
+  }
+
+  Future<void> fetchPreviewReceiveShipments(
+      {required List<String> uniqueCodes}) async {
+    emit(FetchPreviewReceiveShipmentsLoading());
+
+    final params = FetchPreviewReceiveShipmentsUseCaseParams(
+      uniqueCodes: uniqueCodes,
+    );
+    final result = await _fetchPreviewReceiveShipmentsUseCase(params);
+
+    result.fold(
+      (failure) =>
+          emit(FetchPreviewReceiveShipmentsError(message: failure.message)),
+      (batches) => emit(FetchPreviewReceiveShipmentsLoaded(
+          batches: _previewBatches
+            ..clear()
+            ..addAll(batches))),
     );
   }
 
@@ -280,9 +316,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchPickUpShipments({String? search}) async {}
-
   void onUHFScan() => emit(OnUHFScan());
-  void resetUHFScan() => emit(ResetUHFScan());
   void qrCodeScan() => emit(QRCodeScan());
+  void resetUHFScan() => emit(ResetUHFScan());
 }

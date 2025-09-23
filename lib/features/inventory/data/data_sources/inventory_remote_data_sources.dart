@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
+import '../../domain/entities/good_entity.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
@@ -11,6 +12,7 @@ import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../models/batch_model.dart';
+import '../models/good_model.dart';
 
 abstract class InventoryRemoteDataSources {
   Future<String> createReceiveShipments(
@@ -24,10 +26,12 @@ abstract class InventoryRemoteDataSources {
       {required FetchOnTheWayShipmentsUseCaseParams params});
   Future fetchPrepareShipments(
       {required FetchPrepareShipmentsUseCaseParams params});
-  Future<List<BatchEntity>> fetchReceiveShipments(
-      {required FetchReceiveShipmentsUseCaseParams params});
+  Future<List<GoodEntity>> fetchPreviewPrepareShipments(
+      {required List<String> uniqueCodes});
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
       {required FetchPreviewReceiveShipmentsUseCaseParams params});
+  Future<List<BatchEntity>> fetchReceiveShipments(
+      {required FetchReceiveShipmentsUseCaseParams params});
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -184,14 +188,31 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
+  Future<List<GoodEntity>> fetchPreviewPrepareShipments(
+      {required List<String> uniqueCodes}) async {
+    try {
+      final response = await dio.post(
+        '/prepare/preview',
+        data: {'codes': uniqueCodes},
+      );
+      final contents =
+          List<Map<String, dynamic>>.from(response.data['data']['items']);
+
+      return contents.map((e) => GoodModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
       {required FetchPreviewReceiveShipmentsUseCaseParams params}) async {
     try {
       final response = await dio.post(
         '/receive/preview',
-        data: {
-          'codes': params.uniqueCodes,
-        },
+        data: {'codes': params.uniqueCodes},
       );
 
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
