@@ -54,6 +54,7 @@ class UHFMethodHandler {
 
 mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
   InventoryCubit get inventoryCubit;
+  void Function() get onInventoryStop;
 
   late final UHFMethodHandler _uhfMethodHandler;
   final _uhfResults = <UHFResultEntity>[];
@@ -61,7 +62,6 @@ mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
 
   List<UHFResultEntity> get uhfResults => _uhfResults;
   bool get isInventoryRunning => _isInventoryRunning;
-  set setInventoryRunning(bool value) => _isInventoryRunning = value;
 
   void initUHFMethodHandler(MethodChannel platform) {
     _uhfMethodHandler = UHFMethodHandler(platform);
@@ -113,12 +113,7 @@ mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
   void _handleInventory(String toggleCase, UHFResponse response) {
     setState(() => _isInventoryRunning = response.statusCode == 1);
 
-    if (!_isInventoryRunning) {
-      final epcIds = _uhfResults.map((e) => e.epcId).toList();
-      inventoryCubit.fetchPreviewReceiveShipments(uniqueCodes: epcIds);
-    } else {
-      inventoryCubit.onUHFScan();
-    }
+    !_isInventoryRunning ? onInventoryStop() : inventoryCubit.onUHFScan();
 
     toggleCase == startInventoryMethod
         ? TopSnackbar.successSnackbar(message: response.message)
