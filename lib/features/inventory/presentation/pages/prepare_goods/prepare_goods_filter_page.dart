@@ -150,7 +150,13 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                     ? null
                     : () => context.push(
                           prepareGoodsScanRoute,
-                          extra: _batchNameController.text,
+                          extra: {
+                            'shippedAt': DateTime.now(),
+                            'estimatedAt': _selectedEstimateDate!,
+                            'nextWarehouse': _selectedWarehouse!,
+                            'transportMode': _selectedTransportMode!,
+                            'batchName': _batchNameController.text,
+                          },
                         ),
                 child: const Text('Simpan'),
               ),

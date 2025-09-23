@@ -7,11 +7,13 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/good_card_checkbox.dart';
 import '../../widgets/scanned_item_card.dart';
@@ -20,9 +22,17 @@ import '../../widgets/unique_codes_bottom_sheet.dart';
 class PrepareGoodsScanPage extends StatefulWidget {
   const PrepareGoodsScanPage({
     super.key,
+    required this.shippedAt,
+    required this.estimatedAt,
+    required this.nextWarehouse,
+    required this.transportMode,
     required this.batchName,
   });
 
+  final DateTime shippedAt;
+  final DateTime estimatedAt;
+  final DropdownEntity nextWarehouse;
+  final DropdownEntity transportMode;
   final String batchName;
 
   @override
@@ -161,24 +171,58 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                   style: label[medium].copyWith(color: primary),
                 ),
                 value: _inventoryCubit.previewGoods.every((good) =>
-                    (_selectedCodes[good.id]?.length ?? 0) ==
-                    good.uniqueCodes.length),
+                        (_selectedCodes[good.id]?.length ?? 0) ==
+                        good.uniqueCodes.length) &&
+                    _inventoryCubit.previewGoods.isNotEmpty,
                 side: const BorderSide(color: primary),
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             ),
             Expanded(
-              child: TripleFloatingActionButtons(
-                onReset: onReset,
-                onScan: onScan,
-                onSave: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => ActionConfirmationBottomSheet(
-                    onPressed: () {},
-                    message: 'Apakah anda yakin akan menyimpan barang ini?',
+              child: BlocListener<InventoryCubit, InventoryState>(
+                listener: (context, state) {
+                  if (state is CreateShipmentsLoaded) {
+                    TopSnackbar.successSnackbar(message: state.message);
+                    context
+                      ..go(menuRoute)
+                      ..push(prepareGoodsRoute);
+                  }
+
+                  if (state is CreateShipmentsError) {
+                    TopSnackbar.dangerSnackbar(message: state.message);
+                  }
+                },
+                child: TripleFloatingActionButtons(
+                  onReset: onReset,
+                  onScan: onScan,
+                  onSave: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) =>
+                        BlocBuilder<InventoryCubit, InventoryState>(
+                      builder: (context, state) {
+                        final onPressed = switch (state) {
+                          CreateShipmentsLoading() => null,
+                          _ => () => _inventoryCubit.createPrepareShipments(
+                              shippedAt: widget.shippedAt,
+                              estimatedAt: widget.estimatedAt,
+                              nextWarehouse: widget.nextWarehouse,
+                              transportMode: widget.transportMode,
+                              batchName: widget.batchName,
+                              uniqueCodes: _selectedCodes.values
+                                  .expand((codes) => codes)
+                                  .toList()),
+                        };
+
+                        return ActionConfirmationBottomSheet(
+                          onPressed: onPressed,
+                          message:
+                              'Apakah anda yakin akan menyimpan barang ini?',
+                        );
+                      },
+                    ),
                   ),
+                  isScanning: isInventoryRunning,
                 ),
-                isScanning: isInventoryRunning,
               ),
             ),
           ],
