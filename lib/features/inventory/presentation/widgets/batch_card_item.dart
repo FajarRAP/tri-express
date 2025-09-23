@@ -40,7 +40,11 @@ class BatchCardItem extends StatelessWidget {
                           batch.name,
                           style: paragraphMedium[medium],
                         ),
-                        quantity ?? const SizedBox(),
+                        quantity ??
+                            Text(
+                              '${batch.totalAllUnits} Koli',
+                              style: label[bold].copyWith(color: black),
+                            ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -85,7 +89,7 @@ class BatchCardItem extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    batch.shipmentAt.toLocal().toDDMMMMYYYY,
+                    batch.shippedAt.toLocal().toDDMMMMYYYY,
                     style: paragraphSmall[regular],
                   ),
                 ),
