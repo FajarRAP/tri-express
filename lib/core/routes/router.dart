@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/core/domain/entities/dropdown_entity.dart';
 import '../../features/core/presentation/pages/home_page.dart';
 import '../../features/core/presentation/pages/mobile_scanner_simple_page.dart';
 import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
-import '../../features/inventory/domain/entities/warehouse_entity.dart';
 import '../../features/inventory/presentation/pages/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
@@ -167,13 +167,11 @@ final router = GoRouter(
           builder: (context, state) {
             final extras = state.extra as Map<String, dynamic>;
             final good = extras['good'] as GoodEntity;
-            final batchName = extras['batchName'] as String;
-            final receiveAt = extras['receiveAt'] as DateTime?;
+            final batch = extras['batch'] as BatchEntity;
 
             return ReceiveGoodsDetailPage(
-              batchName: batchName,
+              batch: batch,
               good: good,
-              receiveAt: receiveAt,
             );
           },
         ),
@@ -190,26 +188,33 @@ final router = GoRouter(
         ),
         GoRoute(
           path: 'scan',
-          builder: (context, state) => PrepareGoodsScanPage(
-            batchName: '${state.extra}',
-          ),
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final shippedAt = extras['shippedAt'] as DateTime;
+            final estimatedAt = extras['estimatedAt'] as DateTime;
+            final nextWarehouse = extras['nextWarehouse'] as DropdownEntity;
+            final transportMode = extras['transportMode'] as DropdownEntity;
+            final batchName = extras['batchName'] as String;
+
+            return PrepareGoodsScanPage(
+              shippedAt: shippedAt,
+              estimatedAt: estimatedAt,
+              nextWarehouse: nextWarehouse,
+              transportMode: transportMode,
+              batchName: batchName,
+            );
+          },
         ),
         GoRoute(
           path: 'detail',
           builder: (context, state) {
             final extras = state.extra as Map<String, dynamic>;
             final good = extras['good'] as GoodEntity;
-            final batchName = extras['batchName'] as String;
-            final nextWarehouse = extras['nextWarehouse'] as WarehouseEntity;
-            final estimateAt = extras['estimateAt'] as DateTime;
-            final shipmentAt = extras['shipmentAt'] as DateTime;
+            final batch = extras['batch'] as BatchEntity;
 
             return PrepareGoodsDetailPage(
-              batchName: batchName,
+              batch: batch,
               good: good,
-              nextWarehouse: nextWarehouse,
-              estimateAt: estimateAt,
-              shipmentAt: shipmentAt,
             );
           },
         ),
