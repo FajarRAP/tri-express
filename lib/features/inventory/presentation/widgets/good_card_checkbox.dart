@@ -12,12 +12,14 @@ class GoodCardCheckbox extends StatelessWidget {
     this.onChanged,
     this.onTap,
     required this.good,
+    required this.selectedCodesCount,
     this.isActive = false,
   });
 
   final void Function(bool? value)? onChanged;
   final void Function()? onTap;
   final GoodEntity good;
+  final int selectedCodesCount;
   final bool isActive;
 
   @override
@@ -25,17 +27,13 @@ class GoodCardCheckbox extends StatelessWidget {
     return BaseCard(
       borderColor: isActive ? primary : null,
       child: GestureDetector(
-        onTap: () => onChanged?.call(!isActive),
+        onTap: onChanged == null ? null : () => onChanged!(!isActive),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Checkbox(
               onChanged: onChanged,
               value: isActive,
-              visualDensity: const VisualDensity(
-                horizontal: VisualDensity.minimumDensity,
-                vertical: VisualDensity.minimumDensity,
-              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -48,12 +46,15 @@ class GoodCardCheckbox extends StatelessWidget {
                         good.name,
                         style: paragraphMedium[medium].copyWith(color: black),
                       ),
+                      // 5 yang dipilih di bottom sheet
+                      // 10 yang di inventory
                       Text(
-                        '5/10 Koli',
+                        '${selectedCodesCount}/${good.totalItem} Koli',
                         style: label[bold].copyWith(color: black),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
