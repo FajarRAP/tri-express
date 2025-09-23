@@ -30,6 +30,7 @@ class PrepareGoodsPage extends StatelessWidget {
               inventoryCubit.state is! ListPaginateLast) {
             inventoryCubit.fetchPrepareShipmentsPaginate(search: search);
           }
+
           return false;
         },
         child: RefreshIndicator(
@@ -133,12 +134,8 @@ class PrepareGoodsPage extends StatelessWidget {
                               onSelected: (selectedGood) => context.push(
                                 prepareGoodsDetailRoute,
                                 extra: {
+                                  'batch': state.batches[index],
                                   'good': selectedGood.first,
-                                  'batchName': state.batches[index].name,
-                                  'nextWarehouse':
-                                      state.batches[index].destination,
-                                  'estimateAt': state.batches[index].estimateAt,
-                                  'shipmentAt': state.batches[index].shipmentAt,
                                 },
                               ),
                               batch: state.batches[index],
