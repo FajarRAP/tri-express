@@ -102,7 +102,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             TextFormField(
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
-                labelText: 'Tanggal Terima',
+                labelText: 'Tanggal Persiapan',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
               initialValue: DateTime.now().toDDMMMMYYYY,
