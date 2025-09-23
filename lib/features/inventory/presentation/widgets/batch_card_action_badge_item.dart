@@ -27,7 +27,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SuccessBadge(label: batch.status),
+              SuccessBadge(label: batch.statusLabel),
               GestureDetector(
                 onTap: onDelete,
                 child: Text(
@@ -110,7 +110,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  batch.shipmentAt.toLocal().toDDMMMMYYYY,
+                  batch.shippedAt.toLocal().toDDMMMMYYYY,
                   style: paragraphSmall[regular],
                 ),
                 const Spacer(),
