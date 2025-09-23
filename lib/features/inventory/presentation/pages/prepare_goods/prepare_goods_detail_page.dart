@@ -4,25 +4,19 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/base_card.dart';
+import '../../../domain/entities/batch_entity.dart';
 import '../../../domain/entities/good_entity.dart';
-import '../../../domain/entities/warehouse_entity.dart';
 import '../../widgets/info_tile.dart';
 
 class PrepareGoodsDetailPage extends StatelessWidget {
   const PrepareGoodsDetailPage({
     super.key,
-    required this.batchName,
+    required this.batch,
     required this.good,
-    required this.nextWarehouse,
-    required this.estimateAt,
-    required this.shipmentAt,
   });
 
-  final String batchName;
+  final BatchEntity batch;
   final GoodEntity good;
-  final WarehouseEntity nextWarehouse;
-  final DateTime estimateAt;
-  final DateTime shipmentAt;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +58,13 @@ class PrepareGoodsDetailPage extends StatelessWidget {
                     Expanded(
                       child: InfoTile(
                         title: 'Tanggal Pengiriman',
-                        value: shipmentAt.toDDMMMMYYYY,
+                        value: batch.shippedAt.toDDMMMMYYYY,
                       ),
                     ),
                     Expanded(
                       child: InfoTile(
                         title: 'Estimasi Tiba',
-                        value: estimateAt.toDDMMMMYYYY,
+                        value: batch.estimateAt.toDDMMMMYYYY,
                       ),
                     ),
                   ],
@@ -98,7 +92,7 @@ class PrepareGoodsDetailPage extends StatelessWidget {
                     Expanded(
                       child: InfoTile(
                         title: 'Gudang Tujuan',
-                        value: nextWarehouse.name,
+                        value: batch.destination.name,
                       ),
                     ),
                     Expanded(
@@ -118,7 +112,7 @@ class PrepareGoodsDetailPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final firstIndex = index * 2;
                     final secondIndex = firstIndex + 1;
-                    final isOdd = secondIndex < good.uniqueCodes.length;
+                    final isOdd = secondIndex >= good.uniqueCodes.length;
 
                     return Row(
                       children: <Widget>[
@@ -130,11 +124,11 @@ class PrepareGoodsDetailPage extends StatelessWidget {
                         ),
                         Expanded(
                           child: isOdd
-                              ? Text(
+                              ? const SizedBox()
+                              : Text(
                                   good.uniqueCodes[secondIndex],
                                   style: label[medium].copyWith(color: black),
-                                )
-                              : const SizedBox(),
+                                ),
                         ),
                       ],
                     );
