@@ -4,6 +4,7 @@ import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
@@ -15,6 +16,8 @@ import '../models/batch_model.dart';
 import '../models/good_model.dart';
 
 abstract class InventoryRemoteDataSources {
+  Future<String> createPrepareShipments(
+      {required CreatePrepareShipmentsUseCaseParams params});
   Future<String> createReceiveShipments(
       {required CreateReceiveShipmentsUseCaseParams params});
   Future<List<BatchEntity>> fetchDeliveryShipments(
@@ -38,6 +41,30 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   const InventoryRemoteDataSourcesImpl({required this.dio});
 
   final Dio dio;
+
+  @override
+  Future<String> createPrepareShipments(
+      {required CreatePrepareShipmentsUseCaseParams params}) async {
+    try {
+      final response = await dio.post(
+        '/prepare/store',
+        data: {
+          'shipment_date': params.shippedAt.toIso8601String(),
+          'estimate_date': params.estimatedAt.toIso8601String(),
+          'batch_code': params.batchName,
+          'next_warehouse_id': params.nextWarehouse.id,
+          'type': params.transportMode.id,
+          'codes': params.uniqueCodes,
+        },
+      );
+
+      return response.data['message'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
 
   @override
   Future<String> createReceiveShipments(

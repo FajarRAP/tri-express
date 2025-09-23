@@ -5,10 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/internal_exception.dart';
 import 'package:tri_express/core/exceptions/server_exception.dart';
+import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
@@ -29,239 +31,180 @@ void main() {
     inventoryRemoteDataSources = InventoryRemoteDataSourcesImpl(dio: mockDio);
   });
 
-  group(
-    'fetch delivery shipments remote data sources test',
-    () {
-      const params = FetchDeliveryShipmentsUseCaseParams(page: 1, perPage: 10);
-      test(
-        'should return List<BatchEntity> when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/get_delivery_shipments.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any(),
-              queryParameters: any(named: 'queryParameters'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch delivery shipments remote data sources test', () {
+    const params = FetchDeliveryShipmentsUseCaseParams(page: 1, perPage: 10);
+    test(
+      'should return List<BatchEntity> when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString =
+            fixtureReader('data_sources/get_delivery_shipments.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.get(any(),
+            queryParameters: any(named: 'queryParameters'))).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result = await inventoryRemoteDataSources
-              .fetchDeliveryShipments(params: params);
+        // act
+        final result = await inventoryRemoteDataSources.fetchDeliveryShipments(
+            params: params);
 
-          // assert
-          expect(result, isA<List<BatchEntity>>());
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<List<BatchEntity>>());
+      },
+    );
+  });
 
-  group(
-    'fetch on the way shipments remote data sources test',
-    () {
-      const params =
-          FetchOnTheWayShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
-      test(
-        'should return List<BatchEntity> when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/get_on_the_way_shipments.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any(),
-              queryParameters: any(named: 'queryParameters'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch on the way shipments remote data sources test', () {
+    const params =
+        FetchOnTheWayShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
+    test(
+      'should return List<BatchEntity> when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString =
+            fixtureReader('data_sources/get_on_the_way_shipments.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.get(any(),
+            queryParameters: any(named: 'queryParameters'))).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result = await inventoryRemoteDataSources
-              .fetchOnTheWayShipments(params: params);
+        // act
+        final result = await inventoryRemoteDataSources.fetchOnTheWayShipments(
+            params: params);
 
-          // assert
-          expect(result, isA<List<BatchEntity>>());
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<List<BatchEntity>>());
+      },
+    );
+  });
 
-  group(
-    'fetch inventories remote data sources test',
-    () {
-      const params =
-          FetchInventoriesUseCaseParams(page: 1, perPage: 10, search: '');
-      test(
-        'should return List<BatchEntity> when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString = fixtureReader('data_sources/get_inventories.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any(),
-              queryParameters: any(named: 'queryParameters'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch inventories remote data sources test', () {
+    const params =
+        FetchInventoriesUseCaseParams(page: 1, perPage: 10, search: '');
+    test(
+      'should return List<BatchEntity> when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString = fixtureReader('data_sources/get_inventories.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.get(any(),
+            queryParameters: any(named: 'queryParameters'))).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result =
-              await inventoryRemoteDataSources.fetchInventories(params: params);
+        // act
+        final result =
+            await inventoryRemoteDataSources.fetchInventories(params: params);
 
-          // assert
-          expect(result, isA<List<BatchEntity>>());
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<List<BatchEntity>>());
+      },
+    );
+  });
 
-  group(
-    'fetch prepare shipments remote data sources test',
-    () {
-      const params =
-          FetchPrepareShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
-      test(
-        'should return List<BatchEntity> when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/get_prepare_shipments.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any(),
-              queryParameters: any(named: 'queryParameters'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch prepare shipments remote data sources test', () {
+    const params =
+        FetchPrepareShipmentsUseCaseParams(page: 1, perPage: 10, search: '');
+    test(
+      'should return List<BatchEntity> when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString =
+            fixtureReader('data_sources/get_prepare_shipments.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.get(any(),
+            queryParameters: any(named: 'queryParameters'))).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result = await inventoryRemoteDataSources.fetchPrepareShipments(
-              params: params);
+        // act
+        final result = await inventoryRemoteDataSources.fetchPrepareShipments(
+            params: params);
 
-          // assert
-          expect(result, isA<List<BatchEntity>>());
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<List<BatchEntity>>());
+      },
+    );
+  });
 
-  group(
-    'fetch inventories count remote data sources test',
-    () {
-      test(
-        'should return int when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/get_inventories_count.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.get(any())).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch inventories count remote data sources test', () {
+    test(
+      'should return int when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString =
+            fixtureReader('data_sources/get_inventories_count.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.get(any())).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result =
-              await inventoryRemoteDataSources.fetchInventoriesCount();
+        // act
+        final result = await inventoryRemoteDataSources.fetchInventoriesCount();
 
-          // assert
-          expect(result, isA<int>());
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<int>());
+      },
+    );
+  });
 
-  group(
-    'fetch preview receive shipments remote data sources test',
-    () {
-      const params = FetchPreviewReceiveShipmentsUseCaseParams(
-        uniqueCodes: [
-          'A00000000787',
-          'A00000000788',
-          'A00000000789',
-          'A00000000790',
-          'A00000000791'
-        ],
-      );
-      test(
-        'should return int when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/get_shipments_from_codes.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
+  group('fetch preview receive shipments remote data sources test', () {
+    const params = FetchPreviewReceiveShipmentsUseCaseParams(
+      uniqueCodes: [
+        'A00000000787',
+        'A00000000788',
+        'A00000000789',
+        'A00000000790',
+        'A00000000791'
+      ],
+    );
+    test(
+      'should return int when the request status code is 200',
+      () async {
+        // arrange
+        final jsonString =
+            fixtureReader('data_sources/get_shipments_from_codes.json');
+        final jsonMap = jsonDecode(jsonString);
+        when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+          (_) async => Response(
+            data: jsonMap,
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+          ),
+        );
 
-          // act
-          final result = await inventoryRemoteDataSources
-              .fetchPreviewReceiveShipments(params: params);
+        // act
+        final result = await inventoryRemoteDataSources
+            .fetchPreviewReceiveShipments(params: params);
 
-          // assert
-          expect(result, isA<List<BatchEntity>>());
-          verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
-        },
-      );
-    },
-  );
-
-  group(
-    'fetch preview receive shipments remote data sources test',
-    () {
-      final params = CreateReceiveShipmentsUseCaseParams(
-        receivedAt: DateTime.now(),
-        uniqueCodes: [
-          'A00000000787',
-          'A00000000788',
-          'A00000000789',
-          'A00000000790',
-          'A00000000791'
-        ],
-      );
-      test(
-        'should return String when the request status code is 200',
-        () async {
-          // arrange
-          final jsonString =
-              fixtureReader('data_sources/create_receive_shipments.json');
-          final jsonMap = jsonDecode(jsonString);
-          when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
-            (_) async => Response(
-              data: jsonMap,
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-            ),
-          );
-
-          // act
-          final result = await inventoryRemoteDataSources
-              .createReceiveShipments(params: params);
-
-          // assert
-          expect(result, isA<String>());
-          verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
-        },
-      );
-    },
-  );
+        // assert
+        expect(result, isA<List<BatchEntity>>());
+        verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
+      },
+    );
+  });
 
   group('fetch preview prepare shipments remote data sources test', () {
     const params = ['A00000000787', 'A00000000788', 'A00000000789'];
@@ -322,6 +265,150 @@ void main() {
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('create receive shipments remote data sources test', () {
+    final params = CreateReceiveShipmentsUseCaseParams(
+      receivedAt: DateTime.now(),
+      uniqueCodes: ['A00000000787', 'A00000000788', 'A00000000789'],
+    );
+
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/create_receive_shipments.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources.createReceiveShipments(
+          params: params);
+
+      // assert
+      expect(result, json['message']);
+      verify(() => mockDio.post('/receive/store', data: any(named: 'data')))
+          .called(1);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.createReceiveShipments;
+
+      // assert
+      await expectLater(
+          () => result(params: params), throwsA(isA<ServerException>()));
+      verify(() => mockDio.post('/receive/store', data: any(named: 'data')))
+          .called(1);
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.createReceiveShipments;
+
+      // assert
+      await expectLater(
+          () => result(params: params), throwsA(isA<InternalException>()));
+      verify(() => mockDio.post('/receive/store', data: any(named: 'data')))
+          .called(1);
+    });
+  });
+
+  group('create prepare shipments remote data sources test', () {
+    final params = CreatePrepareShipmentsUseCaseParams(
+      shippedAt: DateTime.now(),
+      estimatedAt: DateTime.now().add(const Duration(days: 3)),
+      batchName: 'Batch A',
+      nextWarehouse: const DropdownEntity(id: 'id', value: 'value'),
+      transportMode: const DropdownEntity(id: 'id', value: 'value'),
+      uniqueCodes: ['A00000000787', 'A00000000788', 'A00000000789'],
+    );
+
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/create_receive_shipments.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources.createPrepareShipments(
+          params: params);
+
+      // assert
+      expect(result, json['message']);
+      verify(() => mockDio.post('/prepare/store', data: any(named: 'data')))
+          .called(1);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.createPrepareShipments;
+
+      // assert
+      await expectLater(
+          () => result(params: params), throwsA(isA<ServerException>()));
+      verify(() => mockDio.post('/prepare/store', data: any(named: 'data')))
+          .called(1);
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.createPrepareShipments;
+
+      // assert
+      await expectLater(
+          () => result(params: params), throwsA(isA<InternalException>()));
+      verify(() => mockDio.post('/prepare/store', data: any(named: 'data')))
+          .called(1);
     });
   });
 }
