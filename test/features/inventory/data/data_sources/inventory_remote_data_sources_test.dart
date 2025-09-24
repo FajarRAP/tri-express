@@ -7,6 +7,7 @@ import 'package:tri_express/core/exceptions/internal_exception.dart';
 import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
+import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
@@ -16,6 +17,7 @@ import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_s
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
@@ -467,6 +469,80 @@ void main() {
       // act
       final result = inventoryRemoteDataSources.deletePreparedShipments(
           shipmentId: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('fetch preview delivery shipments remote data sources test', () {
+    const params = FetchPreviewDeliveryShipmentsUseCaseParams(
+      nextWarehouse: DropdownEntity(
+        id: '019903c3-ca71-713d-90a0-549aaea7e2d3',
+        value: 'Gudang Tegal',
+      ),
+      uniqueCodes: ['A00000001760'],
+    );
+
+    test('should return List<BatchEntity> when request status code is 200',
+        () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/get_preview_delivery_shipments.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources
+          .fetchPreviewDeliveryShipments(params: params);
+
+      // assert
+      expect(result, isA<List<BatchEntity>>());
+      expect(result, isNot(isA<List<BatchModel>>()));
+      verify(() => mockDio.post(any(), data: {
+            'next_warehouse_id': params.nextWarehouse.id,
+            // 'driver_id': params.driver?.id,
+            'codes': params.uniqueCodes,
+          })).called(1);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPreviewDeliveryShipments(
+          params: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPreviewDeliveryShipments(
+          params: params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));

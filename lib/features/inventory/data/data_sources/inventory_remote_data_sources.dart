@@ -8,6 +8,7 @@ import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
@@ -30,6 +31,8 @@ abstract class InventoryRemoteDataSources {
       {required FetchOnTheWayShipmentsUseCaseParams params});
   Future fetchPrepareShipments(
       {required FetchPrepareShipmentsUseCaseParams params});
+  Future<List<BatchEntity>> fetchPreviewDeliveryShipments(
+      {required FetchPreviewDeliveryShipmentsUseCaseParams params});
   Future<List<GoodEntity>> fetchPreviewPrepareShipments(
       {required List<String> uniqueCodes});
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
@@ -219,6 +222,29 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       );
       final contents =
           List<Map<String, dynamic>>.from(response.data['data']['data']);
+
+      return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<BatchEntity>> fetchPreviewDeliveryShipments(
+      {required FetchPreviewDeliveryShipmentsUseCaseParams params}) async {
+    try {
+      final response = await dio.post(
+        '/delivery/preview',
+        data: {
+          'next_warehouse_id': params.nextWarehouse.id,
+          // 'driver_id': params.driver?.id,
+          'codes': params.uniqueCodes,
+        },
+      );
+
+      final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
     } on DioException catch (de) {

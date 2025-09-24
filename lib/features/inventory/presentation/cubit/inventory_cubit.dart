@@ -13,6 +13,7 @@ import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
@@ -28,6 +29,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchInventoriesUseCase fetchInventoriesUseCase,
     required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
     required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
+    required FetchPreviewDeliveryShipmentsUseCase
+        fetchPreviewDeliveryShipmentsUseCase,
     required FetchPreviewReceiveShipmentsUseCase
         fetchPreviewReceiveShipmentsUseCase,
     required FetchPreviewPrepareShipmentsUseCase
@@ -41,6 +44,8 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchInventoriesUseCase = fetchInventoriesUseCase,
         _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
+        _fetchPreviewDeliveryShipmentsUseCase =
+            fetchPreviewDeliveryShipmentsUseCase,
         _fetchPreviewReceiveShipmentsUseCase =
             fetchPreviewReceiveShipmentsUseCase,
         _fetchPreviewPrepareShipmentsUseCase =
@@ -56,6 +61,8 @@ class InventoryCubit extends Cubit<InventoryState> {
   final FetchInventoriesUseCase _fetchInventoriesUseCase;
   final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
   final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
+  final FetchPreviewDeliveryShipmentsUseCase
+      _fetchPreviewDeliveryShipmentsUseCase;
   final FetchPreviewReceiveShipmentsUseCase
       _fetchPreviewReceiveShipmentsUseCase;
   final FetchPreviewPrepareShipmentsUseCase
@@ -70,7 +77,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _prepareBatches = <BatchEntity>[];
   final _receiveBatches = <BatchEntity>[];
 
-  final _previewBatches = <BatchEntity>[];
+  final previewBatches = <BatchEntity>[];
   final previewGoods = <GoodEntity>[];
 
   Future<void> createPrepareShipments({
@@ -282,6 +289,33 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
+  Future<void> fetchPreviewDeliveryShipments(
+      {required DropdownEntity nextWarehouse,
+      required List<String> uniqueCodes,
+      DropdownEntity? driver}) async {
+    emit(FetchPreviewBatchesShipmentsLoading());
+
+    // final params = FetchPreviewDeliveryShipmentsUseCaseParams(
+    //   nextWarehouse: nextWarehouse,
+    //   uniqueCodes: uniqueCodes,
+    // );
+    final params = FetchPreviewDeliveryShipmentsUseCaseParams(
+      nextWarehouse: nextWarehouse,
+      uniqueCodes: ['A00000001760', 'A00000000167', 'A00000000168'],
+    );
+
+    final result = await _fetchPreviewDeliveryShipmentsUseCase(params);
+
+    result.fold(
+      (failure) =>
+          emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
+          batches: previewBatches
+            ..clear()
+            ..addAll(batches))),
+    );
+  }
+
   Future<void> fetchPreviewPrepareShipments(
       {required List<String> uniqueCodes}) async {
     emit(FetchPreviewPrepareShipmentsLoading());
@@ -300,7 +334,7 @@ class InventoryCubit extends Cubit<InventoryState> {
 
   Future<void> fetchPreviewReceiveShipments(
       {required List<String> uniqueCodes}) async {
-    emit(FetchPreviewReceiveShipmentsLoading());
+    emit(FetchPreviewBatchesShipmentsLoading());
 
     final params = FetchPreviewReceiveShipmentsUseCaseParams(
       uniqueCodes: uniqueCodes,
@@ -309,9 +343,9 @@ class InventoryCubit extends Cubit<InventoryState> {
 
     result.fold(
       (failure) =>
-          emit(FetchPreviewReceiveShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewReceiveShipmentsLoaded(
-          batches: _previewBatches
+          emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
+          batches: previewBatches
             ..clear()
             ..addAll(batches))),
     );

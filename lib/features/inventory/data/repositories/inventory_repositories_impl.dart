@@ -10,6 +10,7 @@ import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
@@ -172,6 +173,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
     try {
       final result = await inventoryRemoteDataSources.fetchPrepareShipments(
           params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BatchEntity>>> fetchPreviewDeliveryShipments(
+      {required FetchPreviewDeliveryShipmentsUseCaseParams params}) async {
+    try {
+      final result = await inventoryRemoteDataSources
+          .fetchPreviewDeliveryShipments(params: params);
 
       return Right(result);
     } on ServerException catch (se) {
