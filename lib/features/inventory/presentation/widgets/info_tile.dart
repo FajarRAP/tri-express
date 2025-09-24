@@ -27,6 +27,7 @@ class InfoTile extends StatelessWidget {
         ),
         Text(
           value,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: label[medium].copyWith(color: black),
         ),
