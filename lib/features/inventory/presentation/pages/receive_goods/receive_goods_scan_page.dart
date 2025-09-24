@@ -43,9 +43,8 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
   InventoryCubit get inventoryCubit => _inventoryCubit;
 
   @override
-  void Function() get onInventoryStop =>
-      () => _inventoryCubit.fetchPreviewReceiveShipments(
-          uniqueCodes: uhfResults.map((e) => e.epcId).toList());
+  void Function() get onInventoryStop => () =>
+      _inventoryCubit.fetchPreviewReceiveShipments(uhfresults: uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +146,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                   final onPressed = switch (state) {
                     CreateShipmentsLoading() => null,
                     _ => () => _inventoryCubit.createReceiveShipments(
-                          receivedAt: DateTime.now(),
-                          uniqueCodes: uhfResults.map((e) => e.epcId).toList(),
-                        ),
+                        uhfresults: uhfResults, receivedAt: DateTime.now()),
                   };
 
                   return ActionConfirmationBottomSheet(
@@ -257,23 +254,14 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           OnUHFScan() => ('Total Koli Terscan', '${uhfResults.length}'),
           _ => ('Mulai scan untuk melihat total koli', '...'),
         };
+        final style = paragraphSmall[medium].copyWith(color: light);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: paragraphSmall[medium].copyWith(
-                color: light,
-              ),
-            ),
+            Text(title, style: style),
             const SizedBox(height: 8),
-            Text(
-              value,
-              style: paragraphSmall[medium].copyWith(
-                color: light,
-              ),
-            ),
+            Text(value, style: style),
           ],
         );
       },
