@@ -18,8 +18,7 @@ class BaseBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         color: color,
       ),
-      height: 24,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       child: child,
     );
   }
