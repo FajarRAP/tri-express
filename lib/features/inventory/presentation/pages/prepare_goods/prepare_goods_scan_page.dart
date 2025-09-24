@@ -55,10 +55,8 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
   InventoryCubit get inventoryCubit => _inventoryCubit;
 
   @override
-  void Function() get onInventoryStop => () {
-        final uniqueCodes = uhfResults.map((e) => e.epcId).toList();
-        _inventoryCubit.fetchPreviewPrepareShipments(uniqueCodes: uniqueCodes);
-      };
+  void Function() get onInventoryStop => () =>
+      _inventoryCubit.fetchPreviewPrepareShipments(uhfresults: uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -179,50 +177,45 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
               ),
             ),
             Expanded(
-              child: BlocListener<InventoryCubit, InventoryState>(
-                listener: (context, state) {
-                  if (state is CreateShipmentsLoaded) {
-                    TopSnackbar.successSnackbar(message: state.message);
-                    context
-                      ..go(menuRoute)
-                      ..push(prepareGoodsRoute);
-                  }
+              child: TripleFloatingActionButtons(
+                onReset: onReset,
+                onScan: onScan,
+                onSave: () => showModalBottomSheet(
+                  context: context,
+                  builder: (context) =>
+                      BlocConsumer<InventoryCubit, InventoryState>(
+                    listener: (context, state) {
+                      if (state is CreateShipmentsLoaded) {
+                        TopSnackbar.successSnackbar(message: state.message);
+                        context
+                          ..go(menuRoute)
+                          ..push(prepareGoodsRoute);
+                      }
 
-                  if (state is CreateShipmentsError) {
-                    TopSnackbar.dangerSnackbar(message: state.message);
-                  }
-                },
-                child: TripleFloatingActionButtons(
-                  onReset: onReset,
-                  onScan: onScan,
-                  onSave: () => showModalBottomSheet(
-                    context: context,
-                    builder: (context) =>
-                        BlocBuilder<InventoryCubit, InventoryState>(
-                      builder: (context, state) {
-                        final onPressed = switch (state) {
-                          CreateShipmentsLoading() => null,
-                          _ => () => _inventoryCubit.createPrepareShipments(
-                              shippedAt: widget.shippedAt,
-                              estimatedAt: widget.estimatedAt,
-                              nextWarehouse: widget.nextWarehouse,
-                              transportMode: widget.transportMode,
-                              batchName: widget.batchName,
-                              uniqueCodes: _selectedCodes.values
-                                  .expand((codes) => codes)
-                                  .toList()),
-                        };
+                      if (state is CreateShipmentsError) {
+                        TopSnackbar.dangerSnackbar(message: state.message);
+                      }
+                    },
+                    builder: (context, state) {
+                      final onPressed = switch (state) {
+                        CreateShipmentsLoading() => null,
+                        _ => () => _inventoryCubit.createPrepareShipments(
+                            shippedAt: widget.shippedAt,
+                            estimatedAt: widget.estimatedAt,
+                            nextWarehouse: widget.nextWarehouse,
+                            transportMode: widget.transportMode,
+                            batchName: widget.batchName,
+                            selectedCodes: _selectedCodes),
+                      };
 
-                        return ActionConfirmationBottomSheet(
-                          onPressed: onPressed,
-                          message:
-                              'Apakah anda yakin akan menyimpan barang ini?',
-                        );
-                      },
-                    ),
+                      return ActionConfirmationBottomSheet(
+                        onPressed: onPressed,
+                        message: 'Apakah anda yakin akan menyimpan barang ini?',
+                      );
+                    },
                   ),
-                  isScanning: isInventoryRunning,
                 ),
+                isScanning: isInventoryRunning,
               ),
             ),
           ],
