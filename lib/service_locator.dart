@@ -31,6 +31,7 @@ import 'features/inventory/domain/use_cases/delete_prepared_shipments_use_case.d
 import 'features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_count_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -112,6 +113,9 @@ void setupServiceLocator() {
             FetchInventoriesCountUseCase(inventoryRepositories: getIt.get()),
         fetchOnTheWayShipmentsUseCase:
             FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt.get()),
+        fetchPreviewDeliveryShipmentsUseCase:
+            FetchPreviewDeliveryShipmentsUseCase(
+                inventoryRepositories: getIt.get()),
         fetchPreviewReceiveShipmentsUseCase:
             FetchPreviewReceiveShipmentsUseCase(
                 inventoryRepositories: getIt.get()),
