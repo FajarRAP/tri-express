@@ -45,7 +45,7 @@ class SendGoodsDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 InfoTile(
                   title: 'Tanggal Pengiriman',
-                  value: batch.shipmentAt.toDDMMMMYYYY,
+                  value: batch.shippedAt.toDDMMMMYYYY,
                 ),
                 const SizedBox(height: 8),
                 InfoTile(
