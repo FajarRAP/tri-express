@@ -43,6 +43,11 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
   InventoryCubit get inventoryCubit => _inventoryCubit;
 
   @override
+  void Function() get onInventoryStop =>
+      () => _inventoryCubit.fetchPreviewReceiveShipments(
+          uniqueCodes: uhfResults.map((e) => e.epcId).toList());
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
@@ -182,9 +187,9 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
 
     return BlocBuilder<InventoryCubit, InventoryState>(
       buildWhen: (previous, current) =>
-          current is FetchPreviewReceiveShipments || current is UHFAction,
+          current is FetchPreviewBatchesShipments || current is UHFAction,
       builder: (context, state) {
-        if (state is FetchPreviewReceiveShipmentsLoading) {
+        if (state is FetchPreviewBatchesShipmentsLoading) {
           return const SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
@@ -193,7 +198,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           );
         }
 
-        if (state is FetchPreviewReceiveShipmentsLoaded) {
+        if (state is FetchPreviewBatchesShipmentsLoaded) {
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
@@ -241,11 +246,11 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
     return BlocBuilder<InventoryCubit, InventoryState>(
       bloc: _inventoryCubit,
       buildWhen: (previous, current) =>
-          current is FetchPreviewReceiveShipments || current is UHFAction,
+          current is FetchPreviewBatchesShipments || current is UHFAction,
       builder: (context, state) {
         final (String title, String value) = switch (state) {
-          FetchPreviewReceiveShipmentsLoading() => ('Memuat', '...'),
-          FetchPreviewReceiveShipmentsLoaded s => (
+          FetchPreviewBatchesShipmentsLoading() => ('Memuat', '...'),
+          FetchPreviewBatchesShipmentsLoaded s => (
               'Total Koli Aktual',
               '${s.batches.fold<int>(0, (prev, e) => prev + e.totalAllUnits)}'
             ),
