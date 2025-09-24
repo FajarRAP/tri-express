@@ -31,7 +31,7 @@ class ActionConfirmationBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Apakah anda yakin akan menyimpan barang ini?',
+            message,
             style: label[medium].copyWith(color: grayTertiary),
             textAlign: TextAlign.center,
           ),
