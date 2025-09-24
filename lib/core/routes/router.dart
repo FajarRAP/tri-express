@@ -278,14 +278,12 @@ final router = GoRouter(
       path: '/on-the-way-detail',
       builder: (context, state) {
         final extras = state.extra as Map<String, dynamic>;
+        final batch = extras['batch'] as BatchEntity;
         final good = extras['good'] as GoodEntity;
-        final batchName = extras['batchName'] as String;
-        final shipmentAt = extras['shipmentAt'] as DateTime;
 
         return OnTheWayDetailPage(
-          batchName: batchName,
+          batch: batch,
           good: good,
-          shipmentAt: shipmentAt,
         );
       },
     ),

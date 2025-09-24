@@ -73,7 +73,7 @@ class OnTheWayPage extends StatelessWidget {
                                         ),
                                       );
                                     }
-          
+
                                     return Text(
                                       '...',
                                       style: heading5[bold].copyWith(
@@ -108,7 +108,7 @@ class OnTheWayPage extends StatelessWidget {
                       ),
                     );
                   }
-          
+
                   if (state is FetchOnTheWayShipmentsLoaded) {
                     if (state.batches.isEmpty) {
                       return SliverFillRemaining(
@@ -127,7 +127,7 @@ class OnTheWayPage extends StatelessWidget {
                         ),
                       );
                     }
-          
+
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
@@ -140,7 +140,7 @@ class OnTheWayPage extends StatelessWidget {
                                   context.push(onTheWayDetailRoute, extra: {
                                 'batchName': state.batches[index].name,
                                 'good': selectedGood.first,
-                                'shipmentAt': state.batches[index].shipmentAt,
+                                'shipmentAt': state.batches[index].shippedAt,
                               }),
                               batch: state.batches[index],
                             ),
@@ -153,7 +153,7 @@ class OnTheWayPage extends StatelessWidget {
                       ),
                     );
                   }
-          
+
                   return const SliverToBoxAdapter();
                 },
               )
