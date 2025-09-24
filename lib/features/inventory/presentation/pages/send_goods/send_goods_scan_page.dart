@@ -1,59 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
-import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
-import '../../../../core/domain/entities/uhf_result_entity.dart';
-import '../../widgets/batch_card_item.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
+import '../../../domain/entities/batch_entity.dart';
+import '../../cubit/inventory_cubit.dart';
+import '../../widgets/batch_card_checkbox.dart';
+import '../../widgets/scanned_item_card.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class SendGoodsScanPage extends StatefulWidget {
-  const SendGoodsScanPage({super.key});
+  const SendGoodsScanPage({
+    super.key,
+    required this.driver,
+    required this.nextWarehouse,
+  });
+
+  final DropdownEntity driver;
+  final DropdownEntity nextWarehouse;
 
   @override
   State<SendGoodsScanPage> createState() => _SendGoodsScanPageState();
 }
 
-class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
-  late final UHFMethodHandler _uhfMethodHandler;
-  final _tagInfos = <UHFResultEntity>[];
-  final _selectedBatchIds = <String>[];
-  var _isInventoryRunning = false;
-  var _isSelectAll = false;
+class _SendGoodsScanPageState extends State<SendGoodsScanPage>
+    with UHFMethodHandlerMixin {
+  late final InventoryCubit _inventoryCubit;
+  final _selectedBatches = <BatchEntity>{};
 
   @override
   void initState() {
     super.initState();
-    _uhfMethodHandler = const UHFMethodHandler(platform);
-    platform.setMethodCallHandler(
-      (call) async => await _uhfMethodHandler.methodHandler(
-        call,
-        onGetTag: (tagInfo) {
-          final index = _tagInfos.indexWhere((e) => e.epcId == tagInfo.epcId);
-
-          setState(() => index != -1
-              ? _tagInfos[index].updateInfo(tagInfo: tagInfo)
-              : _tagInfos.add(tagInfo));
-        },
-        onToggleInventory: (toggleCase, response) {
-          setState(() => _isInventoryRunning = response.statusCode == 1);
-
-          call.method == startInventoryMethod
-              ? TopSnackbar.successSnackbar(message: response.message)
-              : TopSnackbar.dangerSnackbar(message: response.message);
-        },
-      ),
-    );
+    _inventoryCubit = context.read<InventoryCubit>();
+    initUHFMethodHandler(platform);
   }
+
+  @override
+  InventoryCubit get inventoryCubit => _inventoryCubit;
+
+  @override
+  void Function() get onInventoryStop =>
+      () => _inventoryCubit.fetchPreviewDeliveryShipments(
+          nextWarehouse: widget.nextWarehouse,
+          uniqueCodes: uhfResults.map((e) => e.epcId).toList());
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +74,8 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Text(
-                      'Pengiriman ke Gudang Yogyakarta',
+                    Text(
+                      'Pengiriman ke ${widget.nextWarehouse.value}',
                       style: const TextStyle(
                         color: black,
                         fontSize: 18,
@@ -98,7 +98,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                               ),
                             ),
                             Text(
-                              '0',
+                              '...',
                               style: const TextStyle(
                                 color: light,
                                 fontSize: 24,
@@ -122,7 +122,13 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () => context.push(scanBarcodeInnerRoute),
+                          onTap: () async {
+                            final result = await context
+                                .push<Barcode>(scanBarcodeInnerRoute);
+                            if (result == null) return;
+
+                            onQRScan('${result.displayValue}');
+                          },
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
                       ],
@@ -155,38 +161,45 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
                 onChanged: (value) {
                   if (value == null) return;
 
-                  _isSelectAll = value;
-                  _selectedBatchIds.clear();
-
-                  setState(() {
-                    if (_isSelectAll) {
-                      for (var good in goods) {
-                        _selectedBatchIds.add(good.id);
-                      }
-                    }
-                  });
+                  setState(() => value
+                      ? _selectedBatches.addAll(_inventoryCubit.previewBatches)
+                      : _selectedBatches.clear());
                 },
                 title: Text(
                   'Semua',
                   style: label[medium].copyWith(color: primary),
                 ),
-                value: _isSelectAll,
+                value: _selectedBatches.length ==
+                        _inventoryCubit.previewBatches.length &&
+                    _inventoryCubit.previewBatches.isNotEmpty,
                 side: const BorderSide(color: primary),
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             ),
             Expanded(
               child: TripleFloatingActionButtons(
+                onReset: onReset,
+                onScan: onScan,
                 onSave: () => showModalBottomSheet(
                   context: context,
                   builder: (context) => ActionConfirmationBottomSheet(
-                    onPressed: () => context
-                      ..go(menuRoute)
-                      ..push(sendGoodsRoute),
+                    onPressed: () {
+                      // context
+                      // ..go(menuRoute)
+                      // ..push(sendGoodsRoute)
+                      // print('next_warehouse_id: ${widget.nextWarehouse.id}');
+                      // print(
+                      //     'delivery_date: ${DateTime.now().toIso8601String()}');
+                      // print('user_id: ${widget.driver.id}');
+                      // print(
+                      //     'codes: ${_selectedBatches.expand((e) => e.goods.expand((i) => i.uniqueCodes)).toList()}');
+                      // print(
+                      //     'shipment_ids: ${_selectedBatches.map((e) => e.id).toList()}');
+                    },
                     message: 'Apakah anda yakin akan mengirim barang ini?',
                   ),
                 ),
-                isScanning: _isInventoryRunning,
+                isScanning: isInventoryRunning,
               ),
             ),
           ],
@@ -197,7 +210,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
   }
 
   Widget _buildList() {
-    if (_tagInfos.isNotEmpty) {
+    if (uhfResults.isEmpty) {
       return SliverFillRemaining(
         child: Center(
           child: Text(
@@ -209,23 +222,67 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage> {
       );
     }
 
-    return SliverList.separated(
-      itemBuilder: (context, index) {
-        return BatchCardItem(
-          onTap: () => showModalBottomSheet(
-            builder: (context) => ShipmentReceiptNumbersBottomSheet(
-              onSelected: (selectedReceiptNumbers) => context
-                  .push('$itemDetailRoute/${selectedReceiptNumbers.first}'),
-              batch: batch,
+    return BlocBuilder<InventoryCubit, InventoryState>(
+      buildWhen: (previous, current) =>
+          current is FetchPreviewBatchesShipments || current is UHFAction,
+      builder: (context, state) {
+        if (state is FetchPreviewBatchesShipmentsLoading) {
+          return const SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: CircularProgressIndicator.adaptive(),
             ),
-            backgroundColor: light,
-            context: context,
-          ),
-          batch: batch,
-        );
+          );
+        }
+
+        if (state is FetchPreviewBatchesShipmentsLoaded) {
+          return SliverPadding(
+            padding: const EdgeInsets.only(bottom: 80),
+            sliver: SliverList.separated(
+              itemBuilder: (context, index) => BatchCardCheckbox(
+                onChanged: (value) {
+                  if (value == null) return;
+
+                  setState(() => value
+                      ? _selectedBatches.add(state.batches[index])
+                      : _selectedBatches.remove(state.batches[index]));
+                },
+                onTap: () => showModalBottomSheet(
+                  context: context,
+                  builder: (context) => ShipmentReceiptNumbersBottomSheet(
+                    onSelected: (selectedGoods) => context.push(
+                      receiveGoodsDetailRoute,
+                      extra: {
+                        'batch': state.batches[index],
+                        'good': selectedGoods.first,
+                      },
+                    ),
+                    batch: state.batches[index],
+                  ),
+                ),
+                isActive: _selectedBatches.contains(state.batches[index]),
+                batch: state.batches[index],
+              ),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemCount: state.batches.length,
+            ),
+          );
+        }
+
+        if (state is OnUHFScan || state is QRCodeScan) {
+          return SliverPadding(
+            padding: const EdgeInsets.only(bottom: 80),
+            sliver: SliverList.builder(
+              itemBuilder: (context, index) => ScannedItemCard(
+                number: index + 1,
+                item: uhfResults[index],
+              ),
+              itemCount: uhfResults.length,
+            ),
+          );
+        }
+        return const SliverToBoxAdapter();
       },
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemCount: null,
     );
   }
 }
