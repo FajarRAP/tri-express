@@ -7,6 +7,7 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
@@ -52,8 +53,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
   @override
   void Function() get onInventoryStop =>
       () => _inventoryCubit.fetchPreviewDeliveryShipments(
-          nextWarehouse: widget.nextWarehouse,
-          uniqueCodes: uhfResults.map((e) => e.epcId).toList());
+          nextWarehouse: widget.nextWarehouse, uhfresults: uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -83,13 +83,13 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const SizedBox(
+                    SizedBox(
                       width: double.infinity,
                       child: PrimaryGradientCard(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
+                            const Text(
                               'Siap Kirim',
                               style: const TextStyle(
                                 color: light,
@@ -97,13 +97,32 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            Text(
-                              '...',
-                              style: const TextStyle(
-                                color: light,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
+                            BlocBuilder<InventoryCubit, InventoryState>(
+                              buildWhen: (previous, current) =>
+                                  current is UHFAction ||
+                                  current is FetchPreviewBatchesShipments,
+                              builder: (context, state) {
+                                if (state
+                                    is FetchPreviewBatchesShipmentsLoaded) {
+                                  return Text(
+                                    '${state.batches.length} Koli',
+                                    style: const TextStyle(
+                                      color: light,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  );
+                                }
+
+                                return const Text(
+                                  '...',
+                                  style: TextStyle(
+                                    color: light,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -182,21 +201,35 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                 onScan: onScan,
                 onSave: () => showModalBottomSheet(
                   context: context,
-                  builder: (context) => ActionConfirmationBottomSheet(
-                    onPressed: () {
-                      // context
-                      // ..go(menuRoute)
-                      // ..push(sendGoodsRoute)
-                      // print('next_warehouse_id: ${widget.nextWarehouse.id}');
-                      // print(
-                      //     'delivery_date: ${DateTime.now().toIso8601String()}');
-                      // print('user_id: ${widget.driver.id}');
-                      // print(
-                      //     'codes: ${_selectedBatches.expand((e) => e.goods.expand((i) => i.uniqueCodes)).toList()}');
-                      // print(
-                      //     'shipment_ids: ${_selectedBatches.map((e) => e.id).toList()}');
+                  builder: (context) =>
+                      BlocConsumer<InventoryCubit, InventoryState>(
+                    listener: (context, state) {
+                      if (state is CreateShipmentsLoaded) {
+                        TopSnackbar.successSnackbar(message: state.message);
+                        context
+                          ..go(menuRoute)
+                          ..push(sendGoodsRoute);
+                      }
+
+                      if (state is CreateShipmentsError) {
+                        TopSnackbar.dangerSnackbar(message: state.message);
+                      }
                     },
-                    message: 'Apakah anda yakin akan mengirim barang ini?',
+                    builder: (context, state) {
+                      final onPressed = switch (state) {
+                        CreateShipmentsLoading() => null,
+                        _ => () => _inventoryCubit.createDeliveryShipments(
+                              nextWarehouse: widget.nextWarehouse,
+                              driver: widget.driver,
+                              batches: _selectedBatches,
+                              deliveredAt: DateTime.now(),
+                            ),
+                      };
+                      return ActionConfirmationBottomSheet(
+                        onPressed: onPressed,
+                        message: 'Apakah anda yakin akan mengirim barang ini?',
+                      );
+                    },
                   ),
                 ),
                 isScanning: isInventoryRunning,
