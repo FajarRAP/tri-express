@@ -231,7 +231,16 @@ final router = GoRouter(
         ),
         GoRoute(
           path: 'scan',
-          builder: (context, state) => const SendGoodsScanPage(),
+          builder: (context, state) {
+            final extras = state.extra as Map<String, dynamic>;
+            final driver = extras['driver'] as DropdownEntity;
+            final nextWarehouse = extras['nextWarehouse'] as DropdownEntity;
+
+            return SendGoodsScanPage(
+              driver: driver,
+              nextWarehouse: nextWarehouse,
+            );
+          },
         ),
         GoRoute(
           path: 'detail',

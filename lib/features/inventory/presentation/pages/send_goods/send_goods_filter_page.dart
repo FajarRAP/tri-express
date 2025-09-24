@@ -106,7 +106,10 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
               child: PrimaryButton(
                 onPressed: _selectedDriver == null || _selectedWarehouse == null
                     ? null
-                    : () => context.push(sendGoodsScanRoute),
+                    : () => context.push(sendGoodsScanRoute, extra: {
+                          'driver': _selectedDriver,
+                          'nextWarehouse': _selectedWarehouse,
+                        }),
                 child: const Text('Simpan'),
               ),
             ),
