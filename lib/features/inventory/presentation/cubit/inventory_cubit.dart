@@ -3,8 +3,10 @@ import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
 import '../../../core/domain/entities/dropdown_entity.dart';
+import '../../../core/domain/entities/uhf_result_entity.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/delete_prepared_shipments_use_case.dart';
@@ -22,6 +24,7 @@ part 'inventory_state.dart';
 
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
+    required CreateDeliveryShipmentsUseCase createDeliveryShipmentsUseCase,
     required CreatePrepareShipmentsUseCase createPrepareShipmentsUseCase,
     required CreateReceiveShipmentsUseCase createReceiveShipmentsUseCase,
     required DeletePreparedShipmentsUseCase deletePreparedShipmentsUseCase,
@@ -37,7 +40,8 @@ class InventoryCubit extends Cubit<InventoryState> {
         fetchPreviewPrepareShipmentsUseCase,
     required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
-  })  : _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
+  })  : _createDeliveryShipmentsUseCase = createDeliveryShipmentsUseCase,
+        _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
         _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
         _deletePreparedShipmentsUseCase = deletePreparedShipmentsUseCase,
         _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
@@ -54,6 +58,7 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         super(InventoryInitial());
 
+  final CreateDeliveryShipmentsUseCase _createDeliveryShipmentsUseCase;
   final CreatePrepareShipmentsUseCase _createPrepareShipmentsUseCase;
   final CreateReceiveShipmentsUseCase _createReceiveShipmentsUseCase;
   final DeletePreparedShipmentsUseCase _deletePreparedShipmentsUseCase;
@@ -80,16 +85,43 @@ class InventoryCubit extends Cubit<InventoryState> {
   final previewBatches = <BatchEntity>[];
   final previewGoods = <GoodEntity>[];
 
+  Future<void> createDeliveryShipments({
+    required DropdownEntity nextWarehouse,
+    required DropdownEntity driver,
+    required Set<BatchEntity> batches,
+    required DateTime deliveredAt,
+  }) async {
+    emit(CreateShipmentsLoading());
+
+    final uniqueCodes =
+        batches.expand((e) => e.goods.expand((i) => i.uniqueCodes)).toList();
+    final shipmentIds = batches.map((e) => e.id).toList();
+    final params = CreateDeliveryShipmentsUseCaseParams(
+      nextWarehouse: nextWarehouse,
+      driver: driver,
+      uniqueCodes: uniqueCodes,
+      shipmentIds: shipmentIds,
+      deliveredAt: deliveredAt,
+    );
+    final result = await _createDeliveryShipmentsUseCase(params);
+
+    result.fold(
+      (failure) => emit(CreateShipmentsError(message: failure.message)),
+      (message) => emit(CreateShipmentsLoaded(message: message)),
+    );
+  }
+
   Future<void> createPrepareShipments({
     required DateTime shippedAt,
     required DateTime estimatedAt,
     required DropdownEntity nextWarehouse,
     required DropdownEntity transportMode,
     required String batchName,
-    required List<String> uniqueCodes,
+    required Map<String, Set<String>> selectedCodes,
   }) async {
     emit(CreateShipmentsLoading());
 
+    final uniqueCodes = selectedCodes.values.expand((codes) => codes).toList();
     final params = CreatePrepareShipmentsUseCaseParams(
       shippedAt: shippedAt,
       estimatedAt: estimatedAt,
@@ -107,9 +139,11 @@ class InventoryCubit extends Cubit<InventoryState> {
   }
 
   Future<void> createReceiveShipments(
-      {required DateTime receivedAt, required List<String> uniqueCodes}) async {
+      {required DateTime receivedAt,
+      required List<UHFResultEntity> uhfresults}) async {
     emit(CreateShipmentsLoading());
 
+    final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final params = CreateReceiveShipmentsUseCaseParams(
       receivedAt: receivedAt,
       uniqueCodes: uniqueCodes,
@@ -291,17 +325,14 @@ class InventoryCubit extends Cubit<InventoryState> {
 
   Future<void> fetchPreviewDeliveryShipments(
       {required DropdownEntity nextWarehouse,
-      required List<String> uniqueCodes,
+      required List<UHFResultEntity> uhfresults,
       DropdownEntity? driver}) async {
     emit(FetchPreviewBatchesShipmentsLoading());
 
-    // final params = FetchPreviewDeliveryShipmentsUseCaseParams(
-    //   nextWarehouse: nextWarehouse,
-    //   uniqueCodes: uniqueCodes,
-    // );
+    final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final params = FetchPreviewDeliveryShipmentsUseCaseParams(
       nextWarehouse: nextWarehouse,
-      uniqueCodes: ['A00000001760', 'A00000000167', 'A00000000168'],
+      uniqueCodes: uniqueCodes,
     );
 
     final result = await _fetchPreviewDeliveryShipmentsUseCase(params);
@@ -317,9 +348,10 @@ class InventoryCubit extends Cubit<InventoryState> {
   }
 
   Future<void> fetchPreviewPrepareShipments(
-      {required List<String> uniqueCodes}) async {
+      {required List<UHFResultEntity> uhfresults}) async {
     emit(FetchPreviewPrepareShipmentsLoading());
 
+    final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final result = await _fetchPreviewPrepareShipmentsUseCase(uniqueCodes);
 
     result.fold(
@@ -333,12 +365,14 @@ class InventoryCubit extends Cubit<InventoryState> {
   }
 
   Future<void> fetchPreviewReceiveShipments(
-      {required List<String> uniqueCodes}) async {
+      {required List<UHFResultEntity> uhfresults}) async {
     emit(FetchPreviewBatchesShipmentsLoading());
 
+    final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final params = FetchPreviewReceiveShipmentsUseCaseParams(
       uniqueCodes: uniqueCodes,
     );
+
     final result = await _fetchPreviewReceiveShipmentsUseCase(params);
 
     result.fold(

@@ -6,6 +6,7 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
+import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
@@ -21,6 +22,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   InventoryRepositoriesImpl({required this.inventoryRemoteDataSources});
 
   final InventoryRemoteDataSources inventoryRemoteDataSources;
+
+  @override
+  Future<Either<Failure, String>> createDeliveryShipments(
+      {required CreateDeliveryShipmentsUseCaseParams params}) async {
+    try {
+      final result = await inventoryRemoteDataSources.createDeliveryShipments(
+          params: params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
 
   @override
   Future<Either<Failure, String>> createPrepareShipments(

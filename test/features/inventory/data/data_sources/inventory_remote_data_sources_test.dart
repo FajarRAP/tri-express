@@ -11,6 +11,7 @@ import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
@@ -543,6 +544,86 @@ void main() {
       // act
       final result = inventoryRemoteDataSources.fetchPreviewDeliveryShipments(
           params: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('create delivery shipments remote data sources test', () {
+    final params = CreateDeliveryShipmentsUseCaseParams(
+      nextWarehouse: const DropdownEntity(
+        id: '019903c3-ca71-713d-90a0-549aaea7e2d3',
+        value: 'Gudang Tegal',
+      ),
+      driver: const DropdownEntity(
+        id: '019908d1-635b-70d7-b012-194607f49d16',
+        value: 'driver-value',
+      ),
+      uniqueCodes: ['A00000001760'],
+      shipmentIds: ['100'],
+      deliveredAt: DateTime.parse('2025-09-24'),
+    );
+
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/create_delivery_shipments.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources.createDeliveryShipments(
+          params: params);
+
+      // assert
+      expect(result, isA<String>());
+      verify(() => mockDio.post(any(), data: {
+            'next_warehouse_id': params.nextWarehouse.id,
+            'delivery_date': params.deliveredAt.toIso8601String(),
+            'user_id': params.driver.id,
+            'codes': params.uniqueCodes,
+            'shipment_ids': params.shipmentIds,
+          })).called(1);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result =
+          inventoryRemoteDataSources.createDeliveryShipments(params: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(const InternalException());
+
+      // act
+      final result =
+          inventoryRemoteDataSources.createDeliveryShipments(params: params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));

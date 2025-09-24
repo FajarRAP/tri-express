@@ -1,0 +1,21 @@
+{
+    "status": "Success",
+    "message": "Pengiriman berhasil diproses.",
+    "data": [
+        {
+            "shipment_id": 100,
+            "shipment_code": "TL/QWXR/EBUR",
+            "status": "Dalam Pengiriman",
+            "delivered_qty": 1,
+            "delivery_qty": 1,
+            "prepare_qty": 1,
+            "codes_processed": [
+                "A00000001760"
+            ],
+            "next_warehouse": {
+                "id": "019903c3-ca71-713d-90a0-549aaea7e2d3",
+                "title": "Gudang Tegal"
+            }
+        }
+    ]
+}
