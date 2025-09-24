@@ -4,20 +4,19 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/base_card.dart';
+import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../widgets/info_tile.dart';
 
 class OnTheWayDetailPage extends StatelessWidget {
   const OnTheWayDetailPage({
     super.key,
-    required this.batchName,
+    required this.batch,
     required this.good,
-    required this.shipmentAt,
   });
 
-  final String batchName;
+  final BatchEntity batch;
   final GoodEntity good;
-  final DateTime shipmentAt;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,7 @@ class OnTheWayDetailPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 InfoTile(
                   title: 'Tanggal Pengiriman',
-                  value: shipmentAt.toDDMMMMYYYY,
+                  value: batch.shippedAt.toDDMMMMYYYY,
                 ),
                 const SizedBox(height: 8),
                 InfoTile(
