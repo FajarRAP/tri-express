@@ -27,4 +27,15 @@ class UserModel extends UserEntity {
       warehouse: WarehouseModel.fromJson(json['gudang']),
     );
   }
+
+  UserEntity toEntity() => UserEntity(
+        id: id,
+        warehouseId: warehouseId,
+        avatarUrl: avatarUrl,
+        email: email,
+        name: name,
+        phoneNumber: phoneNumber,
+        roles: roles,
+        warehouse: warehouse,
+      );
 }
