@@ -1,3 +1,4 @@
+import '../../domain/entities/user_entity.dart';
 import 'user_model.dart';
 
 class LoginResponseModel {
@@ -9,13 +10,13 @@ class LoginResponseModel {
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      user: UserModel.fromJson(json['user']),
+      user: UserModel.fromJson(json['user']).toEntity(),
       accessToken: json['token'],
       refreshToken: json['refresh_token'],
     );
   }
 
-  final UserModel user;
+  final UserEntity user;
   final String accessToken;
   final String? refreshToken;
 }

@@ -2,12 +2,13 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../domain/entities/user_entity.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../models/login_response_model.dart';
 import '../models/user_model.dart';
 
 abstract class AuthRemoteDataSources {
-  Future<UserModel> fetchCurrentUser();
+  Future<UserEntity> fetchCurrentUser();
   Future<LoginResponseModel> login({required LoginParams params});
   Future<String> logout();
 }
@@ -18,11 +19,11 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
   final Dio dio;
 
   @override
-  Future<UserModel> fetchCurrentUser() async {
+  Future<UserEntity> fetchCurrentUser() async {
     try {
       final response = await dio.get('/profile');
 
-      return UserModel.fromJson(response.data['data']['user']);
+      return UserModel.fromJson(response.data['data']['user']).toEntity();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {
