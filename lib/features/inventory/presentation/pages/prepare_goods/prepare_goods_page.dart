@@ -7,6 +7,7 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
@@ -75,7 +76,7 @@ class PrepareGoodsPage extends StatelessWidget {
                 title: const Text('Persiapan Barang'),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 sliver: SliverToBoxAdapter(
                   child: Container(
                     decoration: BoxDecoration(
@@ -90,10 +91,21 @@ class PrepareGoodsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
+              BlocConsumer<InventoryCubit, InventoryState>(
                 bloc: inventoryCubit..fetchPrepareShipments(),
                 buildWhen: (previous, current) =>
                     current is FetchPrepareShipments,
+                listener: (context, state) {
+                  if (state is DeleteShipmentsLoaded) {
+                    TopSnackbar.successSnackbar(message: state.message);
+                    context.pop();
+                    inventoryCubit.fetchPrepareShipments();
+                  }
+
+                  if (state is DeleteShipmentsError) {
+                    TopSnackbar.dangerSnackbar(message: state.message);
+                  }
+                },
                 builder: (context, state) {
                   if (state is FetchPrepareShipmentsLoading) {
                     return const SliverFillRemaining(
@@ -123,7 +135,7 @@ class PrepareGoodsPage extends StatelessWidget {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(16),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) =>
                             BatchCardActionBadgeItem(
@@ -143,10 +155,25 @@ class PrepareGoodsPage extends StatelessWidget {
                           ),
                           onDelete: () => showModalBottomSheet(
                             context: context,
-                            builder: (context) => ActionConfirmationBottomSheet(
-                              onPressed: context.pop,
-                              message:
-                                  'Apakah anda yakin akan menghapus barang ini?',
+                            builder: (context) =>
+                                BlocBuilder<InventoryCubit, InventoryState>(
+                              bloc: inventoryCubit,
+                              buildWhen: (previous, current) =>
+                                  current is DeleteShipments,
+                              builder: (context, deleteState) {
+                                final onPressed = switch (deleteState) {
+                                  DeleteShipmentsLoading() => null,
+                                  _ => () async => await inventoryCubit
+                                      .deletePreparedShipments(
+                                          shipmentId: state.batches[index].id),
+                                };
+
+                                return ActionConfirmationBottomSheet(
+                                  onPressed: onPressed,
+                                  message:
+                                      'Apakah anda yakin akan menghapus barang ini?',
+                                );
+                              },
                             ),
                           ),
                           batch: state.batches[index],
