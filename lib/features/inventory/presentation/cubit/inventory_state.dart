@@ -29,6 +29,8 @@ class FetchShipmentReceiptNumbers extends InventoryState {}
 
 class CreateShipments extends InventoryState {}
 
+class DeleteShipments extends InventoryState {}
+
 class UHFAction extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
@@ -198,6 +200,20 @@ class CreateShipmentsLoaded extends CreateShipments {
 
 class CreateShipmentsError extends CreateShipments {
   CreateShipmentsError({required this.message});
+
+  final String message;
+}
+
+class DeleteShipmentsLoading extends DeleteShipments {}
+
+class DeleteShipmentsLoaded extends DeleteShipments {
+  DeleteShipmentsLoaded({required this.message});
+
+  final String message;
+}
+
+class DeleteShipmentsError extends DeleteShipments {
+  DeleteShipmentsError({required this.message});
 
   final String message;
 }

@@ -17,6 +17,8 @@ abstract class InventoryRepositories {
       {required CreatePrepareShipmentsUseCaseParams params});
   Future<Either<Failure, String>> createReceiveShipments(
       {required CreateReceiveShipmentsUseCaseParams params});
+  Future<Either<Failure, String>> deletePreparedShipments(
+      {required String shipmentId});
   Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
       {required FetchDeliveryShipmentsUseCaseParams params});
   Future<Either<Failure, List<BatchEntity>>> fetchInventories(

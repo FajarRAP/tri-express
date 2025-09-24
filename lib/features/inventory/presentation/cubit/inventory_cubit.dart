@@ -7,6 +7,7 @@ import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
+import '../../domain/use_cases/delete_prepared_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
@@ -22,6 +23,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
     required CreatePrepareShipmentsUseCase createPrepareShipmentsUseCase,
     required CreateReceiveShipmentsUseCase createReceiveShipmentsUseCase,
+    required DeletePreparedShipmentsUseCase deletePreparedShipmentsUseCase,
     required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
     required FetchInventoriesUseCase fetchInventoriesUseCase,
     required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
@@ -34,6 +36,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
   })  : _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
         _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
+        _deletePreparedShipmentsUseCase = deletePreparedShipmentsUseCase,
         _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
         _fetchInventoriesUseCase = fetchInventoriesUseCase,
         _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
@@ -48,6 +51,7 @@ class InventoryCubit extends Cubit<InventoryState> {
 
   final CreatePrepareShipmentsUseCase _createPrepareShipmentsUseCase;
   final CreateReceiveShipmentsUseCase _createReceiveShipmentsUseCase;
+  final DeletePreparedShipmentsUseCase _deletePreparedShipmentsUseCase;
   final FetchDeliveryShipmentsUseCase _fetchDeliveryShipmentsUseCase;
   final FetchInventoriesUseCase _fetchInventoriesUseCase;
   final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
@@ -108,6 +112,17 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) => emit(CreateShipmentsError(message: failure.message)),
       (message) => emit(CreateShipmentsLoaded(message: message)),
+    );
+  }
+
+  Future<void> deletePreparedShipments({required String shipmentId}) async {
+    emit(DeleteShipmentsLoading());
+
+    final result = await _deletePreparedShipmentsUseCase(shipmentId);
+
+    result.fold(
+      (failure) => emit(DeleteShipmentsError(message: failure.message)),
+      (message) => emit(DeleteShipmentsLoaded(message: message)),
     );
   }
 

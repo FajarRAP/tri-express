@@ -411,4 +411,65 @@ void main() {
           .called(1);
     });
   });
+
+  group('delete prepared shipments remote data sources test', () {
+    const params = '99';
+
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/delete_prepared_shipments.json');
+      final json = jsonDecode(jsonString);
+      final message = json['message'];
+      when(() => mockDio.delete(any())).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await inventoryRemoteDataSources.deletePreparedShipments(
+          shipmentId: params);
+
+      // assert
+      expect(result, message);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.delete(any())).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.deletePreparedShipments(
+          shipmentId: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.delete(any())).thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.deletePreparedShipments(
+          shipmentId: params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
 }

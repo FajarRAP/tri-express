@@ -20,6 +20,7 @@ abstract class InventoryRemoteDataSources {
       {required CreatePrepareShipmentsUseCaseParams params});
   Future<String> createReceiveShipments(
       {required CreateReceiveShipmentsUseCaseParams params});
+  Future<String> deletePreparedShipments({required String shipmentId});
   Future<List<BatchEntity>> fetchDeliveryShipments(
       {required FetchDeliveryShipmentsUseCaseParams params});
   Future<List<BatchEntity>> fetchInventories(
@@ -77,6 +78,19 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
           'codes': params.uniqueCodes,
         },
       );
+
+      return response.data['message'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> deletePreparedShipments({required String shipmentId}) async {
+    try {
+      final response = await dio.delete('/prepare/destroy/$shipmentId');
 
       return response.data['message'];
     } on DioException catch (de) {

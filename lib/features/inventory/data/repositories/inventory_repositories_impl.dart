@@ -64,6 +64,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
+  Future<Either<Failure, String>> deletePreparedShipments(
+      {required String shipmentId}) async {
+    try {
+      final result = await inventoryRemoteDataSources.deletePreparedShipments(
+          shipmentId: shipmentId);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
       {required FetchDeliveryShipmentsUseCaseParams params}) async {
     try {
