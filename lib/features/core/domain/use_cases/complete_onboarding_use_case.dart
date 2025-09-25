@@ -6,6 +6,7 @@ import '../repositories/core_repositories.dart';
 
 class CompleteOnboardingUseCase implements UseCase<void, NoParams> {
   const CompleteOnboardingUseCase({required this.coreRepositories});
+
   final CoreRepositories coreRepositories;
 
   @override
