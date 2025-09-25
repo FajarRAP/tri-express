@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../features/inventory/domain/entities/batch_entity.dart';
@@ -30,14 +29,6 @@ const stopInventoryMethod = 'stopInventory';
 const failedInventoryMethod = 'failedInventory';
 
 const kSpaceBarHeight = 88.0;
-
-const dropdownItems = <DropdownMenuItem>[
-  DropdownMenuItem(value: 'A', child: Text('Item A')),
-  DropdownMenuItem(value: 'B', child: Text('Item B')),
-  DropdownMenuItem(value: 'C', child: Text('Item C')),
-  DropdownMenuItem(value: 'D', child: Text('Item D')),
-  DropdownMenuItem(value: 'E', child: Text('Item E')),
-];
 
 const imagePath = 'assets/images';
 const onboardingImagePath = '$imagePath/onboarding-bg.jpg';
@@ -85,7 +76,7 @@ final goods = [for (var i = 0; i < 20; i++) _good];
 final batch = BatchEntity(
   id: 'id',
   name: 'name',
-status: 1,
+  status: 1,
   statusLabel: 'status',
   trackingNumber: 'trackingNumber',
   transportMode: 'Darat',
