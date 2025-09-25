@@ -7,14 +7,14 @@ import '../repositories/inventory_repositories.dart';
 
 class CreateDeliveryShipmentsUseCase
     implements UseCase<String, CreateDeliveryShipmentsUseCaseParams> {
-  CreateDeliveryShipmentsUseCase({required this.inventoryRepositories});
+  const CreateDeliveryShipmentsUseCase({required this.inventoryRepositories});
 
   final InventoryRepositories inventoryRepositories;
 
   @override
   Future<Either<Failure, String>> call(
       CreateDeliveryShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.createDeliveryShipments(params: params);
+    return await inventoryRepositories.createDeliveryShipments(params);
   }
 }
 

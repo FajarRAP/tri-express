@@ -4,11 +4,13 @@ import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -16,32 +18,35 @@ import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../models/batch_model.dart';
 import '../models/good_model.dart';
+import '../models/picked_good_model.dart';
 
 abstract class InventoryRemoteDataSources {
   Future<String> createDeliveryShipments(
-      {required CreateDeliveryShipmentsUseCaseParams params});
+      CreateDeliveryShipmentsUseCaseParams params);
   Future<String> createPrepareShipments(
-      {required CreatePrepareShipmentsUseCaseParams params});
+      CreatePrepareShipmentsUseCaseParams params);
   Future<String> createReceiveShipments(
-      {required CreateReceiveShipmentsUseCaseParams params});
-  Future<String> deletePreparedShipments({required String shipmentId});
+      CreateReceiveShipmentsUseCaseParams params);
+  Future<String> deletePreparedShipments(String shipmentId);
   Future<List<BatchEntity>> fetchDeliveryShipments(
-      {required FetchDeliveryShipmentsUseCaseParams params});
+      FetchDeliveryShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchInventories(
-      {required FetchInventoriesUseCaseParams params});
+      FetchInventoriesUseCaseParams params);
   Future<int> fetchInventoriesCount();
-  Future fetchOnTheWayShipments(
-      {required FetchOnTheWayShipmentsUseCaseParams params});
-  Future fetchPrepareShipments(
-      {required FetchPrepareShipmentsUseCaseParams params});
+  Future<List<BatchEntity>> fetchOnTheWayShipments(
+      FetchOnTheWayShipmentsUseCaseParams params);
+  Future<List<PickedGoodEntity>> fetchPickedUpGoods(
+      FetchPickedUpGoodsUseCaseParams params);
+  Future<List<BatchEntity>> fetchPrepareShipments(
+      FetchPrepareShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchPreviewDeliveryShipments(
-      {required FetchPreviewDeliveryShipmentsUseCaseParams params});
+      FetchPreviewDeliveryShipmentsUseCaseParams params);
   Future<List<GoodEntity>> fetchPreviewPrepareShipments(
-      {required List<String> uniqueCodes});
+      List<String> uniqueCodes);
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
-      {required FetchPreviewReceiveShipmentsUseCaseParams params});
+      FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchReceiveShipments(
-      {required FetchReceiveShipmentsUseCaseParams params});
+      FetchReceiveShipmentsUseCaseParams params);
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -51,7 +56,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<String> createDeliveryShipments(
-      {required CreateDeliveryShipmentsUseCaseParams params}) async {
+      CreateDeliveryShipmentsUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/delivery/store',
@@ -74,7 +79,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<String> createPrepareShipments(
-      {required CreatePrepareShipmentsUseCaseParams params}) async {
+      CreatePrepareShipmentsUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/prepare/store',
@@ -98,7 +103,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<String> createReceiveShipments(
-      {required CreateReceiveShipmentsUseCaseParams params}) async {
+      CreateReceiveShipmentsUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/receive/store',
@@ -117,7 +122,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
-  Future<String> deletePreparedShipments({required String shipmentId}) async {
+  Future<String> deletePreparedShipments(String shipmentId) async {
     try {
       final response = await dio.delete('/prepare/destroy/$shipmentId');
 
@@ -131,7 +136,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<BatchEntity>> fetchDeliveryShipments(
-      {required FetchDeliveryShipmentsUseCaseParams params}) async {
+      FetchDeliveryShipmentsUseCaseParams params) async {
     try {
       final response = await dio.get(
         '/delivery',
@@ -154,7 +159,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<BatchEntity>> fetchInventories(
-      {required FetchInventoriesUseCaseParams params}) async {
+      FetchInventoriesUseCaseParams params) async {
     try {
       final response = await dio.get(
         '/inventory',
@@ -189,8 +194,8 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
-  Future fetchOnTheWayShipments(
-      {required FetchOnTheWayShipmentsUseCaseParams params}) async {
+  Future<List<BatchEntity>> fetchOnTheWayShipments(
+      FetchOnTheWayShipmentsUseCaseParams params) async {
     try {
       final response = await dio.get(
         '/otw',
@@ -212,8 +217,34 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
   }
 
   @override
-  Future fetchPrepareShipments(
-      {required FetchPrepareShipmentsUseCaseParams params}) async {
+  Future<List<PickedGoodEntity>> fetchPickedUpGoods(
+      FetchPickedUpGoodsUseCaseParams params) async {
+    try {
+      final response = await dio.get(
+        '/taking',
+        queryParameters: {
+          'page': params.page,
+          'per_page': params.perPage,
+          'search': params.search,
+        },
+      );
+
+      final contents =
+          List<Map<String, dynamic>>.from(response.data['data']['data']);
+
+      return contents
+          .map((e) => PickedGoodModel.fromJson(e).toEntity())
+          .toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<BatchEntity>> fetchPrepareShipments(
+      FetchPrepareShipmentsUseCaseParams params) async {
     try {
       final response = await dio.get(
         '/prepare',
@@ -236,7 +267,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<BatchEntity>> fetchReceiveShipments(
-      {required FetchReceiveShipmentsUseCaseParams params}) async {
+      FetchReceiveShipmentsUseCaseParams params) async {
     try {
       final response = await dio.get(
         '/receive',
@@ -259,7 +290,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<BatchEntity>> fetchPreviewDeliveryShipments(
-      {required FetchPreviewDeliveryShipmentsUseCaseParams params}) async {
+      FetchPreviewDeliveryShipmentsUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/delivery/preview',
@@ -282,7 +313,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<GoodEntity>> fetchPreviewPrepareShipments(
-      {required List<String> uniqueCodes}) async {
+      List<String> uniqueCodes) async {
     try {
       final response = await dio.post(
         '/prepare/preview',
@@ -301,7 +332,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
 
   @override
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
-      {required FetchPreviewReceiveShipmentsUseCaseParams params}) async {
+      FetchPreviewReceiveShipmentsUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/receive/preview',

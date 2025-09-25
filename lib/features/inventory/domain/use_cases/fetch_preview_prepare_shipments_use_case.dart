@@ -14,7 +14,6 @@ class FetchPreviewPrepareShipmentsUseCase
 
   @override
   Future<Either<Failure, List<GoodEntity>>> call(List<String> params) async {
-    return await inventoryRepositories.fetchPreviewPrepareShipments(
-        uniqueCodes: params);
+    return await inventoryRepositories.fetchPreviewPrepareShipments(params);
   }
 }

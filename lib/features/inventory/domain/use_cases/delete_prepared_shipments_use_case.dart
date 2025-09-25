@@ -11,7 +11,6 @@ class DeletePreparedShipmentsUseCase implements UseCase<String, String> {
 
   @override
   Future<Either<Failure, String>> call(String params) async {
-    return await inventoryRepositories.deletePreparedShipments(
-        shipmentId: params);
+    return await inventoryRepositories.deletePreparedShipments(params);
   }
 }

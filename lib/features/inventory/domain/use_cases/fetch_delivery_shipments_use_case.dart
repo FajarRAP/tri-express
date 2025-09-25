@@ -14,7 +14,7 @@ class FetchDeliveryShipmentsUseCase
   @override
   Future<Either<Failure, List<BatchEntity>>> call(
       FetchDeliveryShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.fetchDeliveryShipments(params: params);
+    return await inventoryRepositories.fetchDeliveryShipments(params);
   }
 }
 

@@ -7,14 +7,14 @@ import '../repositories/inventory_repositories.dart';
 
 class FetchReceiveShipmentsUseCase
     implements UseCase<List<BatchEntity>, FetchReceiveShipmentsUseCaseParams> {
-  FetchReceiveShipmentsUseCase({required this.inventoryRepositories});
+  const FetchReceiveShipmentsUseCase({required this.inventoryRepositories});
 
   final InventoryRepositories inventoryRepositories;
 
   @override
   Future<Either<Failure, List<BatchEntity>>> call(
       FetchReceiveShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.fetchReceiveShipments(params: params);
+    return await inventoryRepositories.fetchReceiveShipments(params);
   }
 }
 

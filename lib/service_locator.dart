@@ -33,11 +33,12 @@ import 'features/inventory/domain/use_cases/delete_prepared_shipments_use_case.d
 import 'features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_count_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_picked_up_goods_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
-import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
-import 'features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_receive_shipments_use_case.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
 
@@ -113,32 +114,33 @@ void setupServiceLocator() {
         () => InventoryRemoteDataSourcesImpl(dio: getIt()))
     ..registerLazySingleton<InventoryRepositories>(
         () => InventoryRepositoriesImpl(inventoryRemoteDataSources: getIt()))
-    ..registerSingleton<CreateDeliveryShipmentsUseCase>(
+    ..registerSingleton(
         CreateDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<CreatePrepareShipmentsUseCase>(
+    ..registerSingleton(
         CreatePrepareShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<CreateReceiveShipmentsUseCase>(
+    ..registerSingleton(
         CreateReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<DeletePreparedShipmentsUseCase>(
+    ..registerSingleton(
         DeletePreparedShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchDeliveryShipmentsUseCase>(
+    ..registerSingleton(
         FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchInventoriesUseCase>(
-        FetchInventoriesUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchInventoriesCountUseCase>(
+    ..registerSingleton(FetchInventoriesUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
         FetchInventoriesCountUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchOnTheWayShipmentsUseCase>(
+    ..registerSingleton(
         FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchPreviewDeliveryShipmentsUseCase>(
+    ..registerSingleton(
         FetchPreviewDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchPreviewReceiveShipmentsUseCase>(
+    ..registerSingleton(
         FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchPreviewPrepareShipmentsUseCase>(
+    ..registerSingleton(
         FetchPreviewPrepareShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchPrepareShipmentsUseCase>(
+    ..registerSingleton(
         FetchPrepareShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton<FetchReceiveShipmentsUseCase>(
+    ..registerSingleton(
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchPickedUpGoodsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         createPrepareShipmentsUseCase: getIt(),
@@ -152,7 +154,8 @@ void setupServiceLocator() {
         fetchPreviewReceiveShipmentsUseCase: getIt(),
         fetchPreviewPrepareShipmentsUseCase: getIt(),
         fetchPrepareShipmentsUseCase: getIt(),
-        fetchReceiveShipmentsUseCase: getIt()));
+        fetchReceiveShipmentsUseCase: getIt(),
+        fetchPickedUpGoodsUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors

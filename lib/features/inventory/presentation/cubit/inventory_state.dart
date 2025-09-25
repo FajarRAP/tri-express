@@ -19,8 +19,6 @@ class FetchPreviewBatchesShipments extends InventoryState {}
 
 class FetchPreviewPrepareShipments extends InventoryState {}
 
-class FetchPickUpShipments extends InventoryState {}
-
 class FetchPrepareShipments extends InventoryState {}
 
 class FetchReceiveShipments extends InventoryState {}
@@ -32,6 +30,8 @@ class CreateShipments extends InventoryState {}
 class DeleteShipments extends InventoryState {}
 
 class UHFAction extends InventoryState {}
+
+class FetchPickedGoods extends InventoryState {}
 
 class ListPaginateLoading extends ListPaginate {}
 
@@ -101,20 +101,6 @@ class FetchPrepareShipmentsLoaded extends FetchPrepareShipments {
 
 class FetchPrepareShipmentsError extends FetchPrepareShipments {
   FetchPrepareShipmentsError({required this.message});
-
-  final String message;
-}
-
-class FetchPickUpShipmentsLoading extends FetchPickUpShipments {}
-
-class FetchPickUpShipmentsLoaded extends FetchPickUpShipments {
-  FetchPickUpShipmentsLoaded({required this.batches});
-
-  final List<BatchEntity> batches;
-}
-
-class FetchPickUpShipmentsError extends FetchPickUpShipments {
-  FetchPickUpShipmentsError({required this.message});
 
   final String message;
 }
@@ -214,6 +200,20 @@ class DeleteShipmentsLoaded extends DeleteShipments {
 
 class DeleteShipmentsError extends DeleteShipments {
   DeleteShipmentsError({required this.message});
+
+  final String message;
+}
+
+class FetchPickedGoodsLoading extends FetchPickedGoods {}
+
+class FetchPickedGoodsLoaded extends FetchPickedGoods {
+  FetchPickedGoodsLoaded({required this.pickedGoods});
+
+  final List<PickedGoodEntity> pickedGoods;
+}
+
+class FetchPickedGoodsError extends FetchPickedGoods {
+  FetchPickedGoodsError({required this.message});
 
   final String message;
 }

@@ -10,10 +10,11 @@ class FetchInventoriesUseCase
   const FetchInventoriesUseCase({required this.inventoryRepositories});
 
   final InventoryRepositories inventoryRepositories;
+
   @override
   Future<Either<Failure, List<BatchEntity>>> call(
       FetchInventoriesUseCaseParams params) async {
-    return await inventoryRepositories.fetchInventories(params: params);
+    return await inventoryRepositories.fetchInventories(params);
   }
 }
 

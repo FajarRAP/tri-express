@@ -9,14 +9,17 @@ import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
+import 'package:tri_express/features/inventory/data/models/picked_good_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
+import 'package:tri_express/features/inventory/domain/entities/picked_good_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
@@ -53,8 +56,8 @@ void main() {
         );
 
         // act
-        final result = await inventoryRemoteDataSources.fetchDeliveryShipments(
-            params: params);
+        final result =
+            await inventoryRemoteDataSources.fetchDeliveryShipments(params);
 
         // assert
         expect(result, isA<List<BatchEntity>>());
@@ -82,8 +85,8 @@ void main() {
         );
 
         // act
-        final result = await inventoryRemoteDataSources.fetchOnTheWayShipments(
-            params: params);
+        final result =
+            await inventoryRemoteDataSources.fetchOnTheWayShipments(params);
 
         // assert
         expect(result, isA<List<BatchEntity>>());
@@ -111,7 +114,7 @@ void main() {
 
         // act
         final result =
-            await inventoryRemoteDataSources.fetchInventories(params: params);
+            await inventoryRemoteDataSources.fetchInventories(params);
 
         // assert
         expect(result, isA<List<BatchEntity>>());
@@ -139,8 +142,8 @@ void main() {
         );
 
         // act
-        final result = await inventoryRemoteDataSources.fetchPrepareShipments(
-            params: params);
+        final result =
+            await inventoryRemoteDataSources.fetchPrepareShipments(params);
 
         // assert
         expect(result, isA<List<BatchEntity>>());
@@ -200,7 +203,7 @@ void main() {
 
         // act
         final result = await inventoryRemoteDataSources
-            .fetchPreviewReceiveShipments(params: params);
+            .fetchPreviewReceiveShipments(params);
 
         // assert
         expect(result, isA<List<BatchEntity>>());
@@ -226,8 +229,8 @@ void main() {
       );
 
       // act
-      final result = await inventoryRemoteDataSources
-          .fetchPreviewPrepareShipments(uniqueCodes: params);
+      final result =
+          await inventoryRemoteDataSources.fetchPreviewPrepareShipments(params);
 
       // assert
       expect(result, isA<List<GoodEntity>>());
@@ -249,8 +252,8 @@ void main() {
       );
 
       // act
-      final result = inventoryRemoteDataSources.fetchPreviewPrepareShipments(
-          uniqueCodes: params);
+      final result =
+          inventoryRemoteDataSources.fetchPreviewPrepareShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<ServerException>()));
@@ -263,8 +266,8 @@ void main() {
           .thenThrow(const InternalException());
 
       // act
-      final result = inventoryRemoteDataSources.fetchPreviewPrepareShipments(
-          uniqueCodes: params);
+      final result =
+          inventoryRemoteDataSources.fetchPreviewPrepareShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));
@@ -291,8 +294,8 @@ void main() {
       );
 
       // act
-      final result = await inventoryRemoteDataSources.createReceiveShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createReceiveShipments(params);
 
       // assert
       expect(result, json['message']);
@@ -318,8 +321,7 @@ void main() {
       final result = inventoryRemoteDataSources.createReceiveShipments;
 
       // assert
-      await expectLater(
-          () => result(params: params), throwsA(isA<ServerException>()));
+      await expectLater(() => result(params), throwsA(isA<ServerException>()));
       verify(() => mockDio.post('/receive/store', data: any(named: 'data')))
           .called(1);
     });
@@ -335,7 +337,7 @@ void main() {
 
       // assert
       await expectLater(
-          () => result(params: params), throwsA(isA<InternalException>()));
+          () => result(params), throwsA(isA<InternalException>()));
       verify(() => mockDio.post('/receive/store', data: any(named: 'data')))
           .called(1);
     });
@@ -365,8 +367,8 @@ void main() {
       );
 
       // act
-      final result = await inventoryRemoteDataSources.createPrepareShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createPrepareShipments(params);
 
       // assert
       expect(result, json['message']);
@@ -392,8 +394,7 @@ void main() {
       final result = inventoryRemoteDataSources.createPrepareShipments;
 
       // assert
-      await expectLater(
-          () => result(params: params), throwsA(isA<ServerException>()));
+      await expectLater(() => result(params), throwsA(isA<ServerException>()));
       verify(() => mockDio.post('/prepare/store', data: any(named: 'data')))
           .called(1);
     });
@@ -409,7 +410,7 @@ void main() {
 
       // assert
       await expectLater(
-          () => result(params: params), throwsA(isA<InternalException>()));
+          () => result(params), throwsA(isA<InternalException>()));
       verify(() => mockDio.post('/prepare/store', data: any(named: 'data')))
           .called(1);
     });
@@ -433,8 +434,8 @@ void main() {
       );
 
       // act
-      final result = await inventoryRemoteDataSources.deletePreparedShipments(
-          shipmentId: params);
+      final result =
+          await inventoryRemoteDataSources.deletePreparedShipments(params);
 
       // assert
       expect(result, message);
@@ -455,8 +456,7 @@ void main() {
       );
 
       // act
-      final result = inventoryRemoteDataSources.deletePreparedShipments(
-          shipmentId: params);
+      final result = inventoryRemoteDataSources.deletePreparedShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<ServerException>()));
@@ -468,8 +468,7 @@ void main() {
       when(() => mockDio.delete(any())).thenThrow(const InternalException());
 
       // act
-      final result = inventoryRemoteDataSources.deletePreparedShipments(
-          shipmentId: params);
+      final result = inventoryRemoteDataSources.deletePreparedShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));
@@ -501,7 +500,7 @@ void main() {
 
       // act
       final result = await inventoryRemoteDataSources
-          .fetchPreviewDeliveryShipments(params: params);
+          .fetchPreviewDeliveryShipments(params);
 
       // assert
       expect(result, isA<List<BatchEntity>>());
@@ -528,8 +527,8 @@ void main() {
       );
 
       // act
-      final result = inventoryRemoteDataSources.fetchPreviewDeliveryShipments(
-          params: params);
+      final result =
+          inventoryRemoteDataSources.fetchPreviewDeliveryShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<ServerException>()));
@@ -542,8 +541,8 @@ void main() {
           .thenThrow(const InternalException());
 
       // act
-      final result = inventoryRemoteDataSources.fetchPreviewDeliveryShipments(
-          params: params);
+      final result =
+          inventoryRemoteDataSources.fetchPreviewDeliveryShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));
@@ -579,8 +578,8 @@ void main() {
       );
 
       // act
-      final result = await inventoryRemoteDataSources.createDeliveryShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createDeliveryShipments(params);
 
       // assert
       expect(result, isA<String>());
@@ -608,8 +607,7 @@ void main() {
       );
 
       // act
-      final result =
-          inventoryRemoteDataSources.createDeliveryShipments(params: params);
+      final result = inventoryRemoteDataSources.createDeliveryShipments(params);
 
       // assert
       await expectLater(result, throwsA(isA<ServerException>()));
@@ -622,8 +620,70 @@ void main() {
           .thenThrow(const InternalException());
 
       // act
+      final result = inventoryRemoteDataSources.createDeliveryShipments(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('fetch picked up goods remote data sources test', () {
+    const params = FetchPickedUpGoodsUseCaseParams(
+      page: 1,
+      perPage: 10,
+      search: '',
+    );
+
+    test('should return List<PickedGoodEntity> when request status code is 200',
+        () async {
+      // arrange
+      final jsonString = fixtureReader('data_sources/get_picked_up_goods.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.get(any())).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
       final result =
-          inventoryRemoteDataSources.createDeliveryShipments(params: params);
+          await inventoryRemoteDataSources.fetchPickedUpGoods(params);
+
+      // assert
+      expect(result, isA<List<PickedGoodEntity>>());
+      expect(result, isNot(isA<List<PickedGoodModel>>()));
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.get(any())).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPickedUpGoods(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.get(any())).thenThrow(const InternalException());
+
+      // act
+      final result = inventoryRemoteDataSources.fetchPickedUpGoods(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));

@@ -10,10 +10,11 @@ class CreatePrepareShipmentsUseCase
   const CreatePrepareShipmentsUseCase({required this.inventoryRepositories});
 
   final InventoryRepositories inventoryRepositories;
+
   @override
   Future<Either<Failure, String>> call(
       CreatePrepareShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.createPrepareShipments(params: params);
+    return await inventoryRepositories.createPrepareShipments(params);
   }
 }
 

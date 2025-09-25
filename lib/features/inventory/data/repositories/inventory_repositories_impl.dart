@@ -5,12 +5,14 @@ import '../../../../core/exceptions/server_exception.dart';
 import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -25,10 +27,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, String>> createDeliveryShipments(
-      {required CreateDeliveryShipmentsUseCaseParams params}) async {
+      CreateDeliveryShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.createDeliveryShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -46,10 +48,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, String>> createPrepareShipments(
-      {required CreatePrepareShipmentsUseCaseParams params}) async {
+      CreatePrepareShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.createPrepareShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createPrepareShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -67,10 +69,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, String>> createReceiveShipments(
-      {required CreateReceiveShipmentsUseCaseParams params}) async {
+      CreateReceiveShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.createReceiveShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.createReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -88,10 +90,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, String>> deletePreparedShipments(
-      {required String shipmentId}) async {
+      String shipmentId) async {
     try {
-      final result = await inventoryRemoteDataSources.deletePreparedShipments(
-          shipmentId: shipmentId);
+      final result =
+          await inventoryRemoteDataSources.deletePreparedShipments(shipmentId);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -109,10 +111,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
-      {required FetchDeliveryShipmentsUseCaseParams params}) async {
+      FetchDeliveryShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchDeliveryShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.fetchDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -130,10 +132,9 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchInventories(
-      {required FetchInventoriesUseCaseParams params}) async {
+      FetchInventoriesUseCaseParams params) async {
     try {
-      final result =
-          await inventoryRemoteDataSources.fetchInventories(params: params);
+      final result = await inventoryRemoteDataSources.fetchInventories(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -170,10 +171,31 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments(
-      {required FetchOnTheWayShipmentsUseCaseParams params}) async {
+      FetchOnTheWayShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchOnTheWayShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.fetchOnTheWayShipments(params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PickedGoodEntity>>> fetchPickedUpGoods(
+      FetchPickedUpGoodsUseCaseParams params) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchPickedUpGoods(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -191,10 +213,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipments(
-      {required FetchPrepareShipmentsUseCaseParams params}) async {
+      FetchPrepareShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchPrepareShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.fetchPrepareShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -212,10 +234,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchPreviewDeliveryShipments(
-      {required FetchPreviewDeliveryShipmentsUseCaseParams params}) async {
+      FetchPreviewDeliveryShipmentsUseCaseParams params) async {
     try {
       final result = await inventoryRemoteDataSources
-          .fetchPreviewDeliveryShipments(params: params);
+          .fetchPreviewDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -233,10 +255,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<GoodEntity>>> fetchPreviewPrepareShipments(
-      {required List<String> uniqueCodes}) async {
+      List<String> uniqueCodes) async {
     try {
       final result = await inventoryRemoteDataSources
-          .fetchPreviewPrepareShipments(uniqueCodes: uniqueCodes);
+          .fetchPreviewPrepareShipments(uniqueCodes);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -254,10 +276,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchPreviewReceiveShipments(
-      {required FetchPreviewReceiveShipmentsUseCaseParams params}) async {
+      FetchPreviewReceiveShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources
-          .fetchPreviewReceiveShipments(params: params);
+      final result =
+          await inventoryRemoteDataSources.fetchPreviewReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -275,10 +297,10 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
 
   @override
   Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
-      {required FetchReceiveShipmentsUseCaseParams params}) async {
+      FetchReceiveShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchReceiveShipments(
-          params: params);
+      final result =
+          await inventoryRemoteDataSources.fetchReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
