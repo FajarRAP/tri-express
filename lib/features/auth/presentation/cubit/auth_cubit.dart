@@ -2,8 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
+import '../../../core/domain/use_cases/get_onboarding_status_use_case.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/use_cases/fetch_current_user_use_case.dart';
+import '../../domain/use_cases/get_access_token_use_case.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../../domain/use_cases/logout_use_case.dart';
 
@@ -12,14 +14,20 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required FetchCurrentUserUseCase fetchCurrentUserUseCase,
+    required GetAccessTokenUseCase getAccessTokenUseCase,
+    required GetOnboardingStatusUseCase getOnboardingStatusUseCase,
     required LoginUseCase loginUseCase,
     required LogoutUseCase logoutUseCase,
   })  : _fetchCurrentUserUseCase = fetchCurrentUserUseCase,
+        _getAccessTokenUseCase = getAccessTokenUseCase,
+        _getOnboardingStatusUseCase = getOnboardingStatusUseCase,
         _loginUseCase = loginUseCase,
         _logoutUseCase = logoutUseCase,
         super(AuthInitial());
 
   final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
+  final GetAccessTokenUseCase _getAccessTokenUseCase;
+  final GetOnboardingStatusUseCase _getOnboardingStatusUseCase;
   final LoginUseCase _loginUseCase;
   final LogoutUseCase _logoutUseCase;
   late UserEntity user;
@@ -56,5 +64,31 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(LogoutError(message: failure.message)),
       (message) => emit(LogoutLoaded(message: message)),
     );
+  }
+
+  Future<void> checkAuthentication() async {
+    emit(CheckingAuthentication());
+    String? onboardingStatus;
+    String? accessToken;
+
+    final onboardingResult = await _getOnboardingStatusUseCase(NoParams());
+
+    onboardingResult.fold(
+        (failure) =>
+            emit(CheckingAuthenticationError(message: failure.message)),
+        (status) => onboardingStatus = status);
+
+    if (onboardingStatus == null) {
+      return emit(FirstTimeUser());
+    }
+
+    final accessTokenResult = await _getAccessTokenUseCase(NoParams());
+
+    accessTokenResult.fold(
+        (failure) =>
+            emit(CheckingAuthenticationError(message: failure.message)),
+        (token) => accessToken = token);
+
+    accessToken == null ? emit(Unauthenticated()) : emit(Authenticated());
   }
 }
