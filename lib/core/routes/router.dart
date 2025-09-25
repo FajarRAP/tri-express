@@ -11,12 +11,14 @@ import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
+import '../../features/inventory/domain/entities/picked_good_entity.dart';
 import '../../features/inventory/presentation/pages/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory_page.dart';
 import '../../features/inventory/presentation/pages/item_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
+import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_scan_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_detail_page.dart';
@@ -59,6 +61,7 @@ const sendGoodsDetailRoute = '$sendGoodsRoute/detail';
 const pickUpGoodsRoute = '/pick-up-goods';
 const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute/confirmation';
 const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
+const pickUpGoodsDetailRoute = '$pickUpGoodsRoute/detail';
 
 const onTheWayRoute = '/on-the-way';
 const onTheWayDetailRoute = '/on-the-way-detail';
@@ -75,7 +78,7 @@ const notificationRoute = '/notification';
 const scanBarcodeRoute = '/scan-barcode';
 const scanBarcodeInnerRoute = '/scan-barcode-inner';
 
-class GoRouterObserver extends NavigatorObserver {
+class _GoRouterObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     final isScan = route.settings.name == 'scan';
@@ -109,17 +112,9 @@ final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: initialLocation,
   observers: [
-    GoRouterObserver(),
+    _GoRouterObserver(),
   ],
   routes: <RouteBase>[
-    GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => const OnboardingPage(),
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginPage(),
-    ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) =>
@@ -149,6 +144,7 @@ final router = GoRouter(
         ),
       ],
     ),
+
     // Receive Goods
     GoRoute(
       path: '/receive-goods',
@@ -270,10 +266,25 @@ final router = GoRouter(
           path: 'scan',
           builder: (context, state) => const PickUpGoodsScanPage(),
         ),
+        GoRoute(
+          path: 'detail',
+          builder: (context, state) => PickUpGoodsDetailPage(
+            pickedGood: state.extra as PickedGoodEntity,
+          ),
+        )
       ],
     ),
 
-    // On The Way Detail
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingPage(),
+    ),
+
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
+
     GoRoute(
       path: '/on-the-way-detail',
       builder: (context, state) {
@@ -288,7 +299,6 @@ final router = GoRouter(
       },
     ),
 
-    // Inventory Detail
     GoRoute(
       path: '/inventory-detail',
       builder: (context, state) {
