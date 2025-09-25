@@ -8,6 +8,7 @@ import 'features/auth/data/data_sources/auth_remote_data_sources.dart';
 import 'features/auth/data/repositories/auth_repositories_impl.dart';
 import 'features/auth/domain/repositories/auth_repositories.dart';
 import 'features/auth/domain/use_cases/fetch_current_user_use_case.dart';
+import 'features/auth/domain/use_cases/get_access_token_use_case.dart';
 import 'features/auth/domain/use_cases/login_use_case.dart';
 import 'features/auth/domain/use_cases/logout_use_case.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
@@ -56,77 +57,104 @@ void setupServiceLocator() {
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 3),
       ),
-    )..interceptors.add(CustomInterceptor()),
+    ),
   );
 
   // Core
   getIt
     ..registerLazySingleton<CoreLocalDataSources>(
-        () => CoreLocalDataSourcesImpl(storage: getIt.get()))
+        () => CoreLocalDataSourcesImpl(storage: getIt()))
     ..registerLazySingleton<CoreRemoteDataSources>(
-        () => CoreRemoteDataSourcesImpl(dio: getIt.get()))
+        () => CoreRemoteDataSourcesImpl(dio: getIt()))
     ..registerLazySingleton<CoreRepositories>(() => CoreRepositoriesImpl(
-        coreLocalDataSources: getIt.get(), coreRemoteDataSources: getIt.get()))
+        coreLocalDataSources: getIt(), coreRemoteDataSources: getIt()))
+    ..registerSingleton<CompleteOnboardingUseCase>(
+        CompleteOnboardingUseCase(coreRepositories: getIt()))
+    ..registerSingleton<FetchBannersUseCase>(
+        FetchBannersUseCase(coreRepositories: getIt()))
+    ..registerSingleton<FetchDriverDropdownUseCase>(
+        FetchDriverDropdownUseCase(coreRepositories: getIt()))
+    ..registerSingleton<FetchSummaryUseCase>(
+        FetchSummaryUseCase(coreRepositories: getIt()))
+    ..registerSingleton<FetchTransportModeDropdownUseCase>(
+        FetchTransportModeDropdownUseCase(coreRepositories: getIt()))
+    ..registerSingleton<FetchWarehouseDropdownUseCase>(
+        FetchWarehouseDropdownUseCase(coreRepositories: getIt()))
     ..registerLazySingleton<CoreCubit>(() => CoreCubit(
-        completeOnboardingUseCase:
-            CompleteOnboardingUseCase(coreRepositories: getIt.get()),
-        fetchBannersUseCase: FetchBannersUseCase(coreRepositories: getIt.get()),
-        fetchDriverDropdownUseCase:
-            FetchDriverDropdownUseCase(coreRepositories: getIt.get()),
-        fetchSummaryUseCase: FetchSummaryUseCase(coreRepositories: getIt.get()),
-        fetchTransportModeDropdownUseCase:
-            FetchTransportModeDropdownUseCase(coreRepositories: getIt.get()),
-        fetchWarehouseDropdownUseCase:
-            FetchWarehouseDropdownUseCase(coreRepositories: getIt.get())));
+        completeOnboardingUseCase: getIt(),
+        fetchBannersUseCase: getIt(),
+        fetchDriverDropdownUseCase: getIt(),
+        fetchSummaryUseCase: getIt(),
+        fetchTransportModeDropdownUseCase: getIt(),
+        fetchWarehouseDropdownUseCase: getIt()));
 
   // Auth
   getIt
     ..registerLazySingleton<AuthLocalDataSources>(
-        () => AuthLocalDataSourcesImpl(storage: getIt.get()))
+        () => AuthLocalDataSourcesImpl(storage: getIt()))
     ..registerLazySingleton<AuthRemoteDataSources>(
-        () => AuthRemoteDataSourcesImpl(dio: getIt.get()))
+        () => AuthRemoteDataSourcesImpl(dio: getIt()))
     ..registerLazySingleton<AuthRepositories>(() => AuthRepositoriesImpl(
-        authLocalDataSources: getIt.get(), authRemoteDataSources: getIt.get()))
+        authLocalDataSources: getIt(), authRemoteDataSources: getIt()))
+    ..registerSingleton<FetchCurrentUserUseCase>(
+        FetchCurrentUserUseCase(authRepositories: getIt()))
+    ..registerSingleton<LoginUseCase>(LoginUseCase(authRepositories: getIt()))
+    ..registerSingleton<LogoutUseCase>(LogoutUseCase(authRepositories: getIt()))
+    ..registerSingleton<GetAccessTokenUseCase>(
+        GetAccessTokenUseCase(authRepositories: getIt()))
     ..registerLazySingleton<AuthCubit>(() => AuthCubit(
-        fetchCurrentUserUseCase:
-            FetchCurrentUserUseCase(authRepositories: getIt.get()),
-        loginUseCase: LoginUseCase(authRepositories: getIt.get()),
-        logoutUseCase: LogoutUseCase(authRepositories: getIt.get())));
+        fetchCurrentUserUseCase: getIt(),
+        loginUseCase: getIt(),
+        logoutUseCase: getIt()));
 
   // Inventory
   getIt
     ..registerLazySingleton<InventoryRemoteDataSources>(
-        () => InventoryRemoteDataSourcesImpl(dio: getIt.get()))
-    ..registerLazySingleton<InventoryRepositories>(() =>
-        InventoryRepositoriesImpl(inventoryRemoteDataSources: getIt.get()))
+        () => InventoryRemoteDataSourcesImpl(dio: getIt()))
+    ..registerLazySingleton<InventoryRepositories>(
+        () => InventoryRepositoriesImpl(inventoryRemoteDataSources: getIt()))
+    ..registerSingleton<CreateDeliveryShipmentsUseCase>(
+        CreateDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<CreatePrepareShipmentsUseCase>(
+        CreatePrepareShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<CreateReceiveShipmentsUseCase>(
+        CreateReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<DeletePreparedShipmentsUseCase>(
+        DeletePreparedShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchDeliveryShipmentsUseCase>(
+        FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchInventoriesUseCase>(
+        FetchInventoriesUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchInventoriesCountUseCase>(
+        FetchInventoriesCountUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchOnTheWayShipmentsUseCase>(
+        FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchPreviewDeliveryShipmentsUseCase>(
+        FetchPreviewDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchPreviewReceiveShipmentsUseCase>(
+        FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchPreviewPrepareShipmentsUseCase>(
+        FetchPreviewPrepareShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchPrepareShipmentsUseCase>(
+        FetchPrepareShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton<FetchReceiveShipmentsUseCase>(
+        FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
-        createDeliveryShipmentsUseCase:
-            CreateDeliveryShipmentsUseCase(inventoryRepositories: getIt.get()),
-        createPrepareShipmentsUseCase:
-            CreatePrepareShipmentsUseCase(inventoryRepositories: getIt.get()),
-        createReceiveShipmentsUseCase:
-            CreateReceiveShipmentsUseCase(inventoryRepositories: getIt.get()),
-        deletePreparedShipmentsUseCase:
-            DeletePreparedShipmentsUseCase(inventoryRepositories: getIt.get()),
-        fetchDeliveryShipmentsUseCase:
-            FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt.get()),
-        fetchInventoriesUseCase:
-            FetchInventoriesUseCase(inventoryRepositories: getIt.get()),
-        fetchInventoriesCountUseCase:
-            FetchInventoriesCountUseCase(inventoryRepositories: getIt.get()),
-        fetchOnTheWayShipmentsUseCase:
-            FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt.get()),
-        fetchPreviewDeliveryShipmentsUseCase:
-            FetchPreviewDeliveryShipmentsUseCase(
-                inventoryRepositories: getIt.get()),
-        fetchPreviewReceiveShipmentsUseCase:
-            FetchPreviewReceiveShipmentsUseCase(
-                inventoryRepositories: getIt.get()),
-        fetchPreviewPrepareShipmentsUseCase:
-            FetchPreviewPrepareShipmentsUseCase(
-                inventoryRepositories: getIt.get()),
-        fetchPrepareShipmentsUseCase:
-            FetchPrepareShipmentsUseCase(inventoryRepositories: getIt.get()),
-        fetchReceiveShipmentsUseCase:
-            FetchReceiveShipmentsUseCase(inventoryRepositories: getIt.get())));
+        createDeliveryShipmentsUseCase: getIt(),
+        createPrepareShipmentsUseCase: getIt(),
+        createReceiveShipmentsUseCase: getIt(),
+        deletePreparedShipmentsUseCase: getIt(),
+        fetchDeliveryShipmentsUseCase: getIt(),
+        fetchInventoriesUseCase: getIt(),
+        fetchInventoriesCountUseCase: getIt(),
+        fetchOnTheWayShipmentsUseCase: getIt(),
+        fetchPreviewDeliveryShipmentsUseCase: getIt(),
+        fetchPreviewReceiveShipmentsUseCase: getIt(),
+        fetchPreviewPrepareShipmentsUseCase: getIt(),
+        fetchPrepareShipmentsUseCase: getIt(),
+        fetchReceiveShipmentsUseCase: getIt()));
+
+  getIt<Dio>()
+      .interceptors
+      .add(CustomInterceptor(getAccessTokenUseCase: getIt()));
 }
