@@ -9,6 +9,7 @@ import '../../features/core/presentation/pages/home_page.dart';
 import '../../features/core/presentation/pages/mobile_scanner_simple_page.dart';
 import '../../features/core/presentation/pages/notification_page.dart';
 import '../../features/core/presentation/pages/onboarding_page.dart';
+import '../../features/core/presentation/pages/splash_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/picked_good_entity.dart';
@@ -36,8 +37,6 @@ import '../../features/inventory/presentation/pages/send_goods/send_goods_scan_p
 import '../../features/inventory/presentation/pages/setting_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
-
-late final String initialLocation;
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
@@ -110,7 +109,7 @@ class _GoRouterObserver extends NavigatorObserver {
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: initialLocation,
+  initialLocation: '/splash',
   observers: [
     _GoRouterObserver(),
   ],
@@ -273,6 +272,21 @@ final router = GoRouter(
           ),
         )
       ],
+    ),
+
+    GoRoute(
+      path: '/splash',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+        child: const SplashPage(),
+      ),
     ),
 
     GoRoute(
