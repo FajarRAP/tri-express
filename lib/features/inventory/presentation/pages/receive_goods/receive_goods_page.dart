@@ -26,7 +26,7 @@ class ReceiveGoodsPage extends StatelessWidget {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollState) {
-          if (scrollState.runtimeType == ScrollEndNotification &&
+          if (scrollState is ScrollEndNotification &&
               inventoryCubit.state is! ListPaginateLast) {
             inventoryCubit.fetchReceiveShipmentsPaginate(search: search);
           }
