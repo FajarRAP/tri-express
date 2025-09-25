@@ -22,6 +22,7 @@ import 'features/core/domain/use_cases/fetch_driver_dropdown_use_case.dart';
 import 'features/core/domain/use_cases/fetch_summary_use_case.dart';
 import 'features/core/domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
 import 'features/core/domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
+import 'features/core/domain/use_cases/get_onboarding_status_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
@@ -69,18 +70,15 @@ void setupServiceLocator() {
         () => CoreRemoteDataSourcesImpl(dio: getIt()))
     ..registerLazySingleton<CoreRepositories>(() => CoreRepositoriesImpl(
         coreLocalDataSources: getIt(), coreRemoteDataSources: getIt()))
-    ..registerSingleton<CompleteOnboardingUseCase>(
-        CompleteOnboardingUseCase(coreRepositories: getIt()))
-    ..registerSingleton<FetchBannersUseCase>(
-        FetchBannersUseCase(coreRepositories: getIt()))
-    ..registerSingleton<FetchDriverDropdownUseCase>(
-        FetchDriverDropdownUseCase(coreRepositories: getIt()))
-    ..registerSingleton<FetchSummaryUseCase>(
-        FetchSummaryUseCase(coreRepositories: getIt()))
-    ..registerSingleton<FetchTransportModeDropdownUseCase>(
+    ..registerSingleton(CompleteOnboardingUseCase(coreRepositories: getIt()))
+    ..registerSingleton(FetchBannersUseCase(coreRepositories: getIt()))
+    ..registerSingleton(FetchDriverDropdownUseCase(coreRepositories: getIt()))
+    ..registerSingleton(FetchSummaryUseCase(coreRepositories: getIt()))
+    ..registerSingleton(
         FetchTransportModeDropdownUseCase(coreRepositories: getIt()))
-    ..registerSingleton<FetchWarehouseDropdownUseCase>(
+    ..registerSingleton(
         FetchWarehouseDropdownUseCase(coreRepositories: getIt()))
+    ..registerSingleton(GetOnboardingStatusUseCase(coreRepositories: getIt()))
     ..registerLazySingleton<CoreCubit>(() => CoreCubit(
         completeOnboardingUseCase: getIt(),
         fetchBannersUseCase: getIt(),
@@ -97,14 +95,14 @@ void setupServiceLocator() {
         () => AuthRemoteDataSourcesImpl(dio: getIt()))
     ..registerLazySingleton<AuthRepositories>(() => AuthRepositoriesImpl(
         authLocalDataSources: getIt(), authRemoteDataSources: getIt()))
-    ..registerSingleton<FetchCurrentUserUseCase>(
-        FetchCurrentUserUseCase(authRepositories: getIt()))
-    ..registerSingleton<LoginUseCase>(LoginUseCase(authRepositories: getIt()))
-    ..registerSingleton<LogoutUseCase>(LogoutUseCase(authRepositories: getIt()))
-    ..registerSingleton<GetAccessTokenUseCase>(
-        GetAccessTokenUseCase(authRepositories: getIt()))
+    ..registerSingleton(FetchCurrentUserUseCase(authRepositories: getIt()))
+    ..registerSingleton(GetAccessTokenUseCase(authRepositories: getIt()))
+    ..registerSingleton(LoginUseCase(authRepositories: getIt()))
+    ..registerSingleton(LogoutUseCase(authRepositories: getIt()))
     ..registerLazySingleton<AuthCubit>(() => AuthCubit(
         fetchCurrentUserUseCase: getIt(),
+        getAccessTokenUseCase: getIt(),
+        getOnboardingStatusUseCase: getIt(),
         loginUseCase: getIt(),
         logoutUseCase: getIt()));
 
