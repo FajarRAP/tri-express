@@ -6,6 +6,7 @@ import '../use_cases/login_use_case.dart';
 
 abstract class AuthRepositories {
   Future<Either<Failure, UserEntity>> fetchCurrentUser();
+  Future<Either<Failure, String?>> getAccessToken();
   Future<Either<Failure, UserEntity>> login({required LoginParams params});
   Future<Either<Failure, String>> logout();
 }
