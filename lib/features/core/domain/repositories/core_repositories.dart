@@ -10,4 +10,5 @@ abstract class CoreRepositories {
   Future<Either<Failure, List<int>>> fetchSummary();
   Future<Either<Failure, List<DropdownEntity>>> fetchTransportModeDropdown();
   Future<Either<Failure, List<DropdownEntity>>> fetchWarehouseDropdown();
+  Future<Either<Failure, String?>> getOnboardingStatus();
 }

@@ -5,6 +5,7 @@ import '../../../../core/utils/constants.dart';
 
 abstract class CoreLocalDataSources {
   Future<void> completeOnboarding();
+  Future<String?> getOnboardingStatus();
 }
 
 class CoreLocalDataSourcesImpl implements CoreLocalDataSources {
@@ -16,6 +17,15 @@ class CoreLocalDataSourcesImpl implements CoreLocalDataSources {
   Future<void> completeOnboarding() async {
     try {
       await storage.write(key: onboardingKey, value: 'true');
+    } catch (e) {
+      throw CacheException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String?> getOnboardingStatus() async {
+    try {
+      return await storage.read(key: onboardingKey);
     } catch (e) {
       throw CacheException(message: '$e');
     }

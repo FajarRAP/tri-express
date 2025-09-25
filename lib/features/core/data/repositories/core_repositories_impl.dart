@@ -124,4 +124,18 @@ class CoreRepositoriesImpl extends CoreRepositories {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, String?>> getOnboardingStatus() async {
+    try {
+      final result = await coreLocalDataSources.getOnboardingStatus();
+
+      return Right(result);
+    } on CacheException catch (ce) {
+      return Left(CacheFailure(
+        message: ce.message,
+        statusCode: ce.statusCode,
+      ));
+    }
+  }
 }
