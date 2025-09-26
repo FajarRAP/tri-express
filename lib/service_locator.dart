@@ -38,6 +38,7 @@ import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.
 import 'features/inventory/domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_preview_pick_up_goods_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_receive_shipments_use_case.dart';
@@ -128,17 +129,19 @@ void setupServiceLocator() {
     ..registerSingleton(
         FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
-        FetchPreviewDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(
-        FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(
-        FetchPreviewPrepareShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchPickedUpGoodsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchPrepareShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
-        FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
-        FetchPickedUpGoodsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewPickUpGoodsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchPreviewPrepareShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         createPrepareShipmentsUseCase: getIt(),
@@ -148,12 +151,13 @@ void setupServiceLocator() {
         fetchInventoriesUseCase: getIt(),
         fetchInventoriesCountUseCase: getIt(),
         fetchOnTheWayShipmentsUseCase: getIt(),
-        fetchPreviewDeliveryShipmentsUseCase: getIt(),
-        fetchPreviewReceiveShipmentsUseCase: getIt(),
-        fetchPreviewPrepareShipmentsUseCase: getIt(),
+        fetchPickedUpGoodsUseCase: getIt(),
         fetchPrepareShipmentsUseCase: getIt(),
-        fetchReceiveShipmentsUseCase: getIt(),
-        fetchPickedUpGoodsUseCase: getIt()));
+        fetchPreviewDeliveryShipmentsUseCase: getIt(),
+        fetchPreviewPickUpGoodsUseCase: getIt(),
+        fetchPreviewPrepareShipmentsUseCase: getIt(),
+        fetchPreviewReceiveShipmentsUseCase: getIt(),
+        fetchReceiveShipmentsUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors

@@ -18,6 +18,7 @@ import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_preview_pick_up_goods_use_case.dart';
 import '../../domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
@@ -43,6 +44,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
+    required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
   })  : _createDeliveryShipmentsUseCase = createDeliveryShipmentsUseCase,
         _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
         _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
@@ -60,6 +62,7 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchPrepareShipmentsUseCase = fetchPrepareShipmentsUseCase,
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         _fetchPickedUpGoodsUseCase = fetchPickedUpGoodsUseCase,
+        _fetchPreviewPickUpGoodsUseCase = fetchPreviewPickUpGoodsUseCase,
         super(InventoryInitial());
 
   final CreateDeliveryShipmentsUseCase _createDeliveryShipmentsUseCase;
@@ -76,6 +79,7 @@ class InventoryCubit extends Cubit<InventoryState> {
       _fetchPreviewReceiveShipmentsUseCase;
   final FetchPreviewPrepareShipmentsUseCase
       _fetchPreviewPrepareShipmentsUseCase;
+  final FetchPreviewPickUpGoodsUseCase _fetchPreviewPickUpGoodsUseCase;
   final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
   final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
   final FetchPickedUpGoodsUseCase _fetchPickedUpGoodsUseCase;
@@ -116,6 +120,11 @@ class InventoryCubit extends Cubit<InventoryState> {
       (message) => emit(CreateShipmentsLoaded(message: message)),
     );
   }
+
+  Future<void> createPickUpShipments(
+      {required Map<String, Set<String>> selectedCodes,
+      required String note,
+      required String imagePath}) async {}
 
   Future<void> createPrepareShipments({
     required DateTime shippedAt,
@@ -291,6 +300,42 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
+  Future<void> fetchPickedGoods({String? search}) async {
+    emit(FetchPickedGoodsLoading());
+
+    final params = FetchPickedUpGoodsUseCaseParams(
+      page: _currentPage = 1,
+      search: search,
+    );
+    final result = await _fetchPickedUpGoodsUseCase(params);
+
+    result.fold(
+      (failure) => emit(FetchPickedGoodsError(message: failure.message)),
+      (pickedGoods) => emit(FetchPickedGoodsLoaded(
+          pickedGoods: _pickedGoods
+            ..clear()
+            ..addAll(pickedGoods))),
+    );
+  }
+
+  Future<void> fetchPickedGoodsPaginate({String? search}) async {
+    emit(ListPaginateLoading());
+
+    final params = FetchPickedUpGoodsUseCaseParams(
+      page: ++_currentPage,
+      search: search,
+    );
+    final result = await _fetchPickedUpGoodsUseCase(params);
+
+    result.fold(
+      (failure) => emit(ListPaginateError(message: failure.message)),
+      (pickedGoods) => pickedGoods.isEmpty
+          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
+          : emit(FetchPickedGoodsLoaded(
+              pickedGoods: _pickedGoods..addAll(pickedGoods))),
+    );
+  }
+
   Future<void> fetchPrepareShipments({String? search}) async {
     emit(FetchPrepareShipmentsLoading());
 
@@ -351,17 +396,34 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
+  Future<void> fetchPreviewPickUpShipments(
+      {required List<UHFResultEntity> uhfResults}) async {
+    emit(FetchPreviewGoodsShipmentsLoading());
+
+    final uniqueCodes = uhfResults.map((e) => e.epcId).toList();
+    final result = await _fetchPreviewPickUpGoodsUseCase(uniqueCodes);
+
+    result.fold(
+      (failure) =>
+          emit(FetchPreviewGoodsShipmentsError(message: failure.message)),
+      (goods) => emit(FetchPreviewGoodsShipmentsLoaded(
+          goods: previewGoods
+            ..clear()
+            ..addAll(goods))),
+    );
+  }
+
   Future<void> fetchPreviewPrepareShipments(
       {required List<UHFResultEntity> uhfresults}) async {
-    emit(FetchPreviewPrepareShipmentsLoading());
+    emit(FetchPreviewGoodsShipmentsLoading());
 
     final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final result = await _fetchPreviewPrepareShipmentsUseCase(uniqueCodes);
 
     result.fold(
       (failure) =>
-          emit(FetchPreviewPrepareShipmentsError(message: failure.message)),
-      (goods) => emit(FetchPreviewPrepareShipmentsLoaded(
+          emit(FetchPreviewGoodsShipmentsError(message: failure.message)),
+      (goods) => emit(FetchPreviewGoodsShipmentsLoaded(
           goods: previewGoods
             ..clear()
             ..addAll(goods))),
@@ -422,42 +484,6 @@ class InventoryCubit extends Cubit<InventoryState> {
           ? emit(ListPaginateLast(currentPage: _currentPage = 1))
           : emit(FetchReceiveShipmentsLoaded(
               batches: _receiveBatches..addAll(batches))),
-    );
-  }
-
-  Future<void> fetchPickedGoods({String? search}) async {
-    emit(FetchPickedGoodsLoading());
-
-    final params = FetchPickedUpGoodsUseCaseParams(
-      page: _currentPage = 1,
-      search: search,
-    );
-    final result = await _fetchPickedUpGoodsUseCase(params);
-
-    result.fold(
-      (failure) => emit(FetchPickedGoodsError(message: failure.message)),
-      (pickedGoods) => emit(FetchPickedGoodsLoaded(
-          pickedGoods: _pickedGoods
-            ..clear()
-            ..addAll(pickedGoods))),
-    );
-  }
-
-  Future<void> fetchPickedGoodsPaginate({String? search}) async {
-    emit(ListPaginateLoading());
-
-    final params = FetchPickedUpGoodsUseCaseParams(
-      page: ++_currentPage,
-      search: search,
-    );
-    final result = await _fetchPickedUpGoodsUseCase(params);
-
-    result.fold(
-      (failure) => emit(ListPaginateError(message: failure.message)),
-      (pickedGoods) => pickedGoods.isEmpty
-          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(FetchPickedGoodsLoaded(
-              pickedGoods: _pickedGoods..addAll(pickedGoods))),
     );
   }
 

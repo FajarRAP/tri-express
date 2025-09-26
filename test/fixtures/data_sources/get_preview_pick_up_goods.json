@@ -1,0 +1,173 @@
+{
+    "status": "Success",
+    "message": "Preview Taking",
+    "data": [
+        {
+            "batch_tracking_number": "TRI.2509241500876",
+            "count": 2,
+            "enter_at": "2025-09-24 00:00:00",
+            "receipt_item": {
+                "id": 361,
+                "receipt_id": 344,
+                "item_name": "NUKLIR",
+                "quantity": 15,
+                "group_code": "NUKLIR|1000|10x10x10",
+                "group_label": "NUKLIR - 1000 kg - 10x10x10 cm",
+                "berat": 1000,
+                "panjang": 10,
+                "lebar": 10,
+                "tinggi": 10,
+                "berat_volume": "0.50",
+                "pembagi": "2000.00",
+                "volume_used_total": "15000.00",
+                "berat_volume_total": "7.50",
+                "berat_total": "15000.00",
+                "volume_total": "15000.00",
+                "volume_used": "1000.00",
+                "jalur": 3,
+                "price": "1000.00",
+                "price_total": "15000.00",
+                "keterangan": "Ini bom nuklir untuk mengakhiri rezim ga jelas",
+                "created_at": "2025-09-24T07:59:44.000000Z",
+                "updated_at": "2025-09-24T07:59:44.000000Z",
+                "jalur_label": "Udara Lokal",
+                "receipt": {
+                    "id": 344,
+                    "customer_id": "019903c3-d10a-711f-8c26-881124c78890",
+                    "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                    "destination_warehouse_id": "019903c3-ca8b-713f-9037-0ef28cab6905",
+                    "invoice_code": "INV.2509241459853",
+                    "receipt_date": "2025-09-23T17:00:00.000000Z",
+                    "price_all": "15000.00",
+                    "volume_all": "15000.00",
+                    "jalur": 1,
+                    "created_at": "2025-09-24T07:59:44.000000Z",
+                    "updated_at": "2025-09-24T07:59:44.000000Z",
+                    "customer": {
+                        "id": "019903c3-d10a-711f-8c26-881124c78890",
+                        "negara_id": "019903c3-c9f5-7371-b0f9-59a981643245",
+                        "kode": "CUST000001",
+                        "nama": "Darimin Gamanto Zulkarnain",
+                        "no_telp": "0202 3214 181",
+                        "alamat": "Kpg. Jakarta No. 238",
+                        "jenis": 1,
+                        "keterangan": null,
+                        "latitude": null,
+                        "longitude": null,
+                        "provinsi_id": null,
+                        "kota_id": null,
+                        "kecamatan_id": null,
+                        "desa_id": null,
+                        "created_at": "2025-09-01T05:33:08.000000Z",
+                        "updated_at": "2025-09-01T05:33:08.000000Z"
+                    },
+                    "warehouse": {
+                        "id": "019903c3-ca54-7183-96d2-381bce035072",
+                        "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                        "kode": "MHUO",
+                        "title": "Gudang Pekalongan",
+                        "no_telp": "(+62) 758 8958 1894",
+                        "alamat": "Jr. Krakatau No. 972",
+                        "longitude": "126.409562",
+                        "latitude": "-9.319892",
+                        "keterangan": "Eligendi eos quis reiciendis eum est.",
+                        "created_at": "2025-09-01T05:33:07.000000Z",
+                        "updated_at": "2025-09-01T05:33:07.000000Z"
+                    },
+                    "destination_warehouse": {
+                        "id": "019903c3-ca8b-713f-9037-0ef28cab6905",
+                        "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                        "kode": "QWXR",
+                        "title": "Gudang Palopo",
+                        "no_telp": "(+62) 943 6595 355",
+                        "alamat": "Ds. Sudirman No. 158",
+                        "longitude": "125.315517",
+                        "latitude": "2.472032",
+                        "keterangan": "Mollitia et reprehenderit consequatur.",
+                        "created_at": "2025-09-01T05:33:07.000000Z",
+                        "updated_at": "2025-09-01T05:33:07.000000Z"
+                    }
+                },
+                "transport": {
+                    "id": 3,
+                    "name": "Udara Lokal",
+                    "value": 2000,
+                    "status": 1,
+                    "created_at": "2025-09-02T04:43:14.000000Z",
+                    "updated_at": "2025-09-02T04:43:14.000000Z"
+                }
+            },
+            "receipt": {
+                "id": 344,
+                "customer_id": "019903c3-d10a-711f-8c26-881124c78890",
+                "warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                "destination_warehouse_id": "019903c3-ca8b-713f-9037-0ef28cab6905",
+                "invoice_code": "INV.2509241459853",
+                "receipt_date": "2025-09-23T17:00:00.000000Z",
+                "price_all": "15000.00",
+                "volume_all": "15000.00",
+                "jalur": 1,
+                "created_at": "2025-09-24T07:59:44.000000Z",
+                "updated_at": "2025-09-24T07:59:44.000000Z",
+                "customer": {
+                    "id": "019903c3-d10a-711f-8c26-881124c78890",
+                    "negara_id": "019903c3-c9f5-7371-b0f9-59a981643245",
+                    "kode": "CUST000001",
+                    "nama": "Darimin Gamanto Zulkarnain",
+                    "no_telp": "0202 3214 181",
+                    "alamat": "Kpg. Jakarta No. 238",
+                    "jenis": 1,
+                    "keterangan": null,
+                    "latitude": null,
+                    "longitude": null,
+                    "provinsi_id": null,
+                    "kota_id": null,
+                    "kecamatan_id": null,
+                    "desa_id": null,
+                    "created_at": "2025-09-01T05:33:08.000000Z",
+                    "updated_at": "2025-09-01T05:33:08.000000Z"
+                },
+                "warehouse": {
+                    "id": "019903c3-ca54-7183-96d2-381bce035072",
+                    "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                    "kode": "MHUO",
+                    "title": "Gudang Pekalongan",
+                    "no_telp": "(+62) 758 8958 1894",
+                    "alamat": "Jr. Krakatau No. 972",
+                    "longitude": "126.409562",
+                    "latitude": "-9.319892",
+                    "keterangan": "Eligendi eos quis reiciendis eum est.",
+                    "created_at": "2025-09-01T05:33:07.000000Z",
+                    "updated_at": "2025-09-01T05:33:07.000000Z"
+                },
+                "destination_warehouse": {
+                    "id": "019903c3-ca8b-713f-9037-0ef28cab6905",
+                    "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                    "kode": "QWXR",
+                    "title": "Gudang Palopo",
+                    "no_telp": "(+62) 943 6595 355",
+                    "alamat": "Ds. Sudirman No. 158",
+                    "longitude": "125.315517",
+                    "latitude": "2.472032",
+                    "keterangan": "Mollitia et reprehenderit consequatur.",
+                    "created_at": "2025-09-01T05:33:07.000000Z",
+                    "updated_at": "2025-09-01T05:33:07.000000Z"
+                }
+            },
+            "units": [
+                {
+                    "unique_code": "A00000002443",
+                    "status": 5,
+                    "status_label": "Tiba di Gudang Tujuan Akhir",
+                    "current_warehouse_id": "019903c3-ca8b-713f-9037-0ef28cab6905"
+                },
+                {
+                    "unique_code": "A00000002444",
+                    "status": 5,
+                    "status_label": "Tiba di Gudang Tujuan Akhir",
+                    "current_warehouse_id": "019903c3-ca8b-713f-9037-0ef28cab6905"
+                }
+            ]
+        }
+    ]
+}

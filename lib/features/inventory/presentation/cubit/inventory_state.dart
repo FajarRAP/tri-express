@@ -17,7 +17,7 @@ class FetchOnTheWayShipments extends InventoryState {}
 
 class FetchPreviewBatchesShipments extends InventoryState {}
 
-class FetchPreviewPrepareShipments extends InventoryState {}
+class FetchPreviewGoodsShipments extends InventoryState {}
 
 class FetchPrepareShipments extends InventoryState {}
 
@@ -161,17 +161,16 @@ class FetchPreviewBatchesShipmentsError extends FetchPreviewBatchesShipments {
   final String message;
 }
 
-class FetchPreviewPrepareShipmentsLoading
-    extends FetchPreviewPrepareShipments {}
+class FetchPreviewGoodsShipmentsLoading extends FetchPreviewGoodsShipments {}
 
-class FetchPreviewPrepareShipmentsLoaded extends FetchPreviewPrepareShipments {
-  FetchPreviewPrepareShipmentsLoaded({required this.goods});
+class FetchPreviewGoodsShipmentsLoaded extends FetchPreviewGoodsShipments {
+  FetchPreviewGoodsShipmentsLoaded({required this.goods});
 
   final List<GoodEntity> goods;
 }
 
-class FetchPreviewPrepareShipmentsError extends FetchPreviewPrepareShipments {
-  FetchPreviewPrepareShipmentsError({required this.message});
+class FetchPreviewGoodsShipmentsError extends FetchPreviewGoodsShipments {
+  FetchPreviewGoodsShipmentsError({required this.message});
 
   final String message;
 }

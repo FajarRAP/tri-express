@@ -31,16 +31,18 @@ abstract class InventoryRepositories {
   Future<Either<Failure, int>> fetchInventoriesCount();
   Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments(
       FetchOnTheWayShipmentsUseCaseParams params);
+  Future<Either<Failure, List<PickedGoodEntity>>> fetchPickedUpGoods(
+      FetchPickedUpGoodsUseCaseParams params);
   Future<Either<Failure, List<BatchEntity>>> fetchPrepareShipments(
       FetchPrepareShipmentsUseCaseParams params);
   Future<Either<Failure, List<BatchEntity>>> fetchPreviewDeliveryShipments(
       FetchPreviewDeliveryShipmentsUseCaseParams params);
+  Future<Either<Failure, List<GoodEntity>>> fetchPreviewPickUpGoods(
+      List<String> uniqueCodes);
   Future<Either<Failure, List<GoodEntity>>> fetchPreviewPrepareShipments(
       List<String> uniqueCodes);
   Future<Either<Failure, List<BatchEntity>>> fetchPreviewReceiveShipments(
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
-  Future<Either<Failure, List<PickedGoodEntity>>> fetchPickedUpGoods(
-      FetchPickedUpGoodsUseCaseParams params);
 }

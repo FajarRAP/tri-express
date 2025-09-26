@@ -41,6 +41,7 @@ abstract class InventoryRemoteDataSources {
       FetchPrepareShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchPreviewDeliveryShipments(
       FetchPreviewDeliveryShipmentsUseCaseParams params);
+  Future<List<GoodEntity>> fetchPreviewPickUpGoods(List<String> uniqueCodes);
   Future<List<GoodEntity>> fetchPreviewPrepareShipments(
       List<String> uniqueCodes);
   Future<List<BatchEntity>> fetchPreviewReceiveShipments(
@@ -304,6 +305,25 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<GoodEntity>> fetchPreviewPickUpGoods(
+      List<String> uniqueCodes) async {
+    try {
+      final response = await dio.post(
+        '/taking/preview',
+        data: {'codes': uniqueCodes},
+      );
+
+      final contents = List<Map<String, dynamic>>.from(response.data['data']);
+
+      return contents.map((e) => GoodModel.fromJson(e).toEntity()).toList();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

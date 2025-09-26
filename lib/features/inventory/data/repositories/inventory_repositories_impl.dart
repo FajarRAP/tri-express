@@ -254,6 +254,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
+  Future<Either<Failure, List<GoodEntity>>> fetchPreviewPickUpGoods(
+      List<String> uniqueCodes) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchPreviewPickUpGoods(uniqueCodes);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<GoodEntity>>> fetchPreviewPrepareShipments(
       List<String> uniqueCodes) async {
     try {
