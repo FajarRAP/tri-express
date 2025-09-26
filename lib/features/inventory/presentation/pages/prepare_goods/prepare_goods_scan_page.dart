@@ -240,9 +240,9 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
 
     return BlocBuilder<InventoryCubit, InventoryState>(
       buildWhen: (previous, current) =>
-          current is FetchPreviewPrepareShipments || current is UHFAction,
+          current is FetchPreviewGoodsShipments || current is UHFAction,
       builder: (context, state) {
-        if (state is FetchPreviewPrepareShipmentsLoading) {
+        if (state is FetchPreviewGoodsShipmentsLoading) {
           return const SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
@@ -251,7 +251,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
           );
         }
 
-        if (state is FetchPreviewPrepareShipmentsLoaded) {
+        if (state is FetchPreviewGoodsShipmentsLoaded) {
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
