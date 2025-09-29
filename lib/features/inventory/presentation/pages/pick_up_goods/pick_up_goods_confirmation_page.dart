@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,8 +9,10 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/image_picker_bottom_sheet.dart';
+import '../../cubit/inventory_cubit.dart';
 
 class PickUpGoodsConfirmationPage extends StatelessWidget {
   const PickUpGoodsConfirmationPage({
@@ -21,26 +24,30 @@ class PickUpGoodsConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return _Claude(selectedCodes: selectedCodes);
-    // return _Gemini(selectedCodes: selectedCodes);
-    return const _Tari();
+    return _Tari(selectedCodes);
+    return _Claude(selectedCodes: selectedCodes);
+    return _Gemini(selectedCodes: selectedCodes);
   }
 }
 
 class _Tari extends StatefulWidget {
-  const _Tari();
+  const _Tari(this.selectedCodes);
+
+  final Map<String, Set<String>> selectedCodes;
 
   @override
   State<_Tari> createState() => _TariState();
 }
 
 class _TariState extends State<_Tari> {
+  late final InventoryCubit _inventoryCubit;
   late final TextEditingController _noteController;
   XFile? _pickedImage;
 
   @override
   void initState() {
     super.initState();
+    _inventoryCubit = context.read<InventoryCubit>();
     _noteController = TextEditingController();
   }
 
@@ -122,11 +129,42 @@ class _TariState extends State<_Tari> {
                 readOnly: true,
               ),
               const SizedBox(height: 12),
-              PrimaryButton(
-                onPressed: () => context
-                  ..go(menuRoute)
-                  ..push(pickUpGoodsRoute),
-                child: const Text('Simpan'),
+              BlocConsumer<InventoryCubit, InventoryState>(
+                buildWhen: (previous, current) => current is CreateShipments,
+                listenWhen: (previous, current) => current is CreateShipments,
+                listener: (context, state) {
+                  if (state is CreateShipmentsLoaded) {
+                    TopSnackbar.successSnackbar(message: state.message);
+                    context
+                      ..go(menuRoute)
+                      ..push(pickUpGoodsRoute);
+                  }
+
+                  if (state is CreateShipmentsError) {
+                    TopSnackbar.dangerSnackbar(message: state.message);
+                  }
+                },
+                builder: (context, state) {
+                  final onPressed = switch (state) {
+                    CreateShipmentsLoading() => null,
+                    _ => () {
+                        if (_pickedImage == null) {
+                          return TopSnackbar.dangerSnackbar(
+                              message: 'Bukti foto diperlukan');
+                        }
+
+                        _inventoryCubit.createPickedUpGoods(
+                            selectedCodes: widget.selectedCodes,
+                            note: _noteController.text,
+                            pickedImagePath: _pickedImage!.path);
+                      },
+                  };
+
+                  return PrimaryButton(
+                    onPressed: onPressed,
+                    child: const Text('Simpan'),
+                  );
+                },
               ),
             ],
           ),
