@@ -18,4 +18,6 @@ ServerException handleDioException(DioException de) {
 
 extension DateTimeExtension on DateTime {
   String get toDDMMMMYYYY => DateFormat('dd MMMM yyyy').format(this);
+  String get toDDMMMM => DateFormat('dd MMMM').format(this);
+  String get toHHmm => DateFormat('HH:mm').format(this);
 }
