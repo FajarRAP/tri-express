@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../fonts/fonts.dart';
 import '../themes/colors.dart';
-import 'handle_bar.dart';
 
 class ImagePickerBottomSheet extends StatelessWidget {
   const ImagePickerBottomSheet({
@@ -19,12 +18,10 @@ class ImagePickerBottomSheet extends StatelessWidget {
     final imagePicker = ImagePicker();
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const HandleBar(),
-          const SizedBox(height: 20),
           Text(
             'Pilih Gambar',
             style: paragraphMedium[bold].copyWith(color: black),
