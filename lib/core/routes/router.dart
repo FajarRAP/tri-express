@@ -259,7 +259,9 @@ final router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: 'confirmation',
-          builder: (context, state) => const PickUpGoodsConfirmationPage(),
+          builder: (context, state) => PickUpGoodsConfirmationPage(
+            selectedCodes: state.extra as Map<String, Set<String>>,
+          ),
         ),
         GoRoute(
           path: 'scan',
