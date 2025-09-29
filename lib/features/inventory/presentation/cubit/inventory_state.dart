@@ -23,6 +23,8 @@ class FetchPrepareShipments extends InventoryState {}
 
 class FetchReceiveShipments extends InventoryState {}
 
+class FetchGoodTimeline extends InventoryState {}
+
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
 class CreateShipments extends InventoryState {}
@@ -213,6 +215,20 @@ class FetchPickedGoodsLoaded extends FetchPickedGoods {
 
 class FetchPickedGoodsError extends FetchPickedGoods {
   FetchPickedGoodsError({required this.message});
+
+  final String message;
+}
+
+class FetchGoodTimelineLoading extends FetchGoodTimeline {}
+
+class FetchGoodTimelineLoaded extends FetchGoodTimeline {
+  FetchGoodTimelineLoaded({required this.timeline});
+
+  final TimelineSummaryEntity timeline;
+}
+
+class FetchGoodTimelineError extends FetchGoodTimeline {
+  FetchGoodTimelineError({required this.message});
 
   final String message;
 }

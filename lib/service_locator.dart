@@ -33,6 +33,7 @@ import 'features/inventory/domain/use_cases/create_prepare_shipments_use_case.da
 import 'features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/delete_prepared_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_good_timeline_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_count_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -145,6 +146,8 @@ void setupServiceLocator() {
         FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchGoodTimelineUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         createPickedUpGoodsUseCase: getIt(),
@@ -161,7 +164,8 @@ void setupServiceLocator() {
         fetchPreviewPickUpGoodsUseCase: getIt(),
         fetchPreviewPrepareShipmentsUseCase: getIt(),
         fetchPreviewReceiveShipmentsUseCase: getIt(),
-        fetchReceiveShipmentsUseCase: getIt()));
+        fetchReceiveShipmentsUseCase: getIt(),
+        fetchGoodTimelineUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors

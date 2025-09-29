@@ -7,12 +7,14 @@ import '../../../core/domain/entities/uhf_result_entity.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
+import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/delete_prepared_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/fetch_good_timeline_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
@@ -47,6 +49,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
     required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
+    required FetchGoodTimelineUseCase fetchGoodTimelineUseCase,
   })  : _createDeliveryShipmentsUseCase = createDeliveryShipmentsUseCase,
         _createPickedUpGoodsUseCase = createPickedUpGoodsUseCase,
         _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
@@ -66,6 +69,7 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         _fetchPickedUpGoodsUseCase = fetchPickedUpGoodsUseCase,
         _fetchPreviewPickUpGoodsUseCase = fetchPreviewPickUpGoodsUseCase,
+        _fetchGoodTimelineUseCase = fetchGoodTimelineUseCase,
         super(InventoryInitial());
 
   final CreateDeliveryShipmentsUseCase _createDeliveryShipmentsUseCase;
@@ -87,6 +91,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
   final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
   final FetchPickedUpGoodsUseCase _fetchPickedUpGoodsUseCase;
+  final FetchGoodTimelineUseCase _fetchGoodTimelineUseCase;
 
   var _currentPage = 1;
   final _deliveryBatches = <BatchEntity>[];
@@ -98,6 +103,17 @@ class InventoryCubit extends Cubit<InventoryState> {
 
   final previewBatches = <BatchEntity>[];
   final previewGoods = <GoodEntity>[];
+
+  Future<void> fetchGoodTimeline({required String receiptNumber}) async {
+    emit(FetchGoodTimelineLoading());
+
+    final result = await _fetchGoodTimelineUseCase(receiptNumber);
+
+    result.fold(
+      (failure) => emit(FetchGoodTimelineError(message: failure.message)),
+      (timeline) => emit(FetchGoodTimelineLoaded(timeline: timeline)),
+    );
+  }
 
   Future<void> createDeliveryShipments({
     required DropdownEntity nextWarehouse,

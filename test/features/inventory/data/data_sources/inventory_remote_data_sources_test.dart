@@ -11,9 +11,11 @@ import 'package:tri_express/features/inventory/data/data_sources/inventory_remot
 import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/data/models/picked_good_model.dart';
+import 'package:tri_express/features/inventory/data/models/timeline_summary_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/picked_good_entity.dart';
+import 'package:tri_express/features/inventory/domain/entities/timeline_summary_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_picked_up_goods_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
@@ -797,6 +799,68 @@ void main() {
 
       // act
       final result = dataSource.createPickedUpGoods(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('fetch good timeline remote data sources test', () {
+    const params = 'receipt_number';
+
+    test('should return TimelineSummaryEntity when request status code is 200',
+        () async {
+      // arrange
+      final jsonString = fixtureReader('data_sources/get_timeline.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await dataSource.fetchGoodTimeline(params);
+
+      // assert
+      expect(result, isA<TimelineSummaryEntity>());
+      expect(result, isNot(isA<TimelineSummaryModel>()));
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = dataSource.fetchGoodTimeline(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters')))
+          .thenThrow(Exception('Unexpected error happen'));
+
+      // act
+      final result = dataSource.fetchGoodTimeline(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));

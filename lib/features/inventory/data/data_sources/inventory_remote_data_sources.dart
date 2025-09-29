@@ -5,21 +5,23 @@ import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
+import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
+import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
+import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
-import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
-import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../models/batch_model.dart';
 import '../models/good_model.dart';
 import '../models/picked_good_model.dart';
+import '../models/timeline_summary_model.dart';
 
 abstract class InventoryRemoteDataSources {
   Future<String> createDeliveryShipments(
@@ -50,6 +52,7 @@ abstract class InventoryRemoteDataSources {
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
+  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber);
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -390,6 +393,22 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       );
 
       return response.data['message'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber) async {
+    try {
+      final response = await dio.get(
+        '/inventory/timeline',
+        queryParameters: {'q': receiptNumber},
+      );
+
+      return TimelineSummaryModel.fromJson(response.data['data']).toEntity();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

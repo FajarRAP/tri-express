@@ -6,6 +6,7 @@ import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
+import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
@@ -344,6 +345,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
     try {
       final result =
           await inventoryRemoteDataSources.createPickedUpGoods(params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
+      String receiptNumber) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchGoodTimeline(receiptNumber);
 
       return Right(result);
     } on ServerException catch (se) {

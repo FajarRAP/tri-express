@@ -4,6 +4,7 @@ import '../../../../core/failure/failure.dart';
 import '../entities/batch_entity.dart';
 import '../entities/good_entity.dart';
 import '../entities/picked_good_entity.dart';
+import '../entities/timeline_summary_entity.dart';
 import '../use_cases/create_delivery_shipments_use_case.dart';
 import '../use_cases/create_picked_up_goods_use_case.dart';
 import '../use_cases/create_prepare_shipments_use_case.dart';
@@ -48,4 +49,6 @@ abstract class InventoryRepositories {
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
+  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
+      String receiptNumber);
 }
