@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +15,7 @@ import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/picked_good_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
+import 'package:tri_express/features/inventory/domain/use_cases/create_picked_up_goods_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.dart';
@@ -732,5 +734,72 @@ void main() {
         verify(() => mockDio.post(any(), data: any(named: 'data'))).called(1);
       },
     );
+  });
+
+  group('create picked up goods remote data sources test', () {
+    setUp(() => File('lorem.txt').writeAsBytesSync([1, 2, 3]));
+
+    tearDown(File('lorem.txt').deleteSync);
+
+    final params = CreatePickedUpGoodsUseCaseParams(
+        receiptNumbers: [],
+        uniqueCodes: [],
+        note: 'note',
+        imagePath: 'lorem.txt',
+        pickedUpAt: DateTime.now());
+
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/create_picked_up_goods.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await dataSource.createPickedUpGoods(params);
+
+      // assert
+      expect(result, isA<String>());
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = dataSource.createPickedUpGoods(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.post(any(), data: any(named: 'data')))
+          .thenThrow(Exception('Unexpected error happen'));
+
+      // act
+      final result = dataSource.createPickedUpGoods(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
   });
 }

@@ -8,6 +8,7 @@ import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/delete_prepared_shipments_use_case.dart';
@@ -28,6 +29,7 @@ part 'inventory_state.dart';
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
     required CreateDeliveryShipmentsUseCase createDeliveryShipmentsUseCase,
+    required CreatePickedUpGoodsUseCase createPickedUpGoodsUseCase,
     required CreatePrepareShipmentsUseCase createPrepareShipmentsUseCase,
     required CreateReceiveShipmentsUseCase createReceiveShipmentsUseCase,
     required DeletePreparedShipmentsUseCase deletePreparedShipmentsUseCase,
@@ -46,6 +48,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
     required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
   })  : _createDeliveryShipmentsUseCase = createDeliveryShipmentsUseCase,
+        _createPickedUpGoodsUseCase = createPickedUpGoodsUseCase,
         _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
         _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
         _deletePreparedShipmentsUseCase = deletePreparedShipmentsUseCase,
@@ -66,6 +69,7 @@ class InventoryCubit extends Cubit<InventoryState> {
         super(InventoryInitial());
 
   final CreateDeliveryShipmentsUseCase _createDeliveryShipmentsUseCase;
+  final CreatePickedUpGoodsUseCase _createPickedUpGoodsUseCase;
   final CreatePrepareShipmentsUseCase _createPrepareShipmentsUseCase;
   final CreateReceiveShipmentsUseCase _createReceiveShipmentsUseCase;
   final DeletePreparedShipmentsUseCase _deletePreparedShipmentsUseCase;
@@ -121,10 +125,28 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> createPickUpShipments(
+  Future<void> createPickedUpGoods(
       {required Map<String, Set<String>> selectedCodes,
       required String note,
-      required String imagePath}) async {}
+      required String pickedImagePath}) async {
+    emit(CreateShipmentsLoading());
+
+    final receiptNumbers = selectedCodes.keys.toList();
+    final uniqueCodes = selectedCodes.values.expand((codes) => codes).toList();
+    final params = CreatePickedUpGoodsUseCaseParams(
+      receiptNumbers: receiptNumbers,
+      uniqueCodes: uniqueCodes,
+      note: note,
+      imagePath: pickedImagePath,
+      pickedUpAt: DateTime.now(),
+    );
+    final result = await _createPickedUpGoodsUseCase(params);
+
+    result.fold(
+      (failure) => emit(CreateShipmentsError(message: failure.message)),
+      (message) => emit(CreateShipmentsLoaded(message: message)),
+    );
+  }
 
   Future<void> createPrepareShipments({
     required DateTime shippedAt,
@@ -396,7 +418,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchPreviewPickUpShipments(
+  Future<void> fetchPreviewPickUpGoods(
       {required List<UHFResultEntity> uhfResults}) async {
     emit(FetchPreviewGoodsShipmentsLoading());
 

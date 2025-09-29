@@ -28,6 +28,7 @@ import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart'
 import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
 import 'features/inventory/domain/repositories/inventory_repositories.dart';
 import 'features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
+import 'features/inventory/domain/use_cases/create_picked_up_goods_use_case.dart';
 import 'features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/create_receive_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/delete_prepared_shipments_use_case.dart';
@@ -116,6 +117,8 @@ void setupServiceLocator() {
     ..registerSingleton(
         CreateDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
+        CreatePickedUpGoodsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
         CreatePrepareShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         CreateReceiveShipmentsUseCase(inventoryRepositories: getIt()))
@@ -144,6 +147,7 @@ void setupServiceLocator() {
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createDeliveryShipmentsUseCase: getIt(),
+        createPickedUpGoodsUseCase: getIt(),
         createPrepareShipmentsUseCase: getIt(),
         createReceiveShipmentsUseCase: getIt(),
         deletePreparedShipmentsUseCase: getIt(),

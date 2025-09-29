@@ -5,6 +5,7 @@ import '../entities/batch_entity.dart';
 import '../entities/good_entity.dart';
 import '../entities/picked_good_entity.dart';
 import '../use_cases/create_delivery_shipments_use_case.dart';
+import '../use_cases/create_picked_up_goods_use_case.dart';
 import '../use_cases/create_prepare_shipments_use_case.dart';
 import '../use_cases/create_receive_shipments_use_case.dart';
 import '../use_cases/fetch_delivery_shipments_use_case.dart';
@@ -23,6 +24,8 @@ abstract class InventoryRepositories {
       CreatePrepareShipmentsUseCaseParams params);
   Future<Either<Failure, String>> createReceiveShipments(
       CreateReceiveShipmentsUseCaseParams params);
+  Future<Either<Failure, String>> createPickedUpGoods(
+      CreatePickedUpGoodsUseCaseParams params);
   Future<Either<Failure, String>> deletePreparedShipments(String shipmentId);
   Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
       FetchDeliveryShipmentsUseCaseParams params);

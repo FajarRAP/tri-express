@@ -6,6 +6,7 @@ import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
+import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/create_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
@@ -23,6 +24,7 @@ import '../models/picked_good_model.dart';
 abstract class InventoryRemoteDataSources {
   Future<String> createDeliveryShipments(
       CreateDeliveryShipmentsUseCaseParams params);
+  Future<String> createPickedUpGoods(CreatePickedUpGoodsUseCaseParams params);
   Future<String> createPrepareShipments(
       CreatePrepareShipmentsUseCaseParams params);
   Future<String> createReceiveShipments(
@@ -362,6 +364,32 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> createPickedUpGoods(
+      CreatePickedUpGoodsUseCaseParams params) async {
+    try {
+      final response = await dio.post(
+        '/taking/store',
+        data: FormData.fromMap(
+          {
+            'batch_tracking_number': params.receiptNumbers,
+            'codes': params.uniqueCodes,
+            'note': params.note,
+            'foto': await MultipartFile.fromFile(params.imagePath),
+            'delivery_date': params.pickedUpAt.toIso8601String(),
+          },
+          ListFormat.multiCompatible,
+        ),
+      );
+
+      return response.data['message'];
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {
