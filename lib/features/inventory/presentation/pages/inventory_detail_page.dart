@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/themes/colors.dart';
@@ -9,7 +10,9 @@ import '../../../../core/widgets/badges/success_badge.dart';
 import '../../../../core/widgets/badges/warning_badge.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../cubit/inventory_cubit.dart';
 import '../widgets/info_tile.dart';
+import '../widgets/timeline_indicator.dart';
 
 class InventoryDetailPage extends StatelessWidget {
   const InventoryDetailPage({
@@ -24,8 +27,8 @@ class InventoryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tari(batch: batch, good: good);
-    // return Gemini(batch: batch, good: good);
-    // return Claude(batch: batch, good: good);
+    return _Gemini(batch: batch, good: good);
+    return _Claude(batch: batch, good: good);
   }
 }
 
@@ -41,169 +44,224 @@ class Tari extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final inventoryCubit = context.read<InventoryCubit>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Barang'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: BaseCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Informasi Barang',
-                      style: paragraphSmall[heavy].copyWith(
-                        color: black,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      child: _determineBadge(batch.status, batch.statusLabel),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                InfoTile(
-                  title: 'Batch',
-                  value: batch.name,
-                ),
-                const SizedBox(height: 8),
-                InfoTile(
-                  title: 'Customer',
-                  value: good.customer.name,
-                ),
-                const SizedBox(height: 8),
-                InfoTile(
-                  title: 'Nama Barang',
-                  value: good.name,
-                ),
-                InfoTile(
-                  title: 'Jalur',
-                  value: good.transportMode,
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: InfoTile(
-                        title: 'No Invoice',
-                        value: good.invoiceNumber,
-                      ),
-                    ),
-                    Expanded(
-                      child: InfoTile(
-                        title: 'No Resi',
-                        value: good.receiptNumber,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Gudang Awal',
-                        value: good.origin.name,
-                      ),
-                    ),
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Gudang Akhir',
-                        value: good.destination.name,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Tanggal Kirim',
-                        value: batch.shippedAt.toDDMMMMYYYY,
-                      ),
-                    ),
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Tanggal Terima',
-                        value: batch.receivedAt == null
-                            ? '-'
-                            : batch.receivedAt!.toDDMMMMYYYY,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Total Koli',
-                        value: '${good.totalItem}',
-                      ),
-                    ),
-                    Expanded(
-                      child: InfoTile(
-                        title: 'Status',
-                        value: '${batch.statusLabel}',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Informasi Koli',
-                  style: TextStyle(fontSize: 12, color: gray),
-                ),
-                ListView.separated(
-                  itemBuilder: (context, index) {
-                    final firstIndex = index * 2;
-                    final secondIndex = firstIndex + 1;
-                    final isOdd = secondIndex < good.uniqueCodes.length;
+      body: BlocBuilder<InventoryCubit, InventoryState>(
+        bloc: inventoryCubit
+          ..fetchGoodTimeline(receiptNumber: good.receiptNumber),
+        buildWhen: (previous, current) => current is FetchGoodTimeline,
+        builder: (context, state) {
+          if (state is FetchGoodTimelineLoading) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
 
-                    return Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            good.uniqueCodes[firstIndex],
-                            style: label[medium].copyWith(color: black),
+          if (state is FetchGoodTimelineLoaded) {
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Details
+                BaseCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Informasi Barang',
+                            style: paragraphSmall[heavy].copyWith(
+                              color: black,
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: _determineBadge(
+                                batch.status, batch.statusLabel),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      InfoTile(
+                        title: 'Batch',
+                        value: batch.name,
+                      ),
+                      const SizedBox(height: 8),
+                      InfoTile(
+                        title: 'Customer',
+                        value: good.customer.name,
+                      ),
+                      const SizedBox(height: 8),
+                      InfoTile(
+                        title: 'Nama Barang',
+                        value: good.name,
+                      ),
+                      InfoTile(
+                        title: 'Jalur',
+                        value: good.transportMode,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: InfoTile(
+                              isCopyable: true,
+                              title: 'No Invoice',
+                              value: good.invoiceNumber,
+                            ),
+                          ),
+                          Expanded(
+                            child: InfoTile(
+                              isCopyable: true,
+                              title: 'No Resi',
+                              value: good.receiptNumber,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Gudang Awal',
+                              value: good.origin.name,
+                            ),
+                          ),
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Gudang Akhir',
+                              value: good.destination.name,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Tanggal Kirim',
+                              value: batch.shippedAt.toDDMMMMYYYY,
+                            ),
+                          ),
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Tanggal Terima',
+                              value: batch.receivedAt == null
+                                  ? '-'
+                                  : batch.receivedAt!.toDDMMMMYYYY,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Total Koli',
+                              value: '${good.totalItem}',
+                            ),
+                          ),
+                          Expanded(
+                            child: InfoTile(
+                              title: 'Status',
+                              value: '${batch.statusLabel}',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Informasi Koli',
+                        style: TextStyle(fontSize: 12, color: gray),
+                      ),
+                      ListView.separated(
+                        itemBuilder: (context, index) {
+                          final firstIndex = index * 2;
+                          final secondIndex = firstIndex + 1;
+                          final isOdd = secondIndex < good.uniqueCodes.length;
+
+                          return Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  good.uniqueCodes[firstIndex],
+                                  style: label[medium].copyWith(color: black),
+                                ),
+                              ),
+                              Expanded(
+                                child: isOdd
+                                    ? Text(
+                                        good.uniqueCodes[secondIndex],
+                                        style: label[medium]
+                                            .copyWith(color: black),
+                                      )
+                                    : const SizedBox(),
+                              ),
+                            ],
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 8),
+                        itemCount: (good.uniqueCodes.length / 2).ceil(),
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Timeline
+                BaseCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Detail Status',
+                        style: paragraphSmall[heavy].copyWith(
+                          color: black,
+                        ),
+                      ),
+                      Text(
+                        'Status: ${batch.statusLabel}',
+                        style: label[regular].copyWith(color: black),
+                      ),
+                      const SizedBox(height: 24),
+                      ListView.builder(
+                        itemBuilder: (context, index) => IntrinsicHeight(
+                          child: TimelineIndicator(
+                            timeline: state.timeline.timelines[index],
+                            isLast:
+                                index == state.timeline.timelines.length - 1,
                           ),
                         ),
-                        Expanded(
-                          child: isOdd
-                              ? Text(
-                                  good.uniqueCodes[secondIndex],
-                                  style: label[medium].copyWith(color: black),
-                                )
-                              : const SizedBox(),
-                        ),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 8),
-                  itemCount: (good.uniqueCodes.length / 2).ceil(),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
+                        itemCount: state.timeline.timelines.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ),
+            );
+          }
+
+          return const SizedBox();
+        },
       ),
     );
   }
 }
 
-class Gemini extends StatelessWidget {
-  const Gemini({
-    super.key,
+class _Gemini extends StatelessWidget {
+  const _Gemini({
     required this.batch,
     required this.good,
   });
@@ -386,9 +444,8 @@ class Gemini extends StatelessWidget {
   }
 }
 
-class Claude extends StatelessWidget {
-  const Claude({
-    super.key,
+class _Claude extends StatelessWidget {
+  const _Claude({
     required this.batch,
     required this.good,
   });
