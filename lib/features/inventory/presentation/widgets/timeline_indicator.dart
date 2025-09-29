@@ -1,16 +1,19 @@
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../domain/entities/timeline_entity.dart';
 
 class TimelineIndicator extends StatelessWidget {
   const TimelineIndicator({
     super.key,
     required this.timeline,
+    this.isLast = false,
   });
 
-  final Timeline timeline;
+  final TimelineEntity timeline;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +25,14 @@ class TimelineIndicator extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                DateFormat('dd MMMM').format(timeline.dateTime),
-                style: const TextStyle(
-                  color: black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                timeline.dateTime.toDDMMMM,
+                style: label[medium].copyWith(color: black),
               ),
               Text(
-                DateFormat('HH:mm').format(timeline.dateTime),
+                timeline.dateTime.toHHmm,
                 style: const TextStyle(
                   color: gray,
                   fontSize: 12,
-                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
@@ -42,69 +40,51 @@ class TimelineIndicator extends StatelessWidget {
         ),
         Expanded(
           child: Stack(
+            alignment: Alignment.topCenter,
             children: <Widget>[
-              const VerticalDivider(color: primary, thickness: 2),
+              if (isLast)
+                const VerticalDivider(color: whiteTertiary, thickness: 2)
+              else
+                const VerticalDivider(color: primary, thickness: 2),
               Container(
                 decoration: const BoxDecoration(
                   color: primary,
                   shape: BoxShape.circle,
                 ),
-                height: 16,
-                width: 16,
+                height: 12,
+                width: 12,
               ),
             ],
           ),
         ),
         Expanded(
-          flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                timeline.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  timeline.description,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: label[medium].copyWith(color: black),
                 ),
-              ),
-              Text(
-                timeline.address,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: gray,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  timeline.address,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: gray,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
     );
   }
-}
-
-class Timeline {
-  const Timeline({
-    required this.dateTime,
-    required this.description,
-    required this.address,
-  });
-
-  final DateTime dateTime;
-  final String description;
-  final String address;
-
-  static List<Timeline> generate(int count) => List.generate(
-        count,
-        (index) => Timeline(
-          dateTime: faker.date.dateTime(),
-          description: faker.lorem.sentence(),
-          address: faker.address.streetAddress(),
-        ),
-      );
 }
