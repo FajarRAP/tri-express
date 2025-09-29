@@ -182,10 +182,10 @@ class _Gemini extends StatefulWidget {
   final Map<String, Set<String>> selectedCodes;
 
   @override
-  State<_Gemini> createState() => __GeminiState();
+  State<_Gemini> createState() => _GeminiState();
 }
 
-class __GeminiState extends State<_Gemini> {
+class _GeminiState extends State<_Gemini> {
   late final TextEditingController _noteController;
   XFile? _pickedImage;
 
