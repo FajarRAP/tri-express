@@ -7,6 +7,7 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
@@ -44,7 +45,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
 
   @override
   void Function() get onInventoryStop =>
-      () => _inventoryCubit.fetchPreviewPickUpShipments(uhfResults: uhfResults);
+      () => _inventoryCubit.fetchPreviewPickUpGoods(uhfResults: uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +146,8 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                   setState(() {
                     if (value) {
                       for (final good in _inventoryCubit.previewGoods) {
-                        _selectedCodes[good.id] = good.uniqueCodes.toSet();
+                        _selectedCodes[good.receiptNumber] =
+                            good.uniqueCodes.toSet();
                       }
                     } else {
                       _selectedCodes.clear();
@@ -157,7 +159,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                   style: label[medium].copyWith(color: primary),
                 ),
                 value: _inventoryCubit.previewGoods.every((good) =>
-                        (_selectedCodes[good.id]?.length ?? 0) ==
+                        (_selectedCodes[good.receiptNumber]?.length ?? 0) ==
                         good.uniqueCodes.length) &&
                     _inventoryCubit.previewGoods.isNotEmpty,
                 side: const BorderSide(color: primary),
@@ -171,10 +173,17 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                 onSave: () => showModalBottomSheet(
                   context: context,
                   builder: (context) => ActionConfirmationBottomSheet(
-                    onPressed: () => context
-                      ..go(menuRoute)
-                      ..push(sendGoodsRoute),
-                    message: 'Apakah anda yakin akan mengirim barang ini?',
+                    onPressed: () {
+                      if (_selectedCodes.isEmpty) {
+                        const message = 'Pilih barang yang akan diambil';
+                        return TopSnackbar.dangerSnackbar(message: message);
+                      }
+                      context.push(
+                        pickUpGoodsConfirmationRoute,
+                        extra: _selectedCodes,
+                      );
+                    },
+                    message: 'Apakah anda yakin akan mengambil barang ini?',
                   ),
                 ),
                 isScanning: isInventoryRunning,
@@ -220,36 +229,40 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
-              itemBuilder: (context, index) => GoodCardCheckbox(
-                onChanged: (value) {
-                  if (value == null) return;
+              itemBuilder: (context, index) {
+                final good = state.goods[index];
 
-                  setState(() => value
-                      ? _selectedCodes[state.goods[index].id] =
-                          state.goods[index].uniqueCodes.toSet()
-                      : _selectedCodes.remove(state.goods[index].id));
-                },
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => UniqueCodesBottomSheet(
-                    onSelected: (selectedCodes) {
-                      context.pop();
-                      setState(() => selectedCodes.isEmpty
-                          ? _selectedCodes.remove(state.goods[index].id)
-                          : _selectedCodes[state.goods[index].id] =
-                              selectedCodes.toSet());
-                    },
-                    goodName: state.goods[index].name,
-                    selectedCodes:
-                        _selectedCodes[state.goods[index].id]?.toList() ?? [],
-                    uniqueCodes: state.goods[index].uniqueCodes,
+                return GoodCardCheckbox(
+                  onChanged: (value) {
+                    if (value == null) return;
+
+                    setState(() => value
+                        ? _selectedCodes[good.receiptNumber] =
+                            good.uniqueCodes.toSet()
+                        : _selectedCodes.remove(good.receiptNumber));
+                  },
+                  onTap: () => showModalBottomSheet(
+                    builder: (context) => UniqueCodesBottomSheet(
+                      onSelected: (selectedCodes) {
+                        context.pop();
+                        setState(() => selectedCodes.isEmpty
+                            ? _selectedCodes.remove(good.receiptNumber)
+                            : _selectedCodes[good.receiptNumber] =
+                                selectedCodes.toSet());
+                      },
+                      goodName: good.name,
+                      selectedCodes:
+                          _selectedCodes[good.receiptNumber]?.toList() ?? [],
+                      uniqueCodes: good.uniqueCodes,
+                    ),
+                    context: context,
                   ),
-                ),
-                good: state.goods[index],
-                isActive: _selectedCodes.containsKey(state.goods[index].id),
-                selectedCodesCount:
-                    _selectedCodes[state.goods[index].id]?.length ?? 0,
-              ),
+                  good: good,
+                  isActive: _selectedCodes.containsKey(good.receiptNumber),
+                  selectedCodesCount:
+                      _selectedCodes[good.receiptNumber]?.length ?? 0,
+                );
+              },
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemCount: state.goods.length,
             ),
