@@ -19,6 +19,7 @@ import 'features/core/domain/repositories/core_repositories.dart';
 import 'features/core/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/core/domain/use_cases/fetch_banners_use_case.dart';
 import 'features/core/domain/use_cases/fetch_driver_dropdown_use_case.dart';
+import 'features/core/domain/use_cases/fetch_notifications_use_case.dart';
 import 'features/core/domain/use_cases/fetch_summary_use_case.dart';
 import 'features/core/domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
 import 'features/core/domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
@@ -76,6 +77,7 @@ void setupServiceLocator() {
     ..registerSingleton(CompleteOnboardingUseCase(coreRepositories: getIt()))
     ..registerSingleton(FetchBannersUseCase(coreRepositories: getIt()))
     ..registerSingleton(FetchDriverDropdownUseCase(coreRepositories: getIt()))
+    ..registerSingleton(FetchNotificationsUseCase(coreRepositories: getIt()))
     ..registerSingleton(FetchSummaryUseCase(coreRepositories: getIt()))
     ..registerSingleton(
         FetchTransportModeDropdownUseCase(coreRepositories: getIt()))
@@ -86,6 +88,7 @@ void setupServiceLocator() {
         completeOnboardingUseCase: getIt(),
         fetchBannersUseCase: getIt(),
         fetchDriverDropdownUseCase: getIt(),
+        fetchNotificationsUseCase: getIt(),
         fetchSummaryUseCase: getIt(),
         fetchTransportModeDropdownUseCase: getIt(),
         fetchWarehouseDropdownUseCase: getIt()));
@@ -127,6 +130,8 @@ void setupServiceLocator() {
         DeletePreparedShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(
+        FetchGoodTimelineUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(FetchInventoriesUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchInventoriesCountUseCase(inventoryRepositories: getIt()))
@@ -146,8 +151,6 @@ void setupServiceLocator() {
         FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(
-        FetchGoodTimelineUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         createPickedUpGoodsUseCase: getIt(),
@@ -155,6 +158,7 @@ void setupServiceLocator() {
         createReceiveShipmentsUseCase: getIt(),
         deletePreparedShipmentsUseCase: getIt(),
         fetchDeliveryShipmentsUseCase: getIt(),
+        fetchGoodTimelineUseCase: getIt(),
         fetchInventoriesUseCase: getIt(),
         fetchInventoriesCountUseCase: getIt(),
         fetchOnTheWayShipmentsUseCase: getIt(),
@@ -164,8 +168,7 @@ void setupServiceLocator() {
         fetchPreviewPickUpGoodsUseCase: getIt(),
         fetchPreviewPrepareShipmentsUseCase: getIt(),
         fetchPreviewReceiveShipmentsUseCase: getIt(),
-        fetchReceiveShipmentsUseCase: getIt(),
-        fetchGoodTimelineUseCase: getIt()));
+        fetchReceiveShipmentsUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors
