@@ -49,6 +49,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   }
 
   @override
+  Future<Either<Failure, String>> createPickedUpGoods(
+      CreatePickedUpGoodsUseCaseParams params) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.createPickedUpGoods(params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
   Future<Either<Failure, String>> createPrepareShipments(
       CreatePrepareShipmentsUseCaseParams params) async {
     try {
@@ -117,6 +138,27 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
     try {
       final result =
           await inventoryRemoteDataSources.fetchDeliveryShipments(params);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
+      String receiptNumber) async {
+    try {
+      final result =
+          await inventoryRemoteDataSources.fetchGoodTimeline(receiptNumber);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -324,48 +366,6 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
     try {
       final result =
           await inventoryRemoteDataSources.fetchReceiveShipments(params);
-
-      return Right(result);
-    } on ServerException catch (se) {
-      return Left(ServerFailure(
-        message: se.message,
-        statusCode: se.statusCode,
-      ));
-    } on InternalException catch (ie) {
-      return Left(Failure(
-        message: ie.message,
-        statusCode: ie.statusCode,
-      ));
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> createPickedUpGoods(
-      CreatePickedUpGoodsUseCaseParams params) async {
-    try {
-      final result =
-          await inventoryRemoteDataSources.createPickedUpGoods(params);
-
-      return Right(result);
-    } on ServerException catch (se) {
-      return Left(ServerFailure(
-        message: se.message,
-        statusCode: se.statusCode,
-      ));
-    } on InternalException catch (ie) {
-      return Left(Failure(
-        message: ie.message,
-        statusCode: ie.statusCode,
-      ));
-    }
-  }
-
-  @override
-  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
-      String receiptNumber) async {
-    try {
-      final result =
-          await inventoryRemoteDataSources.fetchGoodTimeline(receiptNumber);
 
       return Right(result);
     } on ServerException catch (se) {

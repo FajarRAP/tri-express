@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/fonts/fonts.dart';
-import '../../../../../core/themes/colors.dart';
-import '../../../../../core/utils/helpers.dart';
-import '../../../../../core/widgets/base_card.dart';
-import '../../domain/entities/batch_entity.dart';
-import '../../domain/entities/good_entity.dart';
-import '../widgets/info_tile.dart';
+import '../../../../../../core/fonts/fonts.dart';
+import '../../../../../../core/themes/colors.dart';
+import '../../../../../../core/utils/helpers.dart';
+import '../../../../../../core/widgets/base_card.dart';
+import '../../../domain/entities/batch_entity.dart';
+import '../../../domain/entities/good_entity.dart';
+import '../../widgets/info_tile.dart';
 
 class OnTheWayDetailPage extends StatelessWidget {
   const OnTheWayDetailPage({

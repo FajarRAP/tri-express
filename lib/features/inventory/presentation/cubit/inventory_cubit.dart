@@ -36,6 +36,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     required CreateReceiveShipmentsUseCase createReceiveShipmentsUseCase,
     required DeletePreparedShipmentsUseCase deletePreparedShipmentsUseCase,
     required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
+    required FetchGoodTimelineUseCase fetchGoodTimelineUseCase,
     required FetchInventoriesUseCase fetchInventoriesUseCase,
     required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
     required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
@@ -49,13 +50,13 @@ class InventoryCubit extends Cubit<InventoryState> {
     required FetchReceiveShipmentsUseCase fetchReceiveShipmentsUseCase,
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
     required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
-    required FetchGoodTimelineUseCase fetchGoodTimelineUseCase,
   })  : _createDeliveryShipmentsUseCase = createDeliveryShipmentsUseCase,
         _createPickedUpGoodsUseCase = createPickedUpGoodsUseCase,
         _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
         _createReceiveShipmentsUseCase = createReceiveShipmentsUseCase,
         _deletePreparedShipmentsUseCase = deletePreparedShipmentsUseCase,
         _fetchDeliveryShipmentsUseCase = fetchDeliveryShipmentsUseCase,
+        _fetchGoodTimelineUseCase = fetchGoodTimelineUseCase,
         _fetchInventoriesUseCase = fetchInventoriesUseCase,
         _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
@@ -69,7 +70,6 @@ class InventoryCubit extends Cubit<InventoryState> {
         _fetchReceiveShipmentsUseCase = fetchReceiveShipmentsUseCase,
         _fetchPickedUpGoodsUseCase = fetchPickedUpGoodsUseCase,
         _fetchPreviewPickUpGoodsUseCase = fetchPreviewPickUpGoodsUseCase,
-        _fetchGoodTimelineUseCase = fetchGoodTimelineUseCase,
         super(InventoryInitial());
 
   final CreateDeliveryShipmentsUseCase _createDeliveryShipmentsUseCase;
@@ -78,6 +78,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   final CreateReceiveShipmentsUseCase _createReceiveShipmentsUseCase;
   final DeletePreparedShipmentsUseCase _deletePreparedShipmentsUseCase;
   final FetchDeliveryShipmentsUseCase _fetchDeliveryShipmentsUseCase;
+  final FetchGoodTimelineUseCase _fetchGoodTimelineUseCase;
   final FetchInventoriesUseCase _fetchInventoriesUseCase;
   final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
   final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
@@ -91,7 +92,6 @@ class InventoryCubit extends Cubit<InventoryState> {
   final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
   final FetchReceiveShipmentsUseCase _fetchReceiveShipmentsUseCase;
   final FetchPickedUpGoodsUseCase _fetchPickedUpGoodsUseCase;
-  final FetchGoodTimelineUseCase _fetchGoodTimelineUseCase;
 
   var _currentPage = 1;
   final _deliveryBatches = <BatchEntity>[];
@@ -103,17 +103,6 @@ class InventoryCubit extends Cubit<InventoryState> {
 
   final previewBatches = <BatchEntity>[];
   final previewGoods = <GoodEntity>[];
-
-  Future<void> fetchGoodTimeline({required String receiptNumber}) async {
-    emit(FetchGoodTimelineLoading());
-
-    final result = await _fetchGoodTimelineUseCase(receiptNumber);
-
-    result.fold(
-      (failure) => emit(FetchGoodTimelineError(message: failure.message)),
-      (timeline) => emit(FetchGoodTimelineLoaded(timeline: timeline)),
-    );
-  }
 
   Future<void> createDeliveryShipments({
     required DropdownEntity nextWarehouse,
@@ -253,6 +242,17 @@ class InventoryCubit extends Cubit<InventoryState> {
             ? emit(ListPaginateLast(currentPage: _currentPage = 1))
             : emit(FetchDeliveryShipmentsLoaded(
                 batches: _deliveryBatches..addAll(batches))));
+  }
+
+  Future<void> fetchGoodTimeline({required String receiptNumber}) async {
+    emit(FetchGoodTimelineLoading());
+
+    final result = await _fetchGoodTimelineUseCase(receiptNumber);
+
+    result.fold(
+      (failure) => emit(FetchGoodTimelineError(message: failure.message)),
+      (timeline) => emit(FetchGoodTimelineLoaded(timeline: timeline)),
+    );
   }
 
   Future<void> fetchInventories({String? search}) async {

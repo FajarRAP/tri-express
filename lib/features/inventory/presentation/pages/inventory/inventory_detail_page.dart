@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/fonts/fonts.dart';
-import '../../../../../core/themes/colors.dart';
-import '../../../../../core/utils/helpers.dart';
-import '../../../../../core/widgets/base_card.dart';
-import '../../../../core/widgets/badges/secondary_badge.dart';
-import '../../../../core/widgets/badges/success_badge.dart';
-import '../../../../core/widgets/badges/warning_badge.dart';
-import '../../domain/entities/batch_entity.dart';
-import '../../domain/entities/good_entity.dart';
-import '../cubit/inventory_cubit.dart';
-import '../widgets/info_tile.dart';
-import '../widgets/timeline_indicator.dart';
+import '../../../../../../core/fonts/fonts.dart';
+import '../../../../../../core/themes/colors.dart';
+import '../../../../../../core/utils/helpers.dart';
+import '../../../../../../core/widgets/base_card.dart';
+import '../../../../../core/widgets/badges/secondary_badge.dart';
+import '../../../../../core/widgets/badges/success_badge.dart';
+import '../../../../../core/widgets/badges/warning_badge.dart';
+import '../../../domain/entities/batch_entity.dart';
+import '../../../domain/entities/good_entity.dart';
+import '../../cubit/inventory_cubit.dart';
+import '../../widgets/info_tile.dart';
+import '../../widgets/timeline_indicator.dart';
 
 class InventoryDetailPage extends StatelessWidget {
   const InventoryDetailPage({

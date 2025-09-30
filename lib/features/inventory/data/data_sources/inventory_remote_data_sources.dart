@@ -34,6 +34,7 @@ abstract class InventoryRemoteDataSources {
   Future<String> deletePreparedShipments(String shipmentId);
   Future<List<BatchEntity>> fetchDeliveryShipments(
       FetchDeliveryShipmentsUseCaseParams params);
+  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber);
   Future<List<BatchEntity>> fetchInventories(
       FetchInventoriesUseCaseParams params);
   Future<int> fetchInventoriesCount();
@@ -52,7 +53,6 @@ abstract class InventoryRemoteDataSources {
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
-  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber);
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -73,6 +73,32 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
           'codes': params.uniqueCodes,
           'shipment_ids': params.shipmentIds,
         },
+      );
+
+      return response.data['message'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> createPickedUpGoods(
+      CreatePickedUpGoodsUseCaseParams params) async {
+    try {
+      final response = await dio.post(
+        '/taking/store',
+        data: FormData.fromMap(
+          {
+            'batch_tracking_number': params.receiptNumbers,
+            'codes': params.uniqueCodes,
+            'note': params.note,
+            'foto': await MultipartFile.fromFile(params.imagePath),
+            'delivery_date': params.pickedUpAt.toIso8601String(),
+          },
+          ListFormat.multiCompatible,
+        ),
       );
 
       return response.data['message'];
@@ -156,6 +182,22 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
           List<Map<String, dynamic>>.from(response.data['data']['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber) async {
+    try {
+      final response = await dio.get(
+        '/inventory/timeline',
+        queryParameters: {'q': receiptNumber},
+      );
+
+      return TimelineSummaryModel.fromJson(response.data['data']).toEntity();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {
@@ -367,48 +409,6 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
-    } on DioException catch (de) {
-      throw handleDioException(de);
-    } catch (e) {
-      throw InternalException(message: '$e');
-    }
-  }
-
-  @override
-  Future<String> createPickedUpGoods(
-      CreatePickedUpGoodsUseCaseParams params) async {
-    try {
-      final response = await dio.post(
-        '/taking/store',
-        data: FormData.fromMap(
-          {
-            'batch_tracking_number': params.receiptNumbers,
-            'codes': params.uniqueCodes,
-            'note': params.note,
-            'foto': await MultipartFile.fromFile(params.imagePath),
-            'delivery_date': params.pickedUpAt.toIso8601String(),
-          },
-          ListFormat.multiCompatible,
-        ),
-      );
-
-      return response.data['message'];
-    } on DioException catch (de) {
-      throw handleDioException(de);
-    } catch (e) {
-      throw InternalException(message: '$e');
-    }
-  }
-
-  @override
-  Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber) async {
-    try {
-      final response = await dio.get(
-        '/inventory/timeline',
-        queryParameters: {'q': receiptNumber},
-      );
-
-      return TimelineSummaryModel.fromJson(response.data['data']).toEntity();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

@@ -21,15 +21,17 @@ import '../use_cases/fetch_receive_shipments_use_case.dart';
 abstract class InventoryRepositories {
   Future<Either<Failure, String>> createDeliveryShipments(
       CreateDeliveryShipmentsUseCaseParams params);
+  Future<Either<Failure, String>> createPickedUpGoods(
+      CreatePickedUpGoodsUseCaseParams params);
   Future<Either<Failure, String>> createPrepareShipments(
       CreatePrepareShipmentsUseCaseParams params);
   Future<Either<Failure, String>> createReceiveShipments(
       CreateReceiveShipmentsUseCaseParams params);
-  Future<Either<Failure, String>> createPickedUpGoods(
-      CreatePickedUpGoodsUseCaseParams params);
   Future<Either<Failure, String>> deletePreparedShipments(String shipmentId);
   Future<Either<Failure, List<BatchEntity>>> fetchDeliveryShipments(
       FetchDeliveryShipmentsUseCaseParams params);
+  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
+      String receiptNumber);
   Future<Either<Failure, List<BatchEntity>>> fetchInventories(
       FetchInventoriesUseCaseParams params);
   Future<Either<Failure, int>> fetchInventoriesCount();
@@ -49,6 +51,4 @@ abstract class InventoryRepositories {
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<Either<Failure, List<BatchEntity>>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
-  Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
-      String receiptNumber);
 }
