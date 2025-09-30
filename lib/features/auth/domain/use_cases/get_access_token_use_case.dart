@@ -8,6 +8,7 @@ class GetAccessTokenUseCase implements UseCase<String?, NoParams> {
   const GetAccessTokenUseCase({required this.authRepositories});
 
   final AuthRepositories authRepositories;
+
   @override
   Future<Either<Failure, String?>> call(NoParams params) async {
     return await authRepositories.getAccessToken();

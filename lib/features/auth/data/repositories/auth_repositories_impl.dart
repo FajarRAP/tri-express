@@ -10,8 +10,8 @@ import '../../domain/use_cases/login_use_case.dart';
 import '../data_sources/auth_local_data_sources.dart';
 import '../data_sources/auth_remote_data_sources.dart';
 
-class AuthRepositoriesImpl extends AuthRepositories {
-  AuthRepositoriesImpl({
+class AuthRepositoriesImpl implements AuthRepositories {
+  const AuthRepositoriesImpl({
     required this.authLocalDataSources,
     required this.authRemoteDataSources,
   });
@@ -68,13 +68,12 @@ class AuthRepositoriesImpl extends AuthRepositories {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> login(
-      {required LoginParams params}) async {
+  Future<Either<Failure, UserEntity>> login(LoginUseCaseParams params) async {
     try {
-      final result = await authRemoteDataSources.login(params: params);
+      final result = await authRemoteDataSources.login(params);
       await authLocalDataSources.cacheToken(
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        result.accessToken,
+        result.refreshToken,
       );
 
       return Right(result.user);

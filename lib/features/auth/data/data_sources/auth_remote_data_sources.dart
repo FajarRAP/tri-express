@@ -7,14 +7,14 @@ import '../../domain/use_cases/login_use_case.dart';
 import '../models/login_response_model.dart';
 import '../models/user_model.dart';
 
-abstract class AuthRemoteDataSources {
+abstract interface class AuthRemoteDataSources {
   Future<UserEntity> fetchCurrentUser();
-  Future<LoginResponseModel> login({required LoginParams params});
+  Future<LoginResponseModel> login(LoginUseCaseParams params);
   Future<String> logout();
 }
 
-class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
-  AuthRemoteDataSourcesImpl({required this.dio});
+class AuthRemoteDataSourcesImpl implements AuthRemoteDataSources {
+  const AuthRemoteDataSourcesImpl({required this.dio});
 
   final Dio dio;
 
@@ -32,7 +32,7 @@ class AuthRemoteDataSourcesImpl extends AuthRemoteDataSources {
   }
 
   @override
-  Future<LoginResponseModel> login({required LoginParams params}) async {
+  Future<LoginResponseModel> login(LoginUseCaseParams params) async {
     try {
       final response = await dio.post(
         '/login',

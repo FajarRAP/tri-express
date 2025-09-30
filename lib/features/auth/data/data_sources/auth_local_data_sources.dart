@@ -3,21 +3,20 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../core/exceptions/cache_exception.dart';
 import '../../../../core/utils/constants.dart';
 
-abstract class AuthLocalDataSources {
+abstract interface class AuthLocalDataSources {
+  Future<void> cacheToken(String accessToken, String? refreshToken);
+  Future<void> clearToken();
   Future<String?> getAccessToken();
   Future<String?> getRefreshToken();
-  Future<void> cacheToken({required String accessToken, String? refreshToken});
-  Future<void> clearToken();
 }
 
-class AuthLocalDataSourcesImpl extends AuthLocalDataSources {
-  AuthLocalDataSourcesImpl({required this.storage});
+class AuthLocalDataSourcesImpl implements AuthLocalDataSources {
+  const AuthLocalDataSourcesImpl({required this.storage});
 
   final FlutterSecureStorage storage;
 
   @override
-  Future<void> cacheToken(
-      {required String accessToken, String? refreshToken}) async {
+  Future<void> cacheToken(String accessToken, String? refreshToken) async {
     try {
       await storage.write(key: accessTokenKey, value: accessToken);
       await storage.write(key: refreshTokenKey, value: refreshToken);
