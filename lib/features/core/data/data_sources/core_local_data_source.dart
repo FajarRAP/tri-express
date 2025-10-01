@@ -3,13 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../core/exceptions/cache_exception.dart';
 import '../../../../core/utils/constants.dart';
 
-abstract class CoreLocalDataSources {
+abstract interface class CoreLocalDataSource {
   Future<void> completeOnboarding();
   Future<String?> getOnboardingStatus();
 }
 
-class CoreLocalDataSourcesImpl implements CoreLocalDataSources {
-  const CoreLocalDataSourcesImpl({required this.storage});
+class CoreLocalDataSourceImpl implements CoreLocalDataSource {
+  const CoreLocalDataSourceImpl({required this.storage});
 
   final FlutterSecureStorage storage;
 

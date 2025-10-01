@@ -3,18 +3,21 @@ import 'package:dio/dio.dart';
 import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/dropdown_entity.dart';
+import '../../domain/entities/notification_entity.dart';
 import '../models/dropdown_model.dart';
+import '../models/notification_model.dart';
 
-abstract class CoreRemoteDataSources {
+abstract interface class CoreRemoteDataSource {
   Future<List<String>> fetchBanners();
   Future<List<DropdownEntity>> fetchDriverDropdown();
+  Future<List<NotificationEntity>> fetchNotifications();
   Future<List<int>> fetchSummary();
   Future<List<DropdownEntity>> fetchTransportModeDropdown();
   Future<List<DropdownEntity>> fetchWarehouseDropdown();
 }
 
-class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
-  const CoreRemoteDataSourcesImpl({required this.dio});
+class CoreRemoteDataSourceImpl implements CoreRemoteDataSource {
+  const CoreRemoteDataSourceImpl({required this.dio});
 
   final Dio dio;
 
@@ -25,6 +28,37 @@ class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => '${e['foto_url']}').toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<DropdownEntity>> fetchDriverDropdown() async {
+    try {
+      final response = await dio.get('/delivery/driver_list');
+      final contents = List<Map<String, dynamic>>.from(response.data['data']);
+
+      return contents.map((e) => DropdownModel.fromJson(e).toEntity()).toList();
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<List<NotificationEntity>> fetchNotifications() async {
+    try {
+      final response = await dio.get('/notification');
+      final contents =
+          List<Map<String, dynamic>>.from(response.data['data']['data']);
+
+      return contents
+          .map((e) => NotificationModel.fromJson(e['data']).toEntity())
+          .toList();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {
@@ -64,20 +98,6 @@ class CoreRemoteDataSourcesImpl implements CoreRemoteDataSources {
   Future<List<DropdownEntity>> fetchWarehouseDropdown() async {
     try {
       final response = await dio.get('/prepare/warehouse');
-      final contents = List<Map<String, dynamic>>.from(response.data['data']);
-
-      return contents.map((e) => DropdownModel.fromJson(e).toEntity()).toList();
-    } on DioException catch (de) {
-      throw handleDioException(de);
-    } catch (e) {
-      throw InternalException(message: '$e');
-    }
-  }
-
-  @override
-  Future<List<DropdownEntity>> fetchDriverDropdown() async {
-    try {
-      final response = await dio.get('/delivery/driver_list');
       final contents = List<Map<String, dynamic>>.from(response.data['data']);
 
       return contents.map((e) => DropdownModel.fromJson(e).toEntity()).toList();

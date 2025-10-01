@@ -3,16 +3,16 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
 import '../entities/dropdown_entity.dart';
-import '../repositories/core_repositories.dart';
+import '../repositories/core_repository.dart';
 
 class FetchTransportModeDropdownUseCase
     implements UseCase<List<DropdownEntity>, NoParams> {
-  const FetchTransportModeDropdownUseCase({required this.coreRepositories});
+  const FetchTransportModeDropdownUseCase({required this.coreRepository});
 
-  final CoreRepositories coreRepositories;
+  final CoreRepository coreRepository;
 
   @override
   Future<Either<Failure, List<DropdownEntity>>> call(NoParams params) async {
-    return await coreRepositories.fetchTransportModeDropdown();
+    return await coreRepository.fetchTransportModeDropdown();
   }
 }

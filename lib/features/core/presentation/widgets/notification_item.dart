@@ -1,44 +1,41 @@
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/fonts/fonts.dart';
-import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
+import '../../domain/entities/notification_entity.dart';
 
 class NotificationItem extends StatelessWidget {
-  const NotificationItem({super.key});
+  const NotificationItem({
+    super.key,
+    required this.notification,
+  });
+
+  final NotificationEntity notification;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.push('$itemDetailRoute/INV.2507231447604'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'INV.2507231447604',
-            style: label[regular].copyWith(color: gray),
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: border),
           ),
-          RichText(
-            text: TextSpan(
-              style: paragraphSmall[regular].copyWith(color: black),
-              text: 'Paket dengan kode ',
-              children: <InlineSpan>[
-                TextSpan(
-                  style: paragraphSmall[bold].copyWith(color: black),
-                  text: 'cn/mn/sto',
-                ),
-                const TextSpan(
-                  text: ' dijadwalkan tiba di Gudang hari ini.',
-                ),
-                TextSpan(
-                  style: paragraphSmall[regular].copyWith(color: gray),
-                  text: ' 1 menit yang lalu',
-                )
-              ],
+        ),
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              notification.title,
+              style: label[bold].copyWith(color: black),
             ),
-          ),
-        ],
+            Text(
+              notification.message,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
       ),
     );
   }
