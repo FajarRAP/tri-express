@@ -12,10 +12,10 @@ import 'features/auth/domain/use_cases/get_access_token_use_case.dart';
 import 'features/auth/domain/use_cases/login_use_case.dart';
 import 'features/auth/domain/use_cases/logout_use_case.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
-import 'features/core/data/data_sources/core_local_data_sources.dart';
-import 'features/core/data/data_sources/core_remote_data_sources.dart';
-import 'features/core/data/repositories/core_repositories_impl.dart';
-import 'features/core/domain/repositories/core_repositories.dart';
+import 'features/core/data/data_sources/core_local_data_source.dart';
+import 'features/core/data/data_sources/core_remote_data_source.dart';
+import 'features/core/data/repositories/core_repository_impl.dart';
+import 'features/core/domain/repositories/core_repository.dart';
 import 'features/core/domain/use_cases/complete_onboarding_use_case.dart';
 import 'features/core/domain/use_cases/fetch_banners_use_case.dart';
 import 'features/core/domain/use_cases/fetch_driver_dropdown_use_case.dart';
@@ -68,22 +68,22 @@ void setupServiceLocator() {
 
   // Core
   getIt
-    ..registerLazySingleton<CoreLocalDataSources>(
-        () => CoreLocalDataSourcesImpl(storage: getIt()))
-    ..registerLazySingleton<CoreRemoteDataSources>(
-        () => CoreRemoteDataSourcesImpl(dio: getIt()))
-    ..registerLazySingleton<CoreRepositories>(() => CoreRepositoriesImpl(
-        coreLocalDataSources: getIt(), coreRemoteDataSources: getIt()))
-    ..registerSingleton(CompleteOnboardingUseCase(coreRepositories: getIt()))
-    ..registerSingleton(FetchBannersUseCase(coreRepositories: getIt()))
-    ..registerSingleton(FetchDriverDropdownUseCase(coreRepositories: getIt()))
-    ..registerSingleton(FetchNotificationsUseCase(coreRepositories: getIt()))
-    ..registerSingleton(FetchSummaryUseCase(coreRepositories: getIt()))
+    ..registerLazySingleton<CoreLocalDataSource>(
+        () => CoreLocalDataSourceImpl(storage: getIt()))
+    ..registerLazySingleton<CoreRemoteDataSource>(
+        () => CoreRemoteDataSourceImpl(dio: getIt()))
+    ..registerLazySingleton<CoreRepository>(() => CoreRepositoryImpl(
+        coreLocalDataSource: getIt(), coreRemoteDataSource: getIt()))
+    ..registerSingleton(CompleteOnboardingUseCase(coreRepository: getIt()))
+    ..registerSingleton(FetchBannersUseCase(coreRepository: getIt()))
+    ..registerSingleton(FetchDriverDropdownUseCase(coreRepository: getIt()))
+    ..registerSingleton(FetchNotificationsUseCase(coreRepository: getIt()))
+    ..registerSingleton(FetchSummaryUseCase(coreRepository: getIt()))
     ..registerSingleton(
-        FetchTransportModeDropdownUseCase(coreRepositories: getIt()))
+        FetchTransportModeDropdownUseCase(coreRepository: getIt()))
     ..registerSingleton(
-        FetchWarehouseDropdownUseCase(coreRepositories: getIt()))
-    ..registerSingleton(GetOnboardingStatusUseCase(coreRepositories: getIt()))
+        FetchWarehouseDropdownUseCase(coreRepository: getIt()))
+    ..registerSingleton(GetOnboardingStatusUseCase(coreRepository: getIt()))
     ..registerLazySingleton<CoreCubit>(() => CoreCubit(
         completeOnboardingUseCase: getIt(),
         fetchBannersUseCase: getIt(),
