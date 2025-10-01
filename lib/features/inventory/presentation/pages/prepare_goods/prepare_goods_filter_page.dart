@@ -18,17 +18,20 @@ class PrepareGoodsFilterPage extends StatefulWidget {
 
 class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   late final TextEditingController _batchNameController;
+  late final TextEditingController _dateController;
   late final TextEditingController _estimateDateController;
   late final TextEditingController _transportModeController;
   late final TextEditingController _warehouseController;
   DropdownEntity? _selectedTransportMode;
   DropdownEntity? _selectedWarehouse;
-  DateTime? _selectedEstimateDate;
+  DateTime? _estimatedDate;
+  DateTime? _shippedAt;
 
   @override
   void initState() {
     super.initState();
     _batchNameController = TextEditingController();
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _estimateDateController = TextEditingController();
     _transportModeController = TextEditingController();
     _warehouseController = TextEditingController();
@@ -37,6 +40,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   @override
   void dispose() {
     _batchNameController.dispose();
+    _dateController.dispose();
     _estimateDateController.dispose();
     _transportModeController.dispose();
     _warehouseController.dispose();
@@ -45,6 +49,8 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    const isStaging = bool.fromEnvironment('IS_STAGING');
+
     return Scaffold(
       appBar: AppBar(
         actions: const <Widget>[
@@ -100,12 +106,27 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onTap: isStaging
+                  ? () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDate == null) return;
+
+                      setState(() => _shippedAt = selectedDate);
+                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                    }
+                  : null,
+              controller: isStaging ? _dateController : null,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Tanggal Persiapan',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              initialValue: DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
               readOnly: true,
             ),
             const SizedBox(height: 12),
@@ -119,7 +140,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                 );
                 if (selectedDate == null) return;
 
-                setState(() => _selectedEstimateDate = selectedDate);
+                setState(() => _estimatedDate = selectedDate);
                 _estimateDateController.text = selectedDate.toDDMMMMYYYY;
               },
               controller: _estimateDateController,
@@ -145,14 +166,15 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
               child: PrimaryButton(
                 onPressed: _selectedWarehouse == null ||
                         _selectedTransportMode == null ||
-                        _selectedEstimateDate == null ||
+                        _estimatedDate == null ||
+                        (isStaging && _shippedAt == null) ||
                         _batchNameController.text.isEmpty
                     ? null
                     : () => context.push(
                           prepareGoodsScanRoute,
                           extra: {
-                            'shippedAt': DateTime.now(),
-                            'estimatedAt': _selectedEstimateDate!,
+                            'shippedAt': _shippedAt!,
+                            'estimatedAt': _estimatedDate!,
                             'nextWarehouse': _selectedWarehouse!,
                             'transportMode': _selectedTransportMode!,
                             'batchName': _batchNameController.text,

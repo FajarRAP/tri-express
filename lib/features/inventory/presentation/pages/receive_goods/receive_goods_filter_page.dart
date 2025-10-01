@@ -18,11 +18,12 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
   late final TextEditingController _dateController;
   late final TextEditingController _warehouseController;
   DropdownEntity? _selectedWarehouse;
+  DateTime? _receivedAt;
 
   @override
   void initState() {
     super.initState();
-    _dateController = TextEditingController();
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _warehouseController = TextEditingController();
   }
 
@@ -35,6 +36,8 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    const isStaging = bool.fromEnvironment('IS_STAGING');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Terima Barang'),
@@ -64,21 +67,38 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
             ),
             const SizedBox(height: 24),
             TextFormField(
+              onTap: isStaging
+                  ? () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDate == null) return;
+
+                      setState(() => _receivedAt = selectedDate);
+                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                    }
+                  : null,
+              controller: isStaging ? _dateController : null,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Tanggal Terima',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              initialValue: DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
               readOnly: true,
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: _selectedWarehouse == null
+                onPressed: _selectedWarehouse == null ||
+                        (isStaging && _receivedAt == null)
                     ? null
-                    : () => context.push(receiveGoodsScanRoute),
+                    : () => context.push(receiveGoodsScanRoute,
+                        extra: _receivedAt!),
                 child: const Text('Simpan'),
               ),
             ),

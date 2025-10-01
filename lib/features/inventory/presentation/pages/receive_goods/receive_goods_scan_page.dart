@@ -20,7 +20,12 @@ import '../../widgets/scanned_item_card.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class ReceiveGoodsScanPage extends StatefulWidget {
-  const ReceiveGoodsScanPage({super.key});
+  const ReceiveGoodsScanPage({
+    super.key,
+    required this.receivedAt,
+  });
+
+  final DateTime receivedAt;
 
   @override
   State<ReceiveGoodsScanPage> createState() => _ReceiveGoodsScanPageState();
@@ -146,7 +151,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                   final onPressed = switch (state) {
                     CreateShipmentsLoading() => null,
                     _ => () => _inventoryCubit.createReceiveShipments(
-                        uhfresults: uhfResults, receivedAt: DateTime.now()),
+                        uhfresults: uhfResults, receivedAt: widget.receivedAt),
                   };
 
                   return ActionConfirmationBottomSheet(

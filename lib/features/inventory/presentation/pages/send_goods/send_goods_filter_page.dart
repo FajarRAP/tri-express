@@ -17,20 +17,24 @@ class SendGoodsFilterPage extends StatefulWidget {
 }
 
 class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
+  late final TextEditingController _dateController;
   late final TextEditingController _driverController;
   late final TextEditingController _warehouseController;
   DropdownEntity? _selectedWarehouse;
   DropdownEntity? _selectedDriver;
+  DateTime? _deliveredAt;
 
   @override
   void initState() {
     super.initState();
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _driverController = TextEditingController();
     _warehouseController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _dateController.dispose();
     _driverController.dispose();
     _warehouseController.dispose();
     super.dispose();
@@ -38,6 +42,8 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    const isStaging = bool.fromEnvironment('IS_STAGING');
+
     return Scaffold(
       appBar: AppBar(
         actions: const <Widget>[
@@ -92,23 +98,41 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              onTap: isStaging
+                  ? () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDate == null) return;
+
+                      setState(() => _deliveredAt = selectedDate);
+                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                    }
+                  : null,
+              controller: isStaging ? _dateController : null,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Tanggal Kirim',
                 suffixIcon: Icon(Icons.calendar_month_outlined),
               ),
-              initialValue: DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
               readOnly: true,
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: _selectedDriver == null || _selectedWarehouse == null
+                onPressed: _selectedDriver == null ||
+                        _selectedWarehouse == null ||
+                        (isStaging && _deliveredAt == null)
                     ? null
                     : () => context.push(sendGoodsScanRoute, extra: {
                           'driver': _selectedDriver,
                           'nextWarehouse': _selectedWarehouse,
+                          'deliveredAt': _deliveredAt!,
                         }),
                 child: const Text('Simpan'),
               ),

@@ -133,7 +133,8 @@ class InventoryCubit extends Cubit<InventoryState> {
   Future<void> createPickedUpGoods(
       {required Map<String, Set<String>> selectedCodes,
       required String note,
-      required String pickedImagePath}) async {
+      required String pickedImagePath,
+      required DateTime pickedUpAt}) async {
     emit(CreateShipmentsLoading());
 
     final receiptNumbers = selectedCodes.keys.toList();
@@ -143,7 +144,7 @@ class InventoryCubit extends Cubit<InventoryState> {
       uniqueCodes: uniqueCodes,
       note: note,
       imagePath: pickedImagePath,
-      pickedUpAt: DateTime.now(),
+      pickedUpAt: pickedUpAt,
     );
     final result = await _createPickedUpGoodsUseCase(params);
 

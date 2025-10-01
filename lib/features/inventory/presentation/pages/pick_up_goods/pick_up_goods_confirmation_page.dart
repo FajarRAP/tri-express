@@ -41,24 +41,30 @@ class _Tari extends StatefulWidget {
 
 class _TariState extends State<_Tari> {
   late final InventoryCubit _inventoryCubit;
+  late final TextEditingController _dateController;
   late final TextEditingController _noteController;
   XFile? _pickedImage;
+  DateTime? _pickedUpAt;
 
   @override
   void initState() {
     super.initState();
     _inventoryCubit = context.read<InventoryCubit>();
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _noteController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _dateController.dispose();
     _noteController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    const isStaging = bool.fromEnvironment('IS_STAGING');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Penerima Barang'),
@@ -112,6 +118,7 @@ class _TariState extends State<_Tari> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                onChanged: (_) => setState(() {}),
                 controller: _noteController,
                 decoration: const InputDecoration(
                   hintText: 'Tambahkan catatan di sini',
@@ -120,12 +127,27 @@ class _TariState extends State<_Tari> {
               ),
               const SizedBox(height: 12),
               TextFormField(
+                onTap: isStaging
+                    ? () async {
+                        final selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (selectedDate == null) return;
+
+                        setState(() => _pickedUpAt = selectedDate);
+                        _dateController.text = selectedDate.toDDMMMMYYYY;
+                      }
+                    : null,
+                controller: isStaging ? _dateController : null,
                 decoration: const InputDecoration(
                   hintText: 'DD MM YYYY',
                   labelText: 'Tanggal Terima',
                   suffixIcon: const Icon(Icons.calendar_month),
                 ),
-                initialValue: DateTime.now().toDDMMMMYYYY,
+                initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
                 readOnly: true,
               ),
               const SizedBox(height: 12),
@@ -147,17 +169,23 @@ class _TariState extends State<_Tari> {
                 builder: (context, state) {
                   final onPressed = switch (state) {
                     CreateShipmentsLoading() => null,
-                    _ => () {
-                        if (_pickedImage == null) {
-                          return TopSnackbar.dangerSnackbar(
-                              message: 'Bukti foto diperlukan');
-                        }
+                    _ => _noteController.text.isEmpty ||
+                            _pickedImage == null ||
+                            _pickedUpAt == null
+                        ? null
+                        : () {
+                            if (_pickedImage == null) {
+                              return TopSnackbar.dangerSnackbar(
+                                  message: 'Bukti foto diperlukan');
+                            }
 
-                        _inventoryCubit.createPickedUpGoods(
-                            selectedCodes: widget.selectedCodes,
-                            note: _noteController.text,
-                            pickedImagePath: _pickedImage!.path);
-                      },
+                            _inventoryCubit.createPickedUpGoods(
+                              selectedCodes: widget.selectedCodes,
+                              note: _noteController.text,
+                              pickedImagePath: _pickedImage!.path,
+                              pickedUpAt: _pickedUpAt!,
+                            );
+                          },
                   };
 
                   return PrimaryButton(

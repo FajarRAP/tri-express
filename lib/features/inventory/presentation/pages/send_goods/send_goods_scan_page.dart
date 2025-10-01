@@ -26,10 +26,12 @@ class SendGoodsScanPage extends StatefulWidget {
     super.key,
     required this.driver,
     required this.nextWarehouse,
+    required this.deliveredAt,
   });
 
   final DropdownEntity driver;
   final DropdownEntity nextWarehouse;
+  final DateTime deliveredAt;
 
   @override
   State<SendGoodsScanPage> createState() => _SendGoodsScanPageState();
@@ -222,7 +224,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                               nextWarehouse: widget.nextWarehouse,
                               driver: widget.driver,
                               batches: _selectedBatches,
-                              deliveredAt: DateTime.now(),
+                              deliveredAt: widget.deliveredAt,
                             ),
                       };
                       return ActionConfirmationBottomSheet(
