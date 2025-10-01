@@ -116,7 +116,7 @@ void main() {
   group(
     'login: ',
     () {
-      const params = LoginParams(email: 'email', password: 'password');
+      const params = LoginUseCaseParams(email: 'email', password: 'password');
       test(
         'should return UserModel when the request status code is 200',
         () async {
@@ -164,7 +164,7 @@ void main() {
           );
 
           // act
-          final result = await authRemoteDataSources.login(params: params);
+          final result = await authRemoteDataSources.login(params);
 
           // assert
           expect(result, isA<LoginResponseModel>());
@@ -187,7 +187,7 @@ void main() {
           );
 
           // act
-          final result = authRemoteDataSources.login(params: params);
+          final result = authRemoteDataSources.login(params);
 
           // assert
           await expectLater(result, throwsA(isA<ServerException>()));
@@ -201,7 +201,7 @@ void main() {
           when(() => mockDio.post(any())).thenThrow(const InternalException());
 
           // act
-          final result = authRemoteDataSources.login(params: params);
+          final result = authRemoteDataSources.login(params);
 
           // assert
           await expectLater(result, throwsA(isA<InternalException>()));

@@ -32,8 +32,7 @@ void main() {
             value: any(named: 'value'))).thenAnswer((_) async {});
 
         // act
-        await dataSources.cacheToken(
-            accessToken: tAccessToken, refreshToken: tRefreshToken);
+        await dataSources.cacheToken(tAccessToken, tRefreshToken);
 
         // assert
         verify(() =>
@@ -53,8 +52,7 @@ void main() {
               value: any(named: 'value'))).thenThrow(const CacheException());
 
           // act
-          final call = dataSources.cacheToken(
-              accessToken: tAccessToken, refreshToken: tRefreshToken);
+          final call = dataSources.cacheToken(tAccessToken, tRefreshToken);
 
           // assert
           await expectLater(call, throwsA(isA<CacheException>()));

@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tri_express/features/core/data/data_sources/core_remote_data_sources.dart';
+import 'package:tri_express/core/exceptions/internal_exception.dart';
+import 'package:tri_express/core/exceptions/server_exception.dart';
+import 'package:tri_express/features/core/data/data_sources/core_remote_data_source.dart';
 import 'package:tri_express/features/core/data/models/dropdown_model.dart';
+import 'package:tri_express/features/core/data/models/notification_model.dart';
 import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
+import 'package:tri_express/features/core/domain/entities/notification_entity.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -13,11 +17,11 @@ class MockDio extends Mock implements Dio {}
 
 void main() {
   late MockDio mockDio;
-  late CoreRemoteDataSourcesImpl dataSources;
+  late CoreRemoteDataSourceImpl dataSource;
 
   setUp(() {
     mockDio = MockDio();
-    dataSources = CoreRemoteDataSourcesImpl(dio: mockDio);
+    dataSource = CoreRemoteDataSourceImpl(dio: mockDio);
   });
 
   group(
@@ -47,7 +51,7 @@ void main() {
               data: json, requestOptions: RequestOptions(), statusCode: 200));
 
           // act
-          final result = await dataSources.fetchBanners();
+          final result = await dataSource.fetchBanners();
 
           // assert
           expect(result, isA<List<String>>());
@@ -72,7 +76,7 @@ void main() {
               data: json, requestOptions: RequestOptions(), statusCode: 200));
 
           // act
-          final result = await dataSources.fetchSummary();
+          final result = await dataSource.fetchSummary();
 
           // assert
           expect(result, isA<List<int>>());
@@ -97,7 +101,7 @@ void main() {
           );
 
           // act
-          final result = await dataSources.fetchTransportModeDropdown();
+          final result = await dataSource.fetchTransportModeDropdown();
 
           // assert
           expect(result, isNot(isA<List<DropdownModel>>()));
@@ -123,7 +127,7 @@ void main() {
           );
 
           // act
-          final result = await dataSources.fetchWarehouseDropdown();
+          final result = await dataSource.fetchWarehouseDropdown();
 
           // assert
           expect(result, isNot(isA<List<DropdownModel>>()));
@@ -149,7 +153,7 @@ void main() {
           );
 
           // act
-          final result = await dataSources.fetchDriverDropdown();
+          final result = await dataSource.fetchDriverDropdown();
 
           // assert
           expect(result, isNot(isA<List<DropdownModel>>()));
@@ -158,4 +162,62 @@ void main() {
       );
     },
   );
+
+  group('fetch notification remote data sources test', () {
+    test(
+        'should return List<NotificationEntity> when request status code is 200',
+        () async {
+      // arrange
+      final jsonString = fixtureReader('data_sources/get_notification.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.get(any())).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await dataSource.fetchNotifications();
+
+      // assert
+      expect(result, isA<List<NotificationEntity>>());
+      expect(result, isNot(isA<List<NotificationModel>>()));
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.get(any())).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = dataSource.fetchNotifications();
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.get(any()))
+          .thenThrow(Exception('Unexpected error happen'));
+
+      // act
+      final result = dataSource.fetchNotifications();
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
 }

@@ -2,19 +2,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/utils/constants.dart';
-import 'package:tri_express/features/core/data/data_sources/core_local_data_sources.dart';
+import 'package:tri_express/features/core/data/data_sources/core_local_data_source.dart';
 
 class MockStorage extends Mock implements FlutterSecureStorage {}
 
 void main() {
   late MockStorage mockStorage;
-  late CoreLocalDataSourcesImpl dataSources;
+  late CoreLocalDataSourceImpl dataSource;
 
   const tOnboardingDone = 'true';
 
   setUp(() {
     mockStorage = MockStorage();
-    dataSources = CoreLocalDataSourcesImpl(storage: mockStorage);
+    dataSource = CoreLocalDataSourceImpl(storage: mockStorage);
   });
 
   group(
@@ -29,7 +29,7 @@ void main() {
               value: any(named: 'value'))).thenAnswer((_) async {});
 
           // act
-          await dataSources.completeOnboarding();
+          await dataSource.completeOnboarding();
 
           // assert
           verify(() =>
