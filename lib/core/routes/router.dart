@@ -151,7 +151,9 @@ final router = GoRouter(
         ),
         GoRoute(
           path: 'scan',
-          builder: (context, state) => const ReceiveGoodsScanPage(),
+          builder: (context, state) => ReceiveGoodsScanPage(
+            receivedAt: state.extra as DateTime,
+          ),
         ),
         GoRoute(
           path: 'detail',
@@ -226,10 +228,12 @@ final router = GoRouter(
             final extras = state.extra as Map<String, dynamic>;
             final driver = extras['driver'] as DropdownEntity;
             final nextWarehouse = extras['nextWarehouse'] as DropdownEntity;
+            final deliveredAt = extras['deliveredAt'] as DateTime;
 
             return SendGoodsScanPage(
               driver: driver,
               nextWarehouse: nextWarehouse,
+              deliveredAt: deliveredAt,
             );
           },
         ),
@@ -257,6 +261,7 @@ final router = GoRouter(
           path: 'confirmation',
           builder: (context, state) => PickUpGoodsConfirmationPage(
             selectedCodes: state.extra as Map<String, Set<String>>,
+            
           ),
         ),
         GoRoute(
