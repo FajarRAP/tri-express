@@ -13,11 +13,10 @@ import '../../features/core/presentation/pages/splash_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/picked_good_entity.dart';
-import '../../features/inventory/presentation/pages/inventory_detail_page.dart';
-import '../../features/inventory/presentation/pages/inventory_page.dart';
-import '../../features/inventory/presentation/pages/item_detail_page.dart';
-import '../../features/inventory/presentation/pages/on_the_way_detail_page.dart';
-import '../../features/inventory/presentation/pages/on_the_way_page.dart';
+import '../../features/inventory/presentation/pages/inventory/inventory_detail_page.dart';
+import '../../features/inventory/presentation/pages/inventory/inventory_page.dart';
+import '../../features/inventory/presentation/pages/on_the_way/on_the_way_detail_page.dart';
+import '../../features/inventory/presentation/pages/on_the_way/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_page.dart';
@@ -64,8 +63,6 @@ const pickUpGoodsDetailRoute = '$pickUpGoodsRoute/detail';
 
 const onTheWayRoute = '/on-the-way';
 const onTheWayDetailRoute = '/on-the-way-detail';
-const batchDetailRoute = '/batch-detail';
-const itemDetailRoute = '/item-detail';
 
 const inventoryRoute = '/inventory';
 const inventoryDetailRoute = '/inventory-detail';
@@ -110,12 +107,11 @@ class _GoRouterObserver extends NavigatorObserver {
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/splash',
-  observers: [
-    _GoRouterObserver(),
-  ],
+  observers: [_GoRouterObserver()],
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
+      observers: [_GoRouterObserver()],
       builder: (context, state, child) =>
           ScaffoldWithBottomNavbar(child: child),
       routes: <RouteBase>[
@@ -327,11 +323,6 @@ final router = GoRouter(
           good: good,
         );
       },
-    ),
-
-    GoRoute(
-      path: '/item-detail',
-      builder: (context, state) => const ItemDetailPage(itemId: ''),
     ),
 
     GoRoute(
