@@ -33,7 +33,10 @@ class HomePage extends StatelessWidget {
           if (state is FetchCurrentUserLoaded) {
             return Scaffold(
               appBar: AppBar(
-                title: ProfileRow(user: state.user),
+                title: GestureDetector(
+                  onTap: () => context.go(settingRoute),
+                  child: ProfileRow(user: state.user),
+                ),
                 actions: <Widget>[
                   const NotificationIconButton(),
                   const SizedBox(width: 16),
