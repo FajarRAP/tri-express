@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
+import '../../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class ReceiveGoodsFilterPage extends StatefulWidget {
@@ -15,6 +18,7 @@ class ReceiveGoodsFilterPage extends StatefulWidget {
 }
 
 class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
+  late final AuthCubit _authCubit;
   late final TextEditingController _dateController;
   late final TextEditingController _warehouseController;
   DropdownEntity? _selectedWarehouse;
@@ -23,6 +27,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
   @override
   void initState() {
     super.initState();
+    _authCubit = context.read<AuthCubit>();
     _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _warehouseController = TextEditingController();
   }
@@ -51,6 +56,12 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                 context: context,
                 builder: (context) => WarehouseDropdown(
                   onTap: (warehouse) {
+                    if (warehouse.id == _authCubit.user.warehouse?.id) {
+                      const message =
+                          'Tidak bisa memilih gudang asal yang sama dengan gudang pengguna saat ini.';
+                      return TopSnackbar.dangerSnackbar(message: message);
+                    }
+
                     _warehouseController.text = warehouse.value;
                     setState(() => _selectedWarehouse = warehouse);
                     context.pop();
@@ -60,6 +71,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
+                hintText: 'Pilih Gudang Asal',
                 labelText: 'Pilih Gudang Asal',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),

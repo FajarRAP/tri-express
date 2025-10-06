@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/dropdowns/transport_mode_dropdown.dart';
 import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class PrepareGoodsFilterPage extends StatefulWidget {
@@ -17,6 +20,7 @@ class PrepareGoodsFilterPage extends StatefulWidget {
 }
 
 class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
+  late final AuthCubit _authCubit;
   late final TextEditingController _batchNameController;
   late final TextEditingController _dateController;
   late final TextEditingController _estimateDateController;
@@ -30,6 +34,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   @override
   void initState() {
     super.initState();
+    _authCubit = context.read<AuthCubit>();
     _batchNameController = TextEditingController();
     _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _estimateDateController = TextEditingController();
@@ -69,6 +74,12 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                 context: context,
                 builder: (context) => WarehouseDropdown(
                   onTap: (warehouse) {
+                    if (warehouse.id == _authCubit.user.warehouse?.id) {
+                      const message =
+                          'Tidak bisa memilih gudang asal yang sama dengan gudang pengguna saat ini.';
+                      return TopSnackbar.dangerSnackbar(message: message);
+                    }
+
                     _warehouseController.text = warehouse.value;
                     setState(() => _selectedWarehouse = warehouse);
                     context.pop();
