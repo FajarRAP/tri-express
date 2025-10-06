@@ -58,10 +58,63 @@ class _MobileScannerSimpleState extends State<MobileScannerSimplePage> {
           CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                actions: [
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: whiteTertiary,
+                      shape: BoxShape.circle,
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 8,
+                    ),
+                    child: ValueListenableBuilder(
+                      valueListenable: _controller,
+                      builder: (context, state, child) {
+                        if (!state.isInitialized || !state.isRunning) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return switch (state.torchState) {
+                          TorchState.off => IconButton(
+                              onPressed: _controller.toggleTorch,
+                              icon: const Icon(
+                                Icons.flashlight_on,
+                                color: black,
+                              ),
+                            ),
+                          TorchState.unavailable => IconButton(
+                              onPressed: _controller.toggleTorch,
+                              icon: const Icon(
+                                Icons.no_flash,
+                                color: black,
+                              ),
+                            ),
+                          _ => IconButton(
+                              onPressed: _controller.toggleTorch,
+                              icon: const Icon(
+                                Icons.flashlight_off,
+                                color: black,
+                              ),
+                            )
+                        };
+                      },
+                    ),
+                  ),
+                ],
                 backgroundColor: Colors.transparent,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: light),
-                  onPressed: context.pop,
+                leading: Container(
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: whiteTertiary,
+                    shape: BoxShape.circle,
+                  ),
+                  margin: const EdgeInsets.all(8),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: black),
+                    onPressed: context.pop,
+                  ),
                 ),
                 title: Text(
                   'Scan QR Code',
@@ -70,19 +123,6 @@ class _MobileScannerSimpleState extends State<MobileScannerSimplePage> {
               ),
             ],
           ),
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: Container(
-          //     alignment: Alignment.bottomCenter,
-          //     height: 100,
-          //     color: light,
-          //     child: Column(
-          //       children: [
-          //         Text('data: ${_barcode?.rawValue ?? '---'}'),
-          //       ],
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
