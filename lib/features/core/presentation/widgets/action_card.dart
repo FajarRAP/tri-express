@@ -12,7 +12,7 @@ class ActionCard extends StatelessWidget {
   });
 
   final void Function()? onTap;
-  final IconData icon;
+  final String icon;
   final String title;
 
   @override

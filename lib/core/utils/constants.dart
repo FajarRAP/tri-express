@@ -1,9 +1,5 @@
 import 'package:flutter/services.dart';
 
-import '../../features/inventory/domain/entities/batch_entity.dart';
-import '../../features/inventory/domain/entities/customer_entity.dart';
-import '../../features/inventory/domain/entities/good_entity.dart';
-import '../../features/inventory/domain/entities/warehouse_entity.dart';
 import '../routes/router.dart';
 
 const apiUrl = String.fromEnvironment('API_URL');
@@ -37,58 +33,7 @@ const logoTextImagePath = '$imagePath/logo-text.png';
 
 const superAdminRole = 'superadmin';
 
-final _warehouse = WarehouseEntity(
-  id: 'id',
-  countryId: 'countryId',
-  address: 'address',
-  description: 'description',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  name: 'name',
-  phone: 'phone',
-  warehouseCode: 'warehouseCode',
-  createdAt: DateTime.now(),
-  updatedAt: DateTime.now(),
-);
-
-const _customer = CustomerEntity(
-  id: 'id',
-  code: 'code',
-  address: 'address',
-  name: 'name',
-  phoneNumber: 'phoneNumber',
-);
-
-final _good = GoodEntity(
-  id: 'id',
-  receiptNumber: 'receiptNumber',
-  invoiceNumber: 'invoiceNumber',
-  name: 'name',
-  transportMode: 'transportMode',
-  totalItem: 1,
-  customer: _customer,
-  origin: _warehouse,
-  destination: _warehouse,
-  uniqueCodes: [],
-);
-
-final goods = [for (var i = 0; i < 20; i++) _good];
-final batch = BatchEntity(
-  id: 'id',
-  name: 'name',
-  status: 1,
-  statusLabel: 'status',
-  trackingNumber: 'trackingNumber',
-  transportMode: 'Darat',
-  receivedUnits: 1,
-  preparedUnits: 1,
-  deliveredUnits: 1,
-  totalAllUnits: 1,
-  goods: goods,
-  origin: _warehouse,
-  destination: _warehouse,
-  deliveredAt: DateTime.now(),
-  estimateAt: DateTime.now(),
-  receivedAt: DateTime.now(),
-  shippedAt: DateTime.now(),
-);
+const boxSvgPath = 'assets/svgs/box.svg';
+const boxAddSvgPath = 'assets/svgs/box-add.svg';
+const truckSvgPath = 'assets/svgs/truck.svg';
+const helmetSvgPath = 'assets/svgs/helmet.svg';

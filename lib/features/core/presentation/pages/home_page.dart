@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
 import '../../../../core/widgets/profile_row.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
@@ -133,22 +134,22 @@ class HomePage extends StatelessWidget {
                     children: <Widget>[
                       ActionCard(
                         onTap: () => context.push(receiveGoodsRoute),
-                        icon: Icons.inventory_2_outlined,
+                        icon: boxSvgPath,
                         title: 'Terima Barang',
                       ),
                       ActionCard(
                         onTap: () => context.push(prepareGoodsRoute),
-                        icon: Icons.inventory_2_outlined,
+                        icon: boxAddSvgPath,
                         title: 'Persiapan Barang',
                       ),
                       ActionCard(
                         onTap: () => context.push(sendGoodsRoute),
-                        icon: Icons.inventory_2_outlined,
+                        icon: truckSvgPath,
                         title: 'Kirim Barang',
                       ),
                       ActionCard(
                         onTap: () => context.push(pickUpGoodsRoute),
-                        icon: Icons.inventory_2_outlined,
+                        icon: helmetSvgPath,
                         title: 'Ambil di Gudang',
                       ),
                     ],
