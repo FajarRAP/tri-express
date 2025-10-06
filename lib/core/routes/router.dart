@@ -124,12 +124,6 @@ final router = GoRouter(
           builder: (context, state) => const OnTheWayPage(),
         ),
         GoRoute(
-          path: '/scan-barcode',
-          builder: (context, state) => MobileScannerSimplePage(
-            onDetect: (barcode) {},
-          ),
-        ),
-        GoRoute(
           path: '/inventory',
           builder: (context, state) => const InventoryPage(),
         ),
@@ -261,7 +255,6 @@ final router = GoRouter(
           path: 'confirmation',
           builder: (context, state) => PickUpGoodsConfirmationPage(
             selectedCodes: state.extra as Map<String, Set<String>>,
-            
           ),
         ),
         GoRoute(
