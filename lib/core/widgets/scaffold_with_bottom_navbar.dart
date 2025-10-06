@@ -62,7 +62,7 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
       case 1:
         context.go(onTheWayRoute);
       case 2:
-        context.go(scanBarcodeRoute);
+        context.push(scanBarcodeInnerRoute);
       case 3:
         context.go(inventoryRoute);
       case 4:
