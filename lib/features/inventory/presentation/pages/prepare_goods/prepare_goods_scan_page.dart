@@ -222,6 +222,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 

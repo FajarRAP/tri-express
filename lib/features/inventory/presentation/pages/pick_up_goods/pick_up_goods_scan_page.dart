@@ -122,7 +122,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
             floating: true,
             pinned: true,
             snap: true,
-            title: const Text('Terima Barang'),
+            title: const Text('Ambil di Gudang'),
           ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -193,6 +193,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 

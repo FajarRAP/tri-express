@@ -241,6 +241,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 
