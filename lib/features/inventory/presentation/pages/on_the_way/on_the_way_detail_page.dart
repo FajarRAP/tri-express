@@ -62,12 +62,14 @@ class OnTheWayDetailPage extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: InfoTile(
+                        isCopyable: true,
                         title: 'No Invoice',
                         value: good.invoiceNumber,
                       ),
                     ),
                     Expanded(
                       child: InfoTile(
+                        isCopyable: true,
                         title: 'No Resi',
                         value: good.receiptNumber,
                       ),
