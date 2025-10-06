@@ -19,7 +19,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: json['id'],
       warehouseId: json['gudang_id'],
-      avatarUrl: json['avatar'],
+      avatarUrl: json['avatar_url'],
       email: json['email'],
       name: json['name'],
       phoneNumber: json['no_telp'],

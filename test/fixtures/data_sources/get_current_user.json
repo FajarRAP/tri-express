@@ -1,0 +1,46 @@
+{
+    "status": "Success",
+    "message": "Detail Profil",
+    "data": {
+        "user": {
+            "id": "019999d1-8a41-7184-b932-95af1969b82a",
+            "gudang_id": "019999cd-0835-73e7-a396-4f70d9d6f317",
+            "name": "G_Transit1",
+            "email": "transit1@gmail.com",
+            "no_telp": "0982378127",
+            "email_verified_at": null,
+            "avatar": "0930155110.png",
+            "status": 1,
+            "created_at": "2025-09-30T08:51:10.000000Z",
+            "updated_at": "2025-09-30T08:52:31.000000Z",
+            "avatar_url": "http://159.65.13.17/storage/users/0930155110.png",
+            "roles": [
+                {
+                    "uuid": "019999c4-c433-716d-9fe1-fefcd9683556",
+                    "name": "admin_gudang",
+                    "guard_name": "web",
+                    "created_at": "2025-09-30T08:37:13.000000Z",
+                    "updated_at": "2025-09-30T08:37:13.000000Z",
+                    "pivot": {
+                        "model_type": "App\\Models\\User",
+                        "model_uuid": "019999d1-8a41-7184-b932-95af1969b82a",
+                        "role_id": "019999c4-c433-716d-9fe1-fefcd9683556"
+                    }
+                }
+            ],
+            "gudang": {
+                "id": "019999cd-0835-73e7-a396-4f70d9d6f317",
+                "negara_id": "019999c7-3def-70df-8c6d-4a53dae4682a",
+                "kode": "TR1",
+                "title": "Transit1",
+                "no_telp": "0938490",
+                "alamat": "jalan bandeng 6",
+                "longitude": "106.82708242921241",
+                "latitude": "-6.173421305040958",
+                "keterangan": "23423",
+                "created_at": "2025-09-30T08:46:15.000000Z",
+                "updated_at": "2025-09-30T08:46:15.000000Z"
+            }
+        }
+    }
+}

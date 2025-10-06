@@ -435,7 +435,8 @@ void main() {
       // arrange
       final jsonString = fixtureReader('data_sources/get_picked_up_goods.json');
       final json = jsonDecode(jsonString);
-      when(() => mockDio.get(any())).thenAnswer(
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenAnswer(
         (_) async => Response(
           requestOptions: RequestOptions(),
           data: json,
@@ -454,7 +455,8 @@ void main() {
     test('should throw ServerException when request status code is not 200',
         () async {
       // arrange
-      when(() => mockDio.get(any())).thenThrow(
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenThrow(
         DioException(
           requestOptions: RequestOptions(),
           response: Response(
@@ -475,7 +477,9 @@ void main() {
     test('should throw InternalException when an unexpected error occurs',
         () async {
       // arrange
-      when(() => mockDio.get(any())).thenThrow(const InternalException());
+      when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters')))
+          .thenThrow(const InternalException());
 
       // act
       final result = dataSource.fetchPickedUpGoods(params);
