@@ -13,4 +13,6 @@ abstract interface class CoreRepository {
   Future<Either<Failure, List<DropdownEntity>>> fetchTransportModeDropdown();
   Future<Either<Failure, List<DropdownEntity>>> fetchWarehouseDropdown();
   Future<Either<Failure, String?>> getOnboardingStatus();
+  Future<Either<Failure, String>> readAllNotifications();
+  Future<Either<Failure, String>> readNotification(String notificationId);
 }

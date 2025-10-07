@@ -11,6 +11,8 @@ import '../../domain/use_cases/fetch_notifications_use_case.dart';
 import '../../domain/use_cases/fetch_summary_use_case.dart';
 import '../../domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
 import '../../domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
+import '../../domain/use_cases/read_all_notifications_use_case.dart';
+import '../../domain/use_cases/read_notification_use_case.dart';
 
 part 'core_state.dart';
 
@@ -24,6 +26,8 @@ class CoreCubit extends Cubit<CoreState> {
     required FetchTransportModeDropdownUseCase
         fetchTransportModeDropdownUseCase,
     required FetchWarehouseDropdownUseCase fetchWarehouseDropdownUseCase,
+    required ReadAllNotificationsUseCase readAllNotificationsUseCase,
+    required ReadNotificationUseCase readNotificationUseCase,
   })  : _completeOnboardingUseCase = completeOnboardingUseCase,
         _fetchBannersUseCase = fetchBannersUseCase,
         _fetchDriverDropdownUseCase = fetchDriverDropdownUseCase,
@@ -31,6 +35,8 @@ class CoreCubit extends Cubit<CoreState> {
         _fetchSummaryUseCase = fetchSummaryUseCase,
         _fetchTransportModeDropdownUseCase = fetchTransportModeDropdownUseCase,
         _fetchWarehouseDropdownUseCase = fetchWarehouseDropdownUseCase,
+        _readAllNotificationsUseCase = readAllNotificationsUseCase,
+        _readNotificationUseCase = readNotificationUseCase,
         super(CoreInitial());
 
   final CompleteOnboardingUseCase _completeOnboardingUseCase;
@@ -40,6 +46,8 @@ class CoreCubit extends Cubit<CoreState> {
   final FetchSummaryUseCase _fetchSummaryUseCase;
   final FetchTransportModeDropdownUseCase _fetchTransportModeDropdownUseCase;
   final FetchWarehouseDropdownUseCase _fetchWarehouseDropdownUseCase;
+  final ReadAllNotificationsUseCase _readAllNotificationsUseCase;
+  final ReadNotificationUseCase _readNotificationUseCase;
 
   Future<void> completeOnboarding() async {
     emit(CompleteOnboardingLoading());
@@ -116,6 +124,28 @@ class CoreCubit extends Cubit<CoreState> {
     result.fold(
       (failure) => emit(FetchDropdownError(message: failure.message)),
       (items) => emit(FetchDropdownLoaded(items: items)),
+    );
+  }
+
+  Future<void> readAllNotifications() async {
+    emit(ReadAllNotificationsLoading());
+
+    final result = await _readAllNotificationsUseCase(NoParams());
+
+    result.fold(
+      (failure) => emit(ReadAllNotificationsError(message: failure.message)),
+      (message) => emit(ReadAllNotificationsLoaded(message: message)),
+    );
+  }
+
+  Future<void> readNotification(String notificationId) async {
+    emit(ReadNotificationLoading());
+
+    final result = await _readNotificationUseCase(notificationId);
+
+    result.fold(
+      (failure) => emit(ReadNotificationError(message: failure.message)),
+      (message) => emit(ReadNotificationLoaded(message: message)),
     );
   }
 }

@@ -24,6 +24,8 @@ import 'features/core/domain/use_cases/fetch_summary_use_case.dart';
 import 'features/core/domain/use_cases/fetch_transport_mode_dropdown_use_case.dart';
 import 'features/core/domain/use_cases/fetch_warehouse_dropdown_use_case.dart';
 import 'features/core/domain/use_cases/get_onboarding_status_use_case.dart';
+import 'features/core/domain/use_cases/read_all_notifications_use_case.dart';
+import 'features/core/domain/use_cases/read_notification_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
@@ -81,17 +83,20 @@ void setupServiceLocator() {
     ..registerSingleton(FetchSummaryUseCase(coreRepository: getIt()))
     ..registerSingleton(
         FetchTransportModeDropdownUseCase(coreRepository: getIt()))
-    ..registerSingleton(
-        FetchWarehouseDropdownUseCase(coreRepository: getIt()))
+    ..registerSingleton(FetchWarehouseDropdownUseCase(coreRepository: getIt()))
     ..registerSingleton(GetOnboardingStatusUseCase(coreRepository: getIt()))
-    ..registerLazySingleton<CoreCubit>(() => CoreCubit(
+    ..registerSingleton(ReadAllNotificationsUseCase(coreRepository: getIt()))
+    ..registerSingleton(ReadNotificationUseCase(coreRepository: getIt()))
+    ..registerLazySingleton(() => CoreCubit(
         completeOnboardingUseCase: getIt(),
         fetchBannersUseCase: getIt(),
         fetchDriverDropdownUseCase: getIt(),
         fetchNotificationsUseCase: getIt(),
         fetchSummaryUseCase: getIt(),
         fetchTransportModeDropdownUseCase: getIt(),
-        fetchWarehouseDropdownUseCase: getIt()));
+        fetchWarehouseDropdownUseCase: getIt(),
+        readAllNotificationsUseCase: getIt(),
+        readNotificationUseCase: getIt()));
 
   // Auth
   getIt

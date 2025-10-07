@@ -228,4 +228,62 @@ void main() {
       await expectLater(result, throwsA(isA<InternalException>()));
     });
   });
+
+  group('read all notifications remote data sources test', () {
+    const message = 'All notifications marked as read';
+    
+    test('should return String when request status code is 200', () async {
+      // arrange
+      final jsonString =
+          fixtureReader('data_sources/get_read_all_notifications.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.get(any())).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await dataSource.readAllNotifications();
+
+      // assert
+      expect(result, message);
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.get(any())).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = dataSource.readAllNotifications();
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.get(any()))
+          .thenThrow(Exception('Unexpected error happen'));
+
+      // act
+      final result = dataSource.readAllNotifications();
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
 }

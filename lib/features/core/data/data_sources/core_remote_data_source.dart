@@ -14,6 +14,8 @@ abstract interface class CoreRemoteDataSource {
   Future<List<int>> fetchSummary();
   Future<List<DropdownEntity>> fetchTransportModeDropdown();
   Future<List<DropdownEntity>> fetchWarehouseDropdown();
+  Future<String> readAllNotifications();
+  Future<String> readNotification(String notificationId);
 }
 
 class CoreRemoteDataSourceImpl implements CoreRemoteDataSource {
@@ -106,5 +108,24 @@ class CoreRemoteDataSourceImpl implements CoreRemoteDataSource {
     } catch (e) {
       throw InternalException(message: '$e');
     }
+  }
+
+  @override
+  Future<String> readAllNotifications() async {
+    try {
+      final response = await dio.get('/notification/readall');
+
+      return response.data['message'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> readNotification(String notificationId) {
+    // TODO: implement readNotification
+    throw UnimplementedError();
   }
 }

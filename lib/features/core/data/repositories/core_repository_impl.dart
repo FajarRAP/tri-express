@@ -161,4 +161,44 @@ class CoreRepositoryImpl implements CoreRepository {
       ));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> readAllNotifications() async {
+    try {
+      final result = await coreRemoteDataSource.readAllNotifications();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> readNotification(
+      String notificationId) async {
+    try {
+      final result =
+          await coreRemoteDataSource.readNotification(notificationId);
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
 }

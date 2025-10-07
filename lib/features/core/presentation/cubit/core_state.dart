@@ -27,6 +27,14 @@ class FetchSummary extends CoreState {
   const FetchSummary();
 }
 
+class ReadAllNotifications extends CoreState {
+  const ReadAllNotifications();
+}
+
+class ReadNotification extends CoreState {
+  const ReadNotification();
+}
+
 class CompleteOnboardingLoading extends CompleteOnboarding {}
 
 class CompleteOnboardingLoaded extends CompleteOnboarding {}
@@ -89,6 +97,34 @@ class FetchSummaryLoaded extends FetchSummary {
 
 class FetchSummaryError extends FetchSummary {
   const FetchSummaryError({required this.message});
+
+  final String message;
+}
+
+class ReadAllNotificationsLoading extends ReadAllNotifications {}
+
+class ReadAllNotificationsLoaded extends ReadAllNotifications {
+  const ReadAllNotificationsLoaded({required this.message});
+
+  final String message;
+}
+
+class ReadAllNotificationsError extends ReadAllNotifications {
+  const ReadAllNotificationsError({required this.message});
+
+  final String message;
+}
+
+class ReadNotificationLoading extends ReadNotification {}
+
+class ReadNotificationLoaded extends ReadNotification {
+  const ReadNotificationLoaded({required this.message});
+
+  final String message;
+}
+
+class ReadNotificationError extends ReadNotification {
+  const ReadNotificationError({required this.message});
 
   final String message;
 }
