@@ -28,6 +28,7 @@ dependencies:
   intl: any
   mobile_scanner: ^7.0.1
   mocktail: ^1.0.4
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:
