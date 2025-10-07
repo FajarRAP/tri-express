@@ -101,7 +101,6 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _receiveBatches = <BatchEntity>[];
   final _pickedGoods = <PickedGoodEntity>[];
 
-  final previewBatches = <BatchEntity>[];
   final previewGoods = <GoodEntity>[];
 
   Future<void> createDeliveryShipments({
@@ -428,10 +427,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
-          batches: previewBatches
-            ..clear()
-            ..addAll(batches))),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(batches: batches)),
     );
   }
 
@@ -483,10 +479,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
-          batches: previewBatches
-            ..clear()
-            ..addAll(batches))),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(batches: batches)),
     );
   }
 

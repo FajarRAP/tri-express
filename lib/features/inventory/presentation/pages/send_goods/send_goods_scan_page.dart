@@ -105,9 +105,10 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                                   current is FetchPreviewBatchesShipments,
                               builder: (context, state) {
                                 if (state
-                                    is FetchPreviewBatchesShipmentsLoaded) {
+                                        is FetchPreviewBatchesShipmentsLoaded &&
+                                    uhfResults.isNotEmpty) {
                                   return Text(
-                                    '${state.batches.length} Koli',
+                                    '${state.batches.length}',
                                     style: const TextStyle(
                                       color: light,
                                       fontSize: 24,
@@ -117,7 +118,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                                 }
 
                                 return const Text(
-                                  '...',
+                                  '0',
                                   style: TextStyle(
                                     color: light,
                                     fontSize: 24,
@@ -175,69 +176,81 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: CheckboxListTile.adaptive(
-                onChanged: (value) {
-                  if (value == null) return;
+        child: BlocBuilder<InventoryCubit, InventoryState>(
+          bloc: _inventoryCubit,
+          buildWhen: (previous, current) =>
+              current is FetchPreviewBatchesShipmentsLoaded,
+          builder: (context, state) {
+            final batches = state is FetchPreviewBatchesShipmentsLoaded
+                ? state.batches
+                : <BatchEntity>[];
 
-                  setState(() => value
-                      ? _selectedBatches.addAll(_inventoryCubit.previewBatches)
-                      : _selectedBatches.clear());
-                },
-                title: Text(
-                  'Semua',
-                  style: label[medium].copyWith(color: primary),
-                ),
-                value: _selectedBatches.length ==
-                        _inventoryCubit.previewBatches.length &&
-                    _inventoryCubit.previewBatches.isNotEmpty,
-                side: const BorderSide(color: primary),
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-            ),
-            Expanded(
-              child: TripleFloatingActionButtons(
-                onReset: onReset,
-                onScan: onScan,
-                onSave: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) =>
-                      BlocConsumer<InventoryCubit, InventoryState>(
-                    listener: (context, state) {
-                      if (state is CreateShipmentsLoaded) {
-                        TopSnackbar.successSnackbar(message: state.message);
-                        context
-                          ..go(menuRoute)
-                          ..push(sendGoodsRoute);
-                      }
+            return Row(
+              children: <Widget>[
+                if (batches.isNotEmpty)
+                  Expanded(
+                    child: CheckboxListTile.adaptive(
+                      onChanged: (value) {
+                        if (value == null) return;
 
-                      if (state is CreateShipmentsError) {
-                        TopSnackbar.dangerSnackbar(message: state.message);
-                      }
-                    },
-                    builder: (context, state) {
-                      final onPressed = switch (state) {
-                        CreateShipmentsLoading() => null,
-                        _ => () => _inventoryCubit.createDeliveryShipments(
-                              nextWarehouse: widget.nextWarehouse,
-                              driver: widget.driver,
-                              batches: _selectedBatches,
-                              deliveredAt: widget.deliveredAt,
-                            ),
-                      };
-                      return ActionConfirmationBottomSheet(
-                        onPressed: onPressed,
-                        message: 'Apakah anda yakin akan mengirim barang ini?',
-                      );
-                    },
+                        setState(() => value
+                            ? _selectedBatches.addAll(batches)
+                            : _selectedBatches.clear());
+                      },
+                      title: Text(
+                        'Semua',
+                        style: label[medium].copyWith(color: primary),
+                      ),
+                      value: _selectedBatches.length == batches.length &&
+                          batches.isNotEmpty,
+                      side: const BorderSide(color: primary),
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                  ),
+                Expanded(
+                  child: TripleFloatingActionButtons(
+                    onReset: onReset,
+                    onScan: onScan,
+                    onSave: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) =>
+                          BlocConsumer<InventoryCubit, InventoryState>(
+                        listener: (context, state) {
+                          if (state is CreateShipmentsLoaded) {
+                            TopSnackbar.successSnackbar(message: state.message);
+                            context
+                              ..go(menuRoute)
+                              ..push(sendGoodsRoute);
+                          }
+
+                          if (state is CreateShipmentsError) {
+                            TopSnackbar.dangerSnackbar(message: state.message);
+                          }
+                        },
+                        builder: (context, state) {
+                          final onPressed = switch (state) {
+                            CreateShipmentsLoading() => null,
+                            _ => () => _inventoryCubit.createDeliveryShipments(
+                                  nextWarehouse: widget.nextWarehouse,
+                                  driver: widget.driver,
+                                  batches: _selectedBatches,
+                                  deliveredAt: widget.deliveredAt,
+                                ),
+                          };
+                          return ActionConfirmationBottomSheet(
+                            onPressed: onPressed,
+                            message:
+                                'Apakah anda yakin akan mengirim barang ini?',
+                          );
+                        },
+                      ),
+                    ),
+                    isScanning: isInventoryRunning,
                   ),
                 ),
-                isScanning: isInventoryRunning,
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -298,6 +311,22 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                 ),
                 isActive: _selectedBatches.contains(state.batches[index]),
                 batch: state.batches[index],
+                quantity: RichText(
+                  text: TextSpan(
+                    text: '${state.batches[index].totalAllUnits}',
+                    style: label[bold].copyWith(
+                      color: black,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: '/${state.batches[index].preparedUnits} Koli',
+                        style: label[regular].copyWith(
+                          color: black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemCount: state.batches.length,
