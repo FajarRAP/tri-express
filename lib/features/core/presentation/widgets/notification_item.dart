@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart';
 
 import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
@@ -30,9 +31,23 @@ class NotificationItem extends StatelessWidget {
               notification.title,
               style: label[bold].copyWith(color: black),
             ),
-            Text(
-              notification.message,
-              style: const TextStyle(fontSize: 12),
+            RichText(
+              text: TextSpan(
+                text: notification.message,
+                style: const TextStyle(
+                  color: black,
+                  fontSize: 12,
+                ),
+                children: <InlineSpan>[
+                  TextSpan(
+                    text: ' ${format(notification.createdAt, locale: 'id')}',
+                    style: const TextStyle(
+                      color: gray,
+                      fontSize: 12,
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
         ),

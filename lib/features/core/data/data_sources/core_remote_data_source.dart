@@ -57,7 +57,7 @@ class CoreRemoteDataSourceImpl implements CoreRemoteDataSource {
           List<Map<String, dynamic>>.from(response.data['data']['data']);
 
       return contents
-          .map((e) => NotificationModel.fromJson(e['data']).toEntity())
+          .map((e) => NotificationModel.fromJson(e).toEntity())
           .toList();
     } on DioException catch (de) {
       throw handleDioException(de);

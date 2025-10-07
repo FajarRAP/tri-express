@@ -7,9 +7,12 @@ import 'package:tri_express/features/core/domain/entities/notification_entity.da
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  const tNotificationModel = NotificationModel(
-    title: 'title',
-    message: 'message',
+  final tNotificationModel = NotificationModel(
+    title: 'Pengiriman menuju gudangmu Gudang Palopo',
+    message:
+        'Barang dengan No Pengiriman #SHIP.2509241458249 dari Gudang Pekalongan via jalur Udara sedang dalam perjalanan ke gudangmu (5 koli).',
+    createdAt: DateTime.parse('2025-09-24T08:01:06.000000Z'),
+    readAt: null,
   );
 
   group('notification model test', () {
@@ -31,7 +34,7 @@ void main() {
       final result = NotificationModel.fromJson(json);
 
       // assert
-      expect(result.toEntity(), isA<NotificationEntity>());
+      expect(result.toEntity(), tNotificationModel.toEntity());
     });
   });
 }

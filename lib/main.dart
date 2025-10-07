@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'core/routes/router.dart';
 import 'core/themes/theme.dart';
@@ -18,6 +19,8 @@ void main() async {
   );
 
   setupServiceLocator();
+
+  timeago.setLocaleMessages('id', timeago.IdMessages());
 
   runApp(const MyApp());
 }

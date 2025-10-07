@@ -9,7 +9,6 @@ import 'package:tri_express/features/core/data/data_sources/core_remote_data_sou
 import 'package:tri_express/features/core/data/models/dropdown_model.dart';
 import 'package:tri_express/features/core/data/models/notification_model.dart';
 import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
-import 'package:tri_express/features/core/domain/entities/notification_entity.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -164,6 +163,15 @@ void main() {
   );
 
   group('fetch notification remote data sources test', () {
+    final tNotificationModel = NotificationModel(
+      title: 'Pengiriman menuju gudangmu Gudang Palopo',
+      message:
+          'Barang dengan No Pengiriman #SHIP.2509241458249 dari Gudang Pekalongan via jalur Udara sedang dalam perjalanan ke gudangmu (5 koli).',
+      createdAt: DateTime.parse('2025-09-24T08:01:06.000000Z'),
+      readAt: null,
+    );
+    final entities = [tNotificationModel.toEntity()];
+
     test(
         'should return List<NotificationEntity> when request status code is 200',
         () async {
@@ -182,7 +190,7 @@ void main() {
       final result = await dataSource.fetchNotifications();
 
       // assert
-      expect(result, isA<List<NotificationEntity>>());
+      expect(result, entities);
       expect(result, isNot(isA<List<NotificationModel>>()));
     });
 

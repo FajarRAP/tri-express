@@ -47,9 +47,7 @@ class NotificationPage extends StatelessWidget {
                       ),
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 12),
-                          
                       itemCount: state.notifications.length,
-                      
                     ),
                   ),
                 ],
