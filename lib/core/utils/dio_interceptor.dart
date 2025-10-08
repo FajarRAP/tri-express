@@ -1,9 +1,14 @@
 import 'package:dio/dio.dart';
 
-import '../../features/auth/data/data_sources/auth_local_data_sources.dart';
-import '../../service_locator.dart';
+import '../../features/auth/domain/use_cases/get_access_token_use_case.dart';
+import '../use_case/use_case.dart';
 
 class CustomInterceptor implements Interceptor {
+  CustomInterceptor({required GetAccessTokenUseCase getAccessTokenUseCase})
+      : _getAccessTokenUseCase = getAccessTokenUseCase;
+
+  final GetAccessTokenUseCase _getAccessTokenUseCase;
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     return handler.next(err);
@@ -12,12 +17,17 @@ class CustomInterceptor implements Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final accessToken =
-        await getIt.get<AuthLocalDataSources>().getAccessToken();
+    final result = await _getAccessTokenUseCase(NoParams());
 
-    if (!options.path.endsWith('/login')) {
-      options.headers['Authorization'] = 'Bearer $accessToken';
-    }
+    result.fold(
+      (_) => _,
+      (accessToken) {
+        if (!options.path.endsWith('/login')) {
+          options.headers['Authorization'] = 'Bearer $accessToken';
+        }
+      },
+    );
+
     options.headers['Accept'] = 'application/json';
 
     return handler.next(options);

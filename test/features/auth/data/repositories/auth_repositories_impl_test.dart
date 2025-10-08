@@ -38,7 +38,7 @@ void main() {
         'should return UserModel when request status code is 200',
         () async {
           // arrange
-          final user = UserModel(
+          const user = UserModel(
             id: '-',
             warehouseId: '-',
             email: 'email',
@@ -53,7 +53,7 @@ void main() {
           final result = await authRepositoriesImpl.fetchCurrentUser();
 
           // assert
-          expect(result, Right(user));
+          expect(result, const Right(user));
         },
       );
 
@@ -62,7 +62,7 @@ void main() {
         () async {
           // arrange
           when(() => mockAuthRemoteDataSources.fetchCurrentUser())
-              .thenThrow(ServerException());
+              .thenThrow(const ServerException());
 
           // act
           final result = await authRepositoriesImpl.fetchCurrentUser();
@@ -81,7 +81,7 @@ void main() {
         () async {
           // arrange
           when(() => mockAuthRemoteDataSources.fetchCurrentUser())
-              .thenThrow(InternalException());
+              .thenThrow(const InternalException());
 
           // act
           final result = await authRepositoriesImpl.fetchCurrentUser();
@@ -100,7 +100,7 @@ void main() {
   group(
     'login: ',
     () {
-      const params = LoginParams(email: 'email', password: 'password');
+      const params = LoginUseCaseParams(email: 'email', password: 'password');
       const tAccessToken = 'access_token';
       const tRefreshToken = 'refresh_token';
 
@@ -108,7 +108,7 @@ void main() {
         'should return LoginResponseModel when request status code is 200',
         () async {
           // arrange
-          final user = UserModel(
+          const user = UserModel(
             id: '-',
             warehouseId: '-',
             email: 'email',
@@ -116,25 +116,23 @@ void main() {
             phoneNumber: 'phoneNumber',
             roles: [],
           );
-          final loginResponse = LoginResponseModel(
+          const loginResponse = LoginResponseModel(
               user: user,
               accessToken: tAccessToken,
               refreshToken: tRefreshToken);
-          when(() => mockAuthRemoteDataSources.login(params: params))
+          when(() => mockAuthRemoteDataSources.login(params))
               .thenAnswer((_) async => loginResponse);
           when(() => mockAuthLocalDataSources.cacheToken(
-                  accessToken: loginResponse.accessToken,
-                  refreshToken: loginResponse.refreshToken))
+                  loginResponse.accessToken, loginResponse.refreshToken))
               .thenAnswer((_) async {});
 
           // act
-          final result = await authRepositoriesImpl.login(params: params);
+          final result = await authRepositoriesImpl.login(params);
 
           // assert
-          expect(result, Right(user));
+          expect(result, const Right(user));
           verify(() => mockAuthLocalDataSources.cacheToken(
-              accessToken: loginResponse.accessToken,
-              refreshToken: loginResponse.refreshToken)).called(1);
+              loginResponse.accessToken, loginResponse.refreshToken)).called(1);
         },
       );
 
@@ -142,11 +140,11 @@ void main() {
         'should return ServerFailure when request status code is not 200',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.login(params: params))
-              .thenThrow(ServerException());
+          when(() => mockAuthRemoteDataSources.login(params))
+              .thenThrow(const ServerException());
 
           // act
-          final result = await authRepositoriesImpl.login(params: params);
+          final result = await authRepositoriesImpl.login(params);
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -161,11 +159,11 @@ void main() {
         'should return Failure when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.login(params: params))
-              .thenThrow(InternalException());
+          when(() => mockAuthRemoteDataSources.login(params))
+              .thenThrow(const InternalException());
 
           // act
-          final result = await authRepositoriesImpl.login(params: params);
+          final result = await authRepositoriesImpl.login(params);
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -194,7 +192,7 @@ void main() {
           final result = await authRepositoriesImpl.logout();
 
           // assert
-          expect(result, Right('Logout successful'));
+          expect(result, const Right('Logout successful'));
           verify(() => mockAuthLocalDataSources.clearToken()).called(1);
         },
       );
@@ -204,7 +202,7 @@ void main() {
         () async {
           // arrange
           when(() => mockAuthRemoteDataSources.logout())
-              .thenThrow(ServerException());
+              .thenThrow(const ServerException());
 
           // act
           final result = await authRepositoriesImpl.logout();
@@ -223,7 +221,7 @@ void main() {
         () async {
           // arrange
           when(() => mockAuthRemoteDataSources.logout())
-              .thenThrow(InternalException());
+              .thenThrow(const InternalException());
 
           // act
           final result = await authRepositoriesImpl.logout();

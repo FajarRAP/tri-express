@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tri_express/core/routes/router.dart';
-import 'package:tri_express/core/utils/helpers.dart';
-import 'package:tri_express/core/widgets/dropdowns/warehouse_dropdown.dart';
 
+import '../../../../../core/routes/router.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../../core/widgets/dropdowns/transport_mode_dropdown.dart';
+import '../../../../../core/widgets/dropdowns/warehouse_dropdown.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
 
 class PrepareGoodsFilterPage extends StatefulWidget {
   const PrepareGoodsFilterPage({super.key});
@@ -15,15 +20,23 @@ class PrepareGoodsFilterPage extends StatefulWidget {
 }
 
 class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
+  late final AuthCubit _authCubit;
   late final TextEditingController _batchNameController;
+  late final TextEditingController _dateController;
   late final TextEditingController _estimateDateController;
   late final TextEditingController _transportModeController;
   late final TextEditingController _warehouseController;
+  DropdownEntity? _selectedTransportMode;
+  DropdownEntity? _selectedWarehouse;
+  DateTime? _estimatedDate;
+  DateTime? _shippedAt;
 
   @override
   void initState() {
     super.initState();
-    _batchNameController = TextEditingController(text: 'NAMA BATCHNYA');
+    _authCubit = context.read<AuthCubit>();
+    _batchNameController = TextEditingController();
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
     _estimateDateController = TextEditingController();
     _transportModeController = TextEditingController();
     _warehouseController = TextEditingController();
@@ -32,6 +45,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
   @override
   void dispose() {
     _batchNameController.dispose();
+    _dateController.dispose();
     _estimateDateController.dispose();
     _transportModeController.dispose();
     _warehouseController.dispose();
@@ -40,6 +54,8 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    const isStaging = bool.fromEnvironment('IS_STAGING');
+
     return Scaffold(
       appBar: AppBar(
         actions: const <Widget>[
@@ -56,11 +72,25 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => WarehouseDropdown(
+                  onTap: (warehouse) {
+                    if (warehouse.id == _authCubit.user.warehouse?.id) {
+                      const message =
+                          'Tidak bisa memilih gudang asal yang sama dengan gudang pengguna saat ini.';
+                      return TopSnackbar.dangerSnackbar(message: message);
+                    }
+
+                    _warehouseController.text = warehouse.value;
+                    setState(() => _selectedWarehouse = warehouse);
+                    context.pop();
+                  },
+                  titleSuffix: 'Tujuan',
+                ),
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
-                labelText: 'Pilih Gudang Asal',
+                hintText: 'Pilih Gudang Tujuan',
+                labelText: 'Pilih Gudang Tujuan',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
               readOnly: true,
@@ -69,10 +99,17 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             TextFormField(
               onTap: () => showModalBottomSheet(
                 context: context,
-                builder: (context) => WarehouseDropdown(onTap: context.pop),
+                builder: (context) => TransportModeDropdown(
+                  onTap: (transportMode) {
+                    _transportModeController.text = transportMode.value;
+                    setState(() => _selectedTransportMode = transportMode);
+                    context.pop();
+                  },
+                ),
               ),
-              controller: _warehouseController,
+              controller: _transportModeController,
               decoration: const InputDecoration(
+                hintText: 'Pilih Jalur Pengiriman',
                 labelText: 'Pilih Jalur Pengiriman',
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),
@@ -80,16 +117,44 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onTap: isStaging
+                  ? () async {
+                      final selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (selectedDate == null) return;
+
+                      setState(() => _shippedAt = selectedDate);
+                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                    }
+                  : null,
+              controller: isStaging ? _dateController : null,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
-                labelText: 'Tanggal Terima',
+                labelText: 'Tanggal Persiapan',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              initialValue: DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
               readOnly: true,
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onTap: () async {
+                final selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (selectedDate == null) return;
+
+                setState(() => _estimatedDate = selectedDate);
+                _estimateDateController.text = selectedDate.toDDMMMMYYYY;
+              },
+              controller: _estimateDateController,
               decoration: const InputDecoration(
                 hintText: 'DD MM YYYY',
                 labelText: 'Estimasi Tiba',
@@ -99,19 +164,33 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              onChanged: (value) => setState(() {}),
               controller: _batchNameController,
               decoration: const InputDecoration(
                 labelText: 'Batch',
+                hintText: 'Masukkan nama batch',
               ),
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: PrimaryButton(
-                onPressed: () => context.push(
-                  prepareGoodsScanRoute,
-                  extra: _batchNameController.text,
-                ),
+                onPressed: _selectedWarehouse == null ||
+                        _selectedTransportMode == null ||
+                        _estimatedDate == null ||
+                        (isStaging && _shippedAt == null) ||
+                        _batchNameController.text.isEmpty
+                    ? null
+                    : () => context.push(
+                          prepareGoodsScanRoute,
+                          extra: {
+                            'shippedAt': _shippedAt!,
+                            'estimatedAt': _estimatedDate!,
+                            'nextWarehouse': _selectedWarehouse!,
+                            'transportMode': _selectedTransportMode!,
+                            'batchName': _batchNameController.text,
+                          },
+                        ),
                 child: const Text('Simpan'),
               ),
             ),

@@ -1,0 +1,233 @@
+{
+    "status": "Success",
+    "message": "Preview Receive shipment",
+    "data": [
+        {
+            "shipment_id": 62,
+            "warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+            "warehouse": {
+                "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                "kode": "WGQV",
+                "title": "Gudang Bandung",
+                "no_telp": "0763 2969 090",
+                "alamat": "Jr. Babadak No. 188",
+                "longitude": "107.751046",
+                "latitude": "1.633127",
+                "keterangan": "Adipisci qui recusandae dignissimos consequuntur sunt non laudantium.",
+                "created_at": "2025-09-01T05:33:07.000000Z",
+                "updated_at": "2025-09-01T05:33:07.000000Z"
+            },
+            "next_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+            "next_warehouse": {
+                "id": "019903c3-ca54-7183-96d2-381bce035072",
+                "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                "kode": "MHUO",
+                "title": "Gudang Pekalongan",
+                "no_telp": "(+62) 758 8958 1894",
+                "alamat": "Jr. Krakatau No. 972",
+                "longitude": "126.409562",
+                "latitude": "-9.319892",
+                "keterangan": "Eligendi eos quis reiciendis eum est.",
+                "created_at": "2025-09-01T05:33:07.000000Z",
+                "updated_at": "2025-09-01T05:33:07.000000Z"
+            },
+            "shipment_date": "2025-09-14T17:00:00.000000Z",
+            "delivery_date": "2025-09-14T17:00:00.000000Z",
+            "estimate_date": "2025-09-17",
+            "receive_date": "",
+            "tracking_number": "SHIP.2509181603679",
+            "batch_code": "Bebas",
+            "marking_code": "",
+            "shipment_code": "TD/WGQV/MHUO",
+            "status": 2,
+            "status_label": "Dalam Pengiriman",
+            "type": 1,
+            "type_label": "Darat",
+            "receive_qty": 0,
+            "delivery_qty": 5,
+            "prepare_qty": 5,
+            "items": [
+                {
+                    "batch_tracking_number": "TRI.2509181603905",
+                    "count": 5,
+                    "receipt_item": {
+                        "id": 81,
+                        "receipt_id": 65,
+                        "item_name": "Tes 2",
+                        "quantity": 5,
+                        "group_code": "Tes 2|30|50x15x10",
+                        "group_label": "Tes 2 - 30 kg - 50x15x10 cm",
+                        "berat": 30,
+                        "panjang": 50,
+                        "lebar": 15,
+                        "tinggi": 10,
+                        "berat_volume": "7.50",
+                        "pembagi": "1000.00",
+                        "volume_used_total": "150.00",
+                        "berat_volume_total": "37.50",
+                        "berat_total": "150.00",
+                        "volume_total": "37500.00",
+                        "volume_used": "30.00",
+                        "jalur": 1,
+                        "price": "30.00",
+                        "price_total": "150.00",
+                        "keterangan": "Meja Kayu",
+                        "created_at": "2025-09-18T09:02:38.000000Z",
+                        "updated_at": "2025-09-18T09:02:38.000000Z",
+                        "jalur_label": "Darat Lokal",
+                        "receipt": {
+                            "id": 65,
+                            "customer_id": "019903c3-d11f-72d5-a8f3-9b22a2b533a1",
+                            "warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                            "destination_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                            "invoice_code": "INV.2509181602764",
+                            "receipt_date": "2025-09-14T17:00:00.000000Z",
+                            "price_all": "150.00",
+                            "volume_all": "150.00",
+                            "jalur": 1,
+                            "created_at": "2025-09-18T09:02:38.000000Z",
+                            "updated_at": "2025-09-18T09:02:38.000000Z",
+                            "customer": {
+                                "id": "019903c3-d11f-72d5-a8f3-9b22a2b533a1",
+                                "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                                "kode": "CUST000003",
+                                "nama": "Lukita Mahdi Wasita M.Ak",
+                                "no_telp": "(+62) 206 4009 414",
+                                "alamat": "Psr. B.Agam Dlm No. 927",
+                                "jenis": 1,
+                                "keterangan": "",
+                                "latitude": "",
+                                "longitude": "",
+                                "provinsi_id": "",
+                                "kota_id": "",
+                                "kecamatan_id": "",
+                                "desa_id": "",
+                                "created_at": "2025-09-01T05:33:08.000000Z",
+                                "updated_at": "2025-09-01T05:33:08.000000Z"
+                            },
+                            "warehouse": {
+                                "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                                "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                                "kode": "WGQV",
+                                "title": "Gudang Bandung",
+                                "no_telp": "0763 2969 090",
+                                "alamat": "Jr. Babadak No. 188",
+                                "longitude": "107.751046",
+                                "latitude": "1.633127",
+                                "keterangan": "Adipisci qui recusandae dignissimos consequuntur sunt non laudantium.",
+                                "created_at": "2025-09-01T05:33:07.000000Z",
+                                "updated_at": "2025-09-01T05:33:07.000000Z"
+                            },
+                            "destination_warehouse": {
+                                "id": "019903c3-ca54-7183-96d2-381bce035072",
+                                "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                                "kode": "MHUO",
+                                "title": "Gudang Pekalongan",
+                                "no_telp": "(+62) 758 8958 1894",
+                                "alamat": "Jr. Krakatau No. 972",
+                                "longitude": "126.409562",
+                                "latitude": "-9.319892",
+                                "keterangan": "Eligendi eos quis reiciendis eum est.",
+                                "created_at": "2025-09-01T05:33:07.000000Z",
+                                "updated_at": "2025-09-01T05:33:07.000000Z"
+                            }
+                        },
+                        "transport": {
+                            "id": 1,
+                            "name": "Darat Lokal",
+                            "value": 1000,
+                            "status": 1,
+                            "created_at": "2025-09-01T06:33:56.000000Z",
+                            "updated_at": "2025-09-01T06:33:56.000000Z"
+                        }
+                    },
+                    "receipt": {
+                        "id": 65,
+                        "customer_id": "019903c3-d11f-72d5-a8f3-9b22a2b533a1",
+                        "warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                        "destination_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
+                        "invoice_code": "INV.2509181602764",
+                        "receipt_date": "2025-09-14T17:00:00.000000Z",
+                        "price_all": "150.00",
+                        "volume_all": "150.00",
+                        "jalur": 1,
+                        "created_at": "2025-09-18T09:02:38.000000Z",
+                        "updated_at": "2025-09-18T09:02:38.000000Z",
+                        "customer": {
+                            "id": "019903c3-d11f-72d5-a8f3-9b22a2b533a1",
+                            "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                            "kode": "CUST000003",
+                            "nama": "Lukita Mahdi Wasita M.Ak",
+                            "no_telp": "(+62) 206 4009 414",
+                            "alamat": "Psr. B.Agam Dlm No. 927",
+                            "jenis": 1,
+                            "keterangan": "",
+                            "latitude": "",
+                            "longitude": "",
+                            "provinsi_id": "",
+                            "kota_id": "",
+                            "kecamatan_id": "",
+                            "desa_id": "",
+                            "created_at": "2025-09-01T05:33:08.000000Z",
+                            "updated_at": "2025-09-01T05:33:08.000000Z"
+                        },
+                        "warehouse": {
+                            "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+                            "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
+                            "kode": "WGQV",
+                            "title": "Gudang Bandung",
+                            "no_telp": "0763 2969 090",
+                            "alamat": "Jr. Babadak No. 188",
+                            "longitude": "107.751046",
+                            "latitude": "1.633127",
+                            "keterangan": "Adipisci qui recusandae dignissimos consequuntur sunt non laudantium.",
+                            "created_at": "2025-09-01T05:33:07.000000Z",
+                            "updated_at": "2025-09-01T05:33:07.000000Z"
+                        },
+                        "destination_warehouse": {
+                            "id": "019903c3-ca54-7183-96d2-381bce035072",
+                            "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
+                            "kode": "MHUO",
+                            "title": "Gudang Pekalongan",
+                            "no_telp": "(+62) 758 8958 1894",
+                            "alamat": "Jr. Krakatau No. 972",
+                            "longitude": "126.409562",
+                            "latitude": "-9.319892",
+                            "keterangan": "Eligendi eos quis reiciendis eum est.",
+                            "created_at": "2025-09-01T05:33:07.000000Z",
+                            "updated_at": "2025-09-01T05:33:07.000000Z"
+                        }
+                    },
+                    "units": [
+                        {
+                            "unique_code": "A00000000787",
+                            "status": 2,
+                            "current_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63"
+                        },
+                        {
+                            "unique_code": "A00000000788",
+                            "status": 2,
+                            "current_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63"
+                        },
+                        {
+                            "unique_code": "A00000000789",
+                            "status": 2,
+                            "current_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63"
+                        },
+                        {
+                            "unique_code": "A00000000790",
+                            "status": 2,
+                            "current_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63"
+                        },
+                        {
+                            "unique_code": "A00000000791",
+                            "status": 2,
+                            "current_warehouse_id": "019903c3-ca5c-718b-9e78-d44b9b755c63"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

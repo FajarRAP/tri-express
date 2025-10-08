@@ -3,25 +3,25 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/cache_exception.dart';
 import 'package:tri_express/core/failure/failure.dart';
-import 'package:tri_express/features/core/data/data_sources/core_local_data_sources.dart';
-import 'package:tri_express/features/core/data/data_sources/core_remote_data_sources.dart';
-import 'package:tri_express/features/core/data/repositories/core_repositories_impl.dart';
+import 'package:tri_express/features/core/data/data_sources/core_local_data_source.dart';
+import 'package:tri_express/features/core/data/data_sources/core_remote_data_source.dart';
+import 'package:tri_express/features/core/data/repositories/core_repository_impl.dart';
 
-class MockCoreLocalDataSources extends Mock implements CoreLocalDataSources {}
+class MockCoreLocalDataSource extends Mock implements CoreLocalDataSource {}
 
-class MockCoreRemoteDataSources extends Mock implements CoreRemoteDataSources {}
+class MockCoreRemoteDataSource extends Mock implements CoreRemoteDataSource {}
 
 void main() {
-  late MockCoreLocalDataSources mockAuthLocalDataSources;
-  late MockCoreRemoteDataSources mockAuthRemoteDataSources;
-  late CoreRepositoriesImpl coreRepositories;
+  late MockCoreLocalDataSource mockAuthLocalDataSource;
+  late MockCoreRemoteDataSource mockAuthRemoteDataSource;
+  late CoreRepositoryImpl coreRepository;
 
   setUp(() {
-    mockAuthLocalDataSources = MockCoreLocalDataSources();
-    mockAuthRemoteDataSources = MockCoreRemoteDataSources();
-    coreRepositories = CoreRepositoriesImpl(
-      coreLocalDataSources: mockAuthLocalDataSources,
-      coreRemoteDataSources: mockAuthRemoteDataSources,
+    mockAuthLocalDataSource = MockCoreLocalDataSource();
+    mockAuthRemoteDataSource = MockCoreRemoteDataSource();
+    coreRepository = CoreRepositoryImpl(
+      coreLocalDataSource: mockAuthLocalDataSource,
+      coreRemoteDataSource: mockAuthRemoteDataSource,
     );
   });
 
@@ -32,15 +32,15 @@ void main() {
         'should call returnOnboarding with correct key when completeOnboarding is called',
         () async {
           // arrange
-          when(() => mockAuthLocalDataSources.completeOnboarding())
+          when(() => mockAuthLocalDataSource.completeOnboarding())
               .thenAnswer((_) async => {});
 
           // act
-          final result = await coreRepositories.completeOnboarding();
+          final result = await coreRepository.completeOnboarding();
 
           // assert
-          await expectLater(result, Right(null));
-          verify(() => mockAuthLocalDataSources.completeOnboarding()).called(1);
+          await expectLater(result, const Right(null));
+          verify(() => mockAuthLocalDataSource.completeOnboarding()).called(1);
         },
       );
 
@@ -48,11 +48,11 @@ void main() {
         'should return CacheFailure when failed to write to storage',
         () async {
           // arrange
-          when(() => mockAuthLocalDataSources.completeOnboarding())
-              .thenThrow(CacheException());
+          when(() => mockAuthLocalDataSource.completeOnboarding())
+              .thenThrow(const CacheException());
 
           // act
-          final result = await coreRepositories.completeOnboarding();
+          final result = await coreRepository.completeOnboarding();
 
           // assert
           expect(result.isLeft(), isTrue);

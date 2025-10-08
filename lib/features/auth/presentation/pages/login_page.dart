@@ -6,7 +6,7 @@ import '../../../../core/fonts/fonts.dart';
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/constants.dart';
-import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/top_snackbar.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../cubit/auth_cubit.dart';
@@ -74,13 +74,11 @@ class _LoginPageState extends State<LoginPage> {
                     bottom: MediaQuery.viewInsetsOf(context).bottom,
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(30),
                     ),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: light,
-                      ),
+                      decoration: const BoxDecoration(color: light),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 40,

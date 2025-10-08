@@ -5,22 +5,38 @@ class BatchEntity {
   const BatchEntity({
     required this.id,
     required this.name,
-    required this.status,
+    required this.statusLabel,
     required this.transportMode,
     required this.trackingNumber,
+    required this.status,
+    required this.receivedUnits,
+    required this.preparedUnits,
+    required this.deliveredUnits,
+    required this.totalAllUnits,
     required this.goods,
     required this.origin,
     required this.destination,
-    required this.sendAt,
+    required this.deliveredAt,
+    required this.estimateAt,
+    required this.receivedAt,
+    required this.shippedAt,
   });
 
   final String id;
   final String name;
-  final String status;
+  final String statusLabel;
   final String transportMode;
   final String trackingNumber;
+  final int status;
+  final int receivedUnits;
+  final int preparedUnits;
+  final int deliveredUnits;
+  final int totalAllUnits;
   final List<GoodEntity> goods;
   final WarehouseEntity origin;
   final WarehouseEntity destination;
-  final DateTime sendAt;
+  final DateTime? deliveredAt;
+  final DateTime estimateAt;
+  final DateTime? receivedAt;
+  final DateTime shippedAt;
 }

@@ -1,0 +1,7 @@
+{
+    "status": "Success",
+    "message": "Total units in inventory",
+    "data": {
+        "total_units": 18
+    }
+}

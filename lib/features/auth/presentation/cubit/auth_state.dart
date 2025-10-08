@@ -52,3 +52,17 @@ class FetchCurrentUserError extends FetchCurrentUser {
 
   final String message;
 }
+
+class CheckingAuthentication extends AuthState {}
+
+class Authenticated extends AuthState {}
+
+class Unauthenticated extends AuthState {}
+
+class FirstTimeUser extends AuthState {}
+
+class CheckingAuthenticationError extends AuthState {
+  CheckingAuthenticationError({required this.message});
+
+  final String message;
+}

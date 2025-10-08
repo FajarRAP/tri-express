@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../themes/colors.dart';
 
@@ -8,7 +9,7 @@ class PrimaryIconRectangle extends StatelessWidget {
     required this.icon,
   });
 
-  final IconData icon;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +20,9 @@ class PrimaryIconRectangle extends StatelessWidget {
         shape: BoxShape.rectangle,
       ),
       padding: const EdgeInsets.all(10),
-      child: Icon(
+      child: SvgPicture.asset(
         icon,
-        color: primary,
+        colorFilter: const ColorFilter.mode(primary, BlendMode.srcIn),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routes/router.dart';
 import '../../../../core/themes/colors.dart';
-import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/top_snackbar.dart';
 import '../../../../core/widgets/base_card.dart';
 import '../../../../core/widgets/buttons/danger_button.dart';
 import '../../../../core/widgets/notification_icon_button.dart';
@@ -41,7 +41,7 @@ class SettingPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: <Widget>[
                 const SizedBox(height: 24),
-                Text(
+                const Text(
                   'Pengaturan',
                   style: const TextStyle(
                     color: black,
@@ -54,7 +54,7 @@ class SettingPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
+                      const Text(
                         'Konfigurasi Inventory',
                         style: const TextStyle(
                           color: black,
@@ -63,7 +63,7 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                         'Mode Inventory',
                         style: const TextStyle(
                           color: black,
@@ -74,10 +74,10 @@ class SettingPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         onChanged: (value) {},
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Pilih mode inventory',
                         ),
-                        items: <DropdownMenuItem<String>>[
+                        items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(
                             value: 'mode1',
                             child: Text('Mode 1'),
@@ -89,7 +89,7 @@ class SettingPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                         'Mode RF',
                         style: const TextStyle(
                           color: black,
@@ -100,10 +100,10 @@ class SettingPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         onChanged: (value) {},
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Pilih mode RF',
                         ),
-                        items: <DropdownMenuItem<String>>[
+                        items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(
                             value: 'mode1',
                             child: Text('Mode 1'),
@@ -119,7 +119,7 @@ class SettingPage extends StatelessWidget {
                         onChanged: (value) {},
                         controlAffinity: ListTileControlAffinity.leading,
                         contentPadding: EdgeInsets.zero,
-                        title: Text(
+                        title: const Text(
                           'Read TID (hanya muncul saat mode = Normal Inventory)',
                           style: const TextStyle(
                             color: black,
@@ -130,7 +130,7 @@ class SettingPage extends StatelessWidget {
                         value: false,
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                         'Item untuk Fast Model',
                         style: const TextStyle(
                           color: black,
@@ -142,7 +142,7 @@ class SettingPage extends StatelessWidget {
                         onChanged: (value) {},
                         contentPadding: EdgeInsets.zero,
                         controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(
+                        title: const Text(
                           'RSSI',
                           style: const TextStyle(
                             color: black,
@@ -156,7 +156,7 @@ class SettingPage extends StatelessWidget {
                         onChanged: (value) {},
                         contentPadding: EdgeInsets.zero,
                         controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(
+                        title: const Text(
                           'Frequency',
                           style: const TextStyle(
                             color: black,
@@ -174,7 +174,7 @@ class SettingPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
+                      const Text(
                         'Session & Target Behavior',
                         style: const TextStyle(
                           color: black,
@@ -183,7 +183,7 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                         'Session',
                         style: const TextStyle(
                           color: black,
@@ -194,10 +194,10 @@ class SettingPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         onChanged: (value) {},
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Pilih session',
                         ),
-                        items: <DropdownMenuItem<String>>[
+                        items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(
                             value: 'session1',
                             child: Text('Session 1'),
@@ -209,7 +209,7 @@ class SettingPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      const Text(
                         'Target',
                         style: const TextStyle(
                           color: black,
@@ -220,10 +220,10 @@ class SettingPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         onChanged: (value) {},
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Pilih target',
                         ),
-                        items: <DropdownMenuItem<String>>[
+                        items: const <DropdownMenuItem<String>>[
                           DropdownMenuItem<String>(
                             value: 'target1',
                             child: Text('Target 1'),

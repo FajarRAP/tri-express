@@ -11,10 +11,12 @@ class BatchCardItem extends StatelessWidget {
     super.key,
     this.onTap,
     required this.batch,
+    this.quantity,
   });
 
   final void Function()? onTap;
   final BatchEntity batch;
+  final Widget? quantity;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +40,11 @@ class BatchCardItem extends StatelessWidget {
                           batch.name,
                           style: paragraphMedium[medium],
                         ),
-                        Text(
-                          '${batch.goods.length} Koli',
-                          style: label[bold],
-                        ),
+                        quantity ??
+                            Text(
+                              '${batch.totalAllUnits} Koli',
+                              style: label[bold].copyWith(color: black),
+                            ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -78,17 +81,18 @@ class BatchCardItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   color: black,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  batch.sendAt.toLocal().toDDMMMMYYYY,
-                  style: paragraphSmall[regular],
+                Expanded(
+                  child: Text(
+                    batch.shippedAt.toLocal().toDDMMMMYYYY,
+                    style: paragraphSmall[regular],
+                  ),
                 ),
-                const Spacer(),
                 Icon(
                   Icons.keyboard_arrow_down,
                   color: Colors.grey.shade600,

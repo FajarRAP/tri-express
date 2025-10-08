@@ -27,7 +27,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const SuccessBadge(label: 'Success'),
+              SuccessBadge(label: batch.statusLabel),
               GestureDetector(
                 onTap: onDelete,
                 child: Text(
@@ -46,12 +46,12 @@ class BatchCardActionBadgeItem extends StatelessWidget {
                 style: paragraphMedium[medium].copyWith(color: black),
               ),
               Text(
-                '${batch.goods.length} Koli',
+                '${batch.totalAllUnits} Koli',
                 style: label[bold].copyWith(color: black),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -65,7 +65,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -79,7 +79,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -103,14 +103,14 @@ class BatchCardActionBadgeItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   color: black,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  batch.sendAt.toLocal().toDDMMMMYYYY,
+                  batch.shippedAt.toLocal().toDDMMMMYYYY,
                   style: paragraphSmall[regular],
                 ),
                 const Spacer(),

@@ -10,8 +10,8 @@ import '../../domain/use_cases/login_use_case.dart';
 import '../data_sources/auth_local_data_sources.dart';
 import '../data_sources/auth_remote_data_sources.dart';
 
-class AuthRepositoriesImpl extends AuthRepositories {
-  AuthRepositoriesImpl({
+class AuthRepositoriesImpl implements AuthRepositories {
+  const AuthRepositoriesImpl({
     required this.authLocalDataSources,
     required this.authRemoteDataSources,
   });
@@ -22,9 +22,9 @@ class AuthRepositoriesImpl extends AuthRepositories {
   @override
   Future<Either<Failure, UserEntity>> fetchCurrentUser() async {
     try {
-      final response = await authRemoteDataSources.fetchCurrentUser();
+      final result = await authRemoteDataSources.fetchCurrentUser();
 
-      return Right(response);
+      return Right(result);
     } on ServerException catch (se) {
       return Left(ServerFailure(
         message: se.message,
@@ -44,13 +44,36 @@ class AuthRepositoriesImpl extends AuthRepositories {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> login(
-      {required LoginParams params}) async {
+  Future<Either<Failure, String?>> getAccessToken() async {
     try {
-      final result = await authRemoteDataSources.login(params: params);
+      final result = await authLocalDataSources.getAccessToken();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on CacheException catch (ce) {
+      return Left(CacheFailure(
+        message: ce.message,
+        statusCode: ce.statusCode,
+      ));
+    } on InternalException catch (e) {
+      return Left(Failure(
+        message: e.message,
+        statusCode: e.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> login(LoginUseCaseParams params) async {
+    try {
+      final result = await authRemoteDataSources.login(params);
       await authLocalDataSources.cacheToken(
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        result.accessToken,
+        result.refreshToken,
       );
 
       return Right(result.user);
@@ -75,10 +98,10 @@ class AuthRepositoriesImpl extends AuthRepositories {
   @override
   Future<Either<Failure, String>> logout() async {
     try {
-      final response = await authRemoteDataSources.logout();
+      final result = await authRemoteDataSources.logout();
       await authLocalDataSources.clearToken();
 
-      return Right(response);
+      return Right(result);
     } on ServerException catch (se) {
       return Left(ServerFailure(
         message: se.message,

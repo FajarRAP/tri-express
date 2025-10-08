@@ -6,8 +6,10 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/debouncer.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
+import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
@@ -18,100 +20,153 @@ class ReceiveGoodsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inventoryCubit = context.read<InventoryCubit>();
+    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    String? search;
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            actions: <Widget>[
-              NotificationIconButton(),
-              const SizedBox(width: 16),
-            ],
-            expandedHeight: kToolbarHeight + kSpaceBarHeight,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Cari resi atau invoice',
-                          prefixIcon: const Icon(Icons.search_outlined),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    DecoratedIconButton(
-                      onTap: () => context.push(receiveGoodsFilterRoute),
-                      icon: const Icon(Icons.add_outlined),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            floating: true,
-            pinned: true,
-            snap: true,
-            title: const Text('Terima Barang'),
-          ),
-          BlocBuilder<InventoryCubit, InventoryState>(
-            bloc: inventoryCubit..fetchReceiveGoods(),
-            buildWhen: (previous, current) => current is FetchReceiveGoods,
-            builder: (context, state) {
-              if (state is FetchReceiveGoodsLoading) {
-                return const SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  ),
-                );
-              }
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (scrollState) {
+          if (scrollState is ScrollEndNotification &&
+              inventoryCubit.state is! ListPaginateLast) {
+            inventoryCubit.fetchReceiveShipmentsPaginate(search: search);
+          }
 
-              if (state is FetchReceiveGoodsLoaded) {
-                if (state.batches.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: Center(
-                        child: Text(
-                          'Belum ada barang.',
-                          style: label[medium].copyWith(
-                            color: primaryGradientEnd,
+          return false;
+        },
+        child: RefreshIndicator(
+          onRefresh: inventoryCubit.fetchReceiveShipments,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                actions: const <Widget>[
+                  NotificationIconButton(),
+                  SizedBox(width: 16),
+                ],
+                expandedHeight: kToolbarHeight + kSpaceBarHeight,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            onChanged: (value) => debouncer.run(() =>
+                                inventoryCubit.fetchReceiveShipments(
+                                    search: search = value)),
+                            decoration: const InputDecoration(
+                              hintText: 'Cari resi atau invoice',
+                              prefixIcon: Icon(Icons.search_outlined),
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                    ),
-                  );
-                }
-
-                return SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  sliver: SliverList.separated(
-                    itemBuilder: (context, index) => BatchCardItem(
-                      onTap: () => showModalBottomSheet(
-                        context: context,
-                        builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                          onSelected: (selectedReceiptNumbers) => context.push(
-                              '$itemDetailRoute/${selectedReceiptNumbers.first}'),
-                          batch: state.batches[index],
+                        const SizedBox(width: 10),
+                        DecoratedIconButton(
+                          onTap: () => context.push(receiveGoodsFilterRoute),
+                          icon: const Icon(Icons.add_outlined),
                         ),
-                      ),
-                      batch: state.batches[index],
+                      ],
                     ),
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemCount: state.batches.length,
                   ),
-                );
-              }
+                ),
+                floating: true,
+                pinned: true,
+                snap: true,
+                title: const Text('Terima Barang'),
+              ),
+              BlocBuilder<InventoryCubit, InventoryState>(
+                bloc: inventoryCubit..fetchReceiveShipments(),
+                buildWhen: (previous, current) =>
+                    current is FetchReceiveShipments,
+                builder: (context, state) {
+                  if (state is FetchReceiveShipmentsLoading) {
+                    return const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    );
+                  }
 
-              return const SliverToBoxAdapter();
-            },
+                  if (state is FetchReceiveShipmentsLoaded) {
+                    if (state.batches.isEmpty) {
+                      return SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Center(
+                            child: Text(
+                              'Belum ada barang.',
+                              style: label[medium].copyWith(
+                                color: primaryGradientEnd,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      sliver: SliverList.separated(
+                        itemBuilder: (context, index) => BatchCardItem(
+                          onTap: () => showModalBottomSheet(
+                            builder: (context) =>
+                                ShipmentReceiptNumbersBottomSheet(
+                              onSelected: (selectedGoods) => context.push(
+                                receiveGoodsDetailRoute,
+                                extra: {
+                                  'batch': state.batches[index],
+                                  'good': selectedGoods.first,
+                                },
+                              ),
+                              batch: state.batches[index],
+                            ),
+                            context: context,
+                            isScrollControlled: true,
+                          ),
+                          batch: state.batches[index],
+                          quantity: _renderQuantity(state.batches[index]),
+                        ),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
+                        itemCount: state.batches.length,
+                      ),
+                    );
+                  }
+
+                  return const SliverToBoxAdapter();
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _renderQuantity(BatchEntity batch) {
+    if (batch.receivedUnits < batch.totalAllUnits) {
+      return RichText(
+        text: TextSpan(
+          children: <InlineSpan>[
+            TextSpan(
+              text: '${batch.receivedUnits}',
+              style: label[regular].copyWith(color: black),
+            ),
+            TextSpan(
+              text: '/${batch.totalAllUnits} Koli',
+              style: label[bold].copyWith(color: black),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Text(
+      '${batch.totalAllUnits} Koli',
+      style: label[bold].copyWith(color: black),
     );
   }
 }

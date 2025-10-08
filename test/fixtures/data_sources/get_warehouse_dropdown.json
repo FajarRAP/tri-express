@@ -1,0 +1,90 @@
+{
+    "status": "Success",
+    "message": "data gudang",
+    "data": [
+        {
+            "id": "019903c3-ca40-72da-a63e-044c3fd1f8c1",
+            "text": "Gudang Sungai Penuh"
+        },
+        {
+            "id": "019903c3-ca4c-72d9-b650-a154870da330",
+            "text": "Gudang Padangsidempuan"
+        },
+        {
+            "id": "019903c3-ca54-7183-96d2-381bce035072",
+            "text": "Gudang Pekalongan"
+        },
+        {
+            "id": "019903c3-ca5c-718b-9e78-d44b9b755c63",
+            "text": "Gudang Bandung"
+        },
+        {
+            "id": "019903c3-ca64-73c3-be09-135d99930c5a",
+            "text": "Gudang Depok"
+        },
+        {
+            "id": "019903c3-ca6b-705b-af3a-223310b04183",
+            "text": "Gudang Gorontalo"
+        },
+        {
+            "id": "019903c3-ca71-713d-90a0-549aaea7e2d3",
+            "text": "Gudang Tegal"
+        },
+        {
+            "id": "019903c3-ca78-7011-885f-9c9ff85b83d6",
+            "text": "Gudang Salatiga"
+        },
+        {
+            "id": "019903c3-ca82-70e0-a91f-cc63a8dc43a4",
+            "text": "Gudang Tarakan"
+        },
+        {
+            "id": "019903c3-ca8b-713f-9037-0ef28cab6905",
+            "text": "Gudang Palopo"
+        },
+        {
+            "id": "019903c3-ca94-71a5-a403-485392dc5224",
+            "text": "Gudang Parepare"
+        },
+        {
+            "id": "019903c3-ca9c-73c3-a9c2-ebb8df4798ea",
+            "text": "Gudang Pangkal Pinang"
+        },
+        {
+            "id": "019903c3-caa3-7016-9e50-db8e5f198fa8",
+            "text": "Gudang Batam"
+        },
+        {
+            "id": "019903c3-caa9-7108-b0a2-0ea9195dc1c9",
+            "text": "Gudang Malang"
+        },
+        {
+            "id": "019903c3-cab0-70a6-87b0-dd443a38ba0c",
+            "text": "Gudang Tarakan"
+        },
+        {
+            "id": "019903c3-cab8-724a-97c1-b58ffc687a0f",
+            "text": "Gudang Banjarmasin"
+        },
+        {
+            "id": "019903c3-cac0-7234-8aff-4ed511ada08d",
+            "text": "Gudang Samarinda"
+        },
+        {
+            "id": "019903c3-cac6-7133-ba34-af873bf6e2ac",
+            "text": "Gudang Tangerang"
+        },
+        {
+            "id": "019903c3-cacd-704b-bbe2-3e767dcec69d",
+            "text": "Gudang Bekasi"
+        },
+        {
+            "id": "019903c3-cad3-7194-80fb-f21bdc73961b",
+            "text": "Gudang Bima"
+        },
+        {
+            "id": "019903c3-cad9-70ca-af0d-5e2857e03d8d",
+            "text": "Gudang Tidore Kepulauan"
+        }
+    ]
+}
