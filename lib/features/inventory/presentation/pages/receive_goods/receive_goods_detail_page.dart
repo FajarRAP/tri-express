@@ -20,6 +20,8 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uniqueCodesSet = good.uniqueCodes.toSet();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Barang'),
@@ -47,7 +49,7 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                   title: 'Tanggal Terima',
                   value: batch.receivedAt == null
                       ? '-'
-                      : batch.receivedAt!.toDDMMMMYYYY,
+                      : batch.receivedAt!.toDDMMMYYY,
                 ),
                 const SizedBox(height: 8),
                 InfoTile(
@@ -121,30 +123,38 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final firstIndex = index * 2;
                     final secondIndex = firstIndex + 1;
-                    final isOdd = secondIndex >= good.uniqueCodes.length;
+
+                    final firstWidget = Text(
+                      good.allUniqueCodes[firstIndex],
+                      style: label[medium].copyWith(
+                          color: uniqueCodesSet
+                                  .contains(good.allUniqueCodes[firstIndex])
+                              ? black
+                              : gray),
+                    );
+                    
+                    Widget secondWidget = const SizedBox();
+                    if (secondIndex < good.allUniqueCodes.length) {
+                      secondWidget = Text(
+                        good.allUniqueCodes[secondIndex],
+                        style: label[medium].copyWith(
+                            color: uniqueCodesSet
+                                    .contains(good.allUniqueCodes[secondIndex])
+                                ? black
+                                : gray),
+                      );
+                    }
 
                     return Row(
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            good.uniqueCodes[firstIndex],
-                            style: label[medium].copyWith(color: black),
-                          ),
-                        ),
-                        Expanded(
-                          child: isOdd
-                              ? const SizedBox()
-                              : Text(
-                                  good.uniqueCodes[secondIndex],
-                                  style: label[medium].copyWith(color: black),
-                                ),
-                        ),
+                        Expanded(child: firstWidget),
+                        Expanded(child: secondWidget),
                       ],
                     );
                   },
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
-                  itemCount: (good.uniqueCodes.length / 2).ceil(),
+                  itemCount: (good.allUniqueCodes.length / 2).ceil(),
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                 ),
