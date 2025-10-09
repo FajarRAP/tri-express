@@ -1,4 +1,6 @@
-class WarehouseEntity {
+import 'package:equatable/equatable.dart';
+
+class WarehouseEntity extends Equatable {
   const WarehouseEntity({
     required this.id,
     required this.countryId,
@@ -24,4 +26,19 @@ class WarehouseEntity {
   final String warehouseCode;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  @override
+  List<Object?> get props => [
+        id,
+        countryId,
+        address,
+        description,
+        latitude,
+        longitude,
+        name,
+        phone,
+        warehouseCode,
+        createdAt,
+        updatedAt
+      ];
 }

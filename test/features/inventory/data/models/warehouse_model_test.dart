@@ -8,17 +8,17 @@ import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
   final tWarehouseModel = WarehouseModel(
-    id: 'id',
-    countryId: 'countryId',
-    address: 'address',
-    description: 'description',
-    latitude: 'latitude',
-    longitude: 'longitude',
-    name: 'name',
-    phone: 'phone',
-    warehouseCode: 'warehouseCode',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
+    id: '019903c3-ca54-7183-96d2-381bce035072',
+    countryId: '019903c3-c9e1-73f2-9a60-1054fa4a55a4',
+    address: 'Jr. Krakatau No. 972',
+    description: 'Eligendi eos quis reiciendis eum est.',
+    latitude: '-9.319892',
+    longitude: '126.409562',
+    name: 'Gudang Pekalongan',
+    phone: '(+62) 758 8958 1894',
+    warehouseCode: 'MHUO',
+    createdAt: DateTime.parse('2025-09-01T05:33:07.000000Z'),
+    updatedAt: DateTime.parse('2025-09-01T05:33:07.000000Z'),
   );
 
   test(
@@ -46,7 +46,7 @@ void main() {
       final model = WarehouseModel.fromJson(jsonMap);
 
       // assert
-      expect(model, isA<WarehouseModel>());
+      expect(model, tWarehouseModel);
     },
   );
 }
