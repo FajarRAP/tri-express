@@ -709,6 +709,7 @@ void main() {
 
   group('fetch preview receive shipments remote data sources test', () {
     const params = FetchPreviewReceiveShipmentsUseCaseParams(
+      origin: DropdownEntity(id: 'id', value: 'value'),
       uniqueCodes: [
         'A00000000787',
         'A00000000788',

@@ -403,7 +403,10 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
     try {
       final response = await dio.post(
         '/receive/preview',
-        data: {'codes': params.uniqueCodes},
+        data: {
+          'codes': params.uniqueCodes,
+          'warehouse_id': params.origin.id,
+        },
       );
 
       final contents = List<Map<String, dynamic>>.from(response.data['data']);

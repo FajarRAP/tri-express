@@ -2,8 +2,8 @@ import 'package:fpdart/src/either.dart';
 
 import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
+import '../../../core/domain/entities/dropdown_entity.dart';
 import '../entities/batch_entity.dart';
-import '../entities/warehouse_entity.dart';
 import '../repositories/inventory_repositories.dart';
 
 class FetchPreviewReceiveShipmentsUseCase
@@ -23,10 +23,10 @@ class FetchPreviewReceiveShipmentsUseCase
 
 class FetchPreviewReceiveShipmentsUseCaseParams {
   const FetchPreviewReceiveShipmentsUseCaseParams({
-    this.origin,
+    required this.origin,
     required this.uniqueCodes,
   });
 
-  final WarehouseEntity? origin;
+  final DropdownEntity origin;
   final List<String> uniqueCodes;
 }
