@@ -83,7 +83,7 @@ class GoodCardCheckbox extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          DateTime.now().toDDMMMMYYYY,
+                          DateTime.now().toDDMMMYYY,
                           style: paragraphSmall[regular],
                         ),
                         const Spacer(),

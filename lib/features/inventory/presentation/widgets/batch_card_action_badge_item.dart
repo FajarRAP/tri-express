@@ -110,7 +110,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  batch.shippedAt.toLocal().toDDMMMMYYYY,
+                  batch.shippedAt.toLocal().toDDMMMYYY,
                   style: paragraphSmall[regular],
                 ),
                 const Spacer(),

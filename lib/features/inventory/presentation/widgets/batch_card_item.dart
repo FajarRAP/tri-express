@@ -89,12 +89,12 @@ class BatchCardItem extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    batch.shippedAt.toLocal().toDDMMMMYYYY,
+                    batch.shippedAt.toLocal().toDDMMMYYY,
                     style: paragraphSmall[regular],
                   ),
                 ),
                 Icon(
-                  Icons.keyboard_arrow_down,
+                  Icons.keyboard_arrow_right,
                   color: Colors.grey.shade600,
                 ),
               ],

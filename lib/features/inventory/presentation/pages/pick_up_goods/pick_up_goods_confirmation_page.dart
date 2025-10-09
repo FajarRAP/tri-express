@@ -50,7 +50,7 @@ class _TariState extends State<_Tari> {
   void initState() {
     super.initState();
     _inventoryCubit = context.read<InventoryCubit>();
-    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMYYY);
     _noteController = TextEditingController();
   }
 
@@ -138,7 +138,7 @@ class _TariState extends State<_Tari> {
                         if (selectedDate == null) return;
 
                         setState(() => _pickedUpAt = selectedDate);
-                        _dateController.text = selectedDate.toDDMMMMYYYY;
+                        _dateController.text = selectedDate.toDDMMMYYY;
                       }
                     : null,
                 controller: isStaging ? _dateController : null,
@@ -147,7 +147,7 @@ class _TariState extends State<_Tari> {
                   labelText: 'Tanggal Terima',
                   suffixIcon: const Icon(Icons.calendar_month),
                 ),
-                initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
+                initialValue: isStaging ? null : DateTime.now().toDDMMMYYY,
                 readOnly: true,
               ),
               const SizedBox(height: 12),
@@ -381,7 +381,7 @@ class _GeminiState extends State<_Gemini> {
                   border: OutlineInputBorder(),
                 ),
                 readOnly: true, // Keyboard tidak akan muncul
-                initialValue: DateTime.now().toDDMMMMYYYY,
+                initialValue: DateTime.now().toDDMMMYYY,
               ),
               const SizedBox(height: 32),
 
@@ -681,7 +681,7 @@ class _ClaudeState extends State<_Claude> {
                                     ),
                                   ),
                                   Text(
-                                    DateTime.now().toDDMMMMYYYY,
+                                    DateTime.now().toDDMMMYYY,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,

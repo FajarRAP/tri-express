@@ -58,7 +58,7 @@ class _Tari extends StatelessWidget {
                     const SizedBox(height: 8),
                     InfoTile(
                       title: 'Tanggal Selesai',
-                      value: pickedGood.deliveredAt.toDDMMMMYYYY,
+                      value: pickedGood.deliveredAt.toDDMMMYYY,
                     ),
                     const SizedBox(height: 8),
                     InfoTile(
@@ -213,7 +213,7 @@ class _Gemini extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Selesai pada ${pickedGood.deliveredAt.toDDMMMMYYYY}',
+          'Selesai pada ${pickedGood.deliveredAt.toDDMMMYYY}',
           textAlign: TextAlign.center,
           style: label[medium].copyWith(color: gray),
         ),
@@ -663,7 +663,7 @@ class _Claude extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Diselesaikan ${pickedGood.deliveredAt.toDDMMMMYYYY}',
+              'Diselesaikan ${pickedGood.deliveredAt.toDDMMMYYY}',
               style: TextStyle(
                 color: Colors.white.withValues(alpha: .9),
                 fontSize: 16,

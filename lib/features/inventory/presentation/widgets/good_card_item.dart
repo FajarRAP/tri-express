@@ -77,7 +77,7 @@ class GoodCardItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  pickedGood.deliveredAt.toDDMMMMYYYY,
+                  pickedGood.deliveredAt.toDDMMMYYY,
                   style: paragraphSmall[regular],
                 ),
                 const Spacer(),

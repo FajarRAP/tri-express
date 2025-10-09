@@ -25,7 +25,7 @@ class TimelineIndicator extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                timeline.dateTime.toDDMMMM,
+                timeline.dateTime.toDDMMMYYY,
                 style: label[medium].copyWith(color: black),
               ),
               Text(

@@ -58,13 +58,13 @@ class PrepareGoodsDetailPage extends StatelessWidget {
                     Expanded(
                       child: InfoTile(
                         title: 'Tanggal Pengiriman',
-                        value: batch.shippedAt.toDDMMMMYYYY,
+                        value: batch.shippedAt.toDDMMMYYY,
                       ),
                     ),
                     Expanded(
                       child: InfoTile(
                         title: 'Estimasi Tiba',
-                        value: batch.estimateAt.toDDMMMMYYYY,
+                        value: batch.estimateAt.toDDMMMYYY,
                       ),
                     ),
                   ],

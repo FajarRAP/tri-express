@@ -107,7 +107,7 @@ class BatchCardCheckbox extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            batch.shippedAt.toLocal().toDDMMMMYYYY,
+                            batch.shippedAt.toLocal().toDDMMMYYY,
                             style: paragraphSmall[regular],
                           ),
                         ),

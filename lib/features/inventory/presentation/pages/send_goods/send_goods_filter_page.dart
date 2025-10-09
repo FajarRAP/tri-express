@@ -32,7 +32,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
   void initState() {
     super.initState();
     _authCubit = context.read<AuthCubit>();
-    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMYYY);
     _driverController = TextEditingController();
     _warehouseController = TextEditingController();
   }
@@ -120,7 +120,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                       if (selectedDate == null) return;
 
                       setState(() => _deliveredAt = selectedDate);
-                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                      _dateController.text = selectedDate.toDDMMMYYY;
                     }
                   : null,
               controller: isStaging ? _dateController : null,
@@ -129,7 +129,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                 labelText: 'Tanggal Kirim',
                 suffixIcon: Icon(Icons.calendar_month_outlined),
               ),
-              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMYYY,
               readOnly: true,
             ),
             const SizedBox(height: 24),

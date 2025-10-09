@@ -82,7 +82,9 @@ class Tari extends StatelessWidget {
                           const SizedBox(width: 24),
                           Expanded(
                             child: _determineBadge(
-                                batch.status, batch.statusLabel),
+                              good.status ?? batch.status,
+                              good.statusLabel ?? batch.statusLabel,
+                            ),
                           ),
                         ],
                       ),
@@ -147,7 +149,8 @@ class Tari extends StatelessWidget {
                           Expanded(
                             child: InfoTile(
                               title: 'Tanggal Kirim',
-                              value: batch.shippedAt.toDDMMMMYYYY,
+                              value: batch.deliveredAt?.toDDMMMYYY ??
+                                  batch.shippedAt.toDDMMMYYY,
                             ),
                           ),
                           Expanded(
@@ -155,7 +158,7 @@ class Tari extends StatelessWidget {
                               title: 'Tanggal Terima',
                               value: batch.receivedAt == null
                                   ? '-'
-                                  : batch.receivedAt!.toDDMMMMYYYY,
+                                  : batch.receivedAt!.toDDMMMYYY,
                             ),
                           ),
                         ],
@@ -172,7 +175,7 @@ class Tari extends StatelessWidget {
                           Expanded(
                             child: InfoTile(
                               title: 'Status',
-                              value: '${batch.statusLabel}',
+                              value: good.statusLabel ?? batch.statusLabel,
                             ),
                           ),
                         ],
@@ -230,7 +233,7 @@ class Tari extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Status: ${batch.statusLabel}',
+                        'Status: ${good.statusLabel ?? batch.statusLabel}',
                         style: label[regular].copyWith(color: black),
                       ),
                       const SizedBox(height: 24),
@@ -316,7 +319,10 @@ class _Gemini extends StatelessWidget {
               ),
               const SizedBox(width: 24),
               Expanded(
-                child: _determineBadge(batch.status, batch.statusLabel),
+                child: _determineBadge(
+                  good.status ?? batch.status,
+                  good.statusLabel ?? batch.statusLabel,
+                ),
               ),
             ],
           ),
@@ -365,9 +371,9 @@ class _Gemini extends StatelessWidget {
             icon: Icons.calendar_today_outlined,
             leftTitle: 'Tanggal Kirim',
             leftValue:
-                batch.shippedAt.toDDMMMMYYYY, // Asumsi extension method ini ada
+                batch.deliveredAt?.toDDMMMYYY ?? batch.shippedAt.toDDMMMYYY,
             rightTitle: 'Tanggal Terima',
-            rightValue: batch.receivedAt?.toDDMMMMYYYY ?? '-',
+            rightValue: batch.receivedAt?.toDDMMMYYY ?? '-',
           ),
         ],
       ),
@@ -525,7 +531,10 @@ class _Claude extends StatelessWidget {
                 ),
                 const SizedBox(width: 24),
                 Expanded(
-                  child: _determineBadge(batch.status, batch.statusLabel),
+                  child: _determineBadge(
+                    good.status ?? batch.status,
+                    good.statusLabel ?? batch.statusLabel,
+                  ),
                 ),
               ],
             ),
@@ -725,7 +734,7 @@ class _Claude extends StatelessWidget {
                 Expanded(
                   child: _buildDateInfo(
                     'Tanggal Kirim',
-                    batch.shippedAt.toDDMMMMYYYY,
+                    batch.deliveredAt?.toDDMMMYYY ?? batch.shippedAt.toDDMMMYYY,
                     Icons.flight_takeoff,
                     Colors.blue,
                   ),
@@ -734,7 +743,7 @@ class _Claude extends StatelessWidget {
                 Expanded(
                   child: _buildDateInfo(
                     'Tanggal Terima',
-                    batch.receivedAt?.toDDMMMMYYYY ?? 'Belum diterima',
+                    batch.receivedAt?.toDDMMMYYY ?? 'Belum diterima',
                     Icons.flight_land,
                     batch.receivedAt != null ? Colors.green : Colors.orange,
                   ),

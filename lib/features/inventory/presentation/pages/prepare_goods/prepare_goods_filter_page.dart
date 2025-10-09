@@ -36,7 +36,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
     super.initState();
     _authCubit = context.read<AuthCubit>();
     _batchNameController = TextEditingController();
-    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMYYY);
     _estimateDateController = TextEditingController();
     _transportModeController = TextEditingController();
     _warehouseController = TextEditingController();
@@ -128,7 +128,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                       if (selectedDate == null) return;
 
                       setState(() => _shippedAt = selectedDate);
-                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                      _dateController.text = selectedDate.toDDMMMYYY;
                     }
                   : null,
               controller: isStaging ? _dateController : null,
@@ -137,7 +137,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                 labelText: 'Tanggal Persiapan',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMYYY,
               readOnly: true,
             ),
             const SizedBox(height: 12),
@@ -152,7 +152,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                 if (selectedDate == null) return;
 
                 setState(() => _estimatedDate = selectedDate);
-                _estimateDateController.text = selectedDate.toDDMMMMYYYY;
+                _estimateDateController.text = selectedDate.toDDMMMYYY;
               },
               controller: _estimateDateController,
               decoration: const InputDecoration(

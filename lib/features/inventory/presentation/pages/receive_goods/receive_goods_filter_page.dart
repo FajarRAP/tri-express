@@ -28,7 +28,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
   void initState() {
     super.initState();
     _authCubit = context.read<AuthCubit>();
-    _dateController = TextEditingController(text: DateTime.now().toDDMMMMYYYY);
+    _dateController = TextEditingController(text: DateTime.now().toDDMMMYYY);
     _warehouseController = TextEditingController();
   }
 
@@ -90,7 +90,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                       if (selectedDate == null) return;
 
                       setState(() => _receivedAt = selectedDate);
-                      _dateController.text = selectedDate.toDDMMMMYYYY;
+                      _dateController.text = selectedDate.toDDMMMYYY;
                     }
                   : null,
               controller: isStaging ? _dateController : null,
@@ -99,7 +99,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                 labelText: 'Tanggal Terima',
                 suffixIcon: Icon(Icons.calendar_month),
               ),
-              initialValue: isStaging ? null : DateTime.now().toDDMMMMYYYY,
+              initialValue: isStaging ? null : DateTime.now().toDDMMMYYY,
               readOnly: true,
             ),
             const SizedBox(height: 24),
@@ -109,8 +109,10 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                 onPressed: _selectedWarehouse == null ||
                         (isStaging && _receivedAt == null)
                     ? null
-                    : () => context.push(receiveGoodsScanRoute,
-                        extra: _receivedAt!),
+                    : () => context.push(receiveGoodsScanRoute, extra: {
+                          'origin': _selectedWarehouse!,
+                          'receivedAt': _receivedAt!,
+                        }),
                 child: const Text('Simpan'),
               ),
             ),
