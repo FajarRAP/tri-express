@@ -140,7 +140,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                         _selectedWarehouse == null ||
                         (isStaging && _deliveredAt == null)
                     ? null
-                    : () => context.push(sendGoodsScanRoute, extra: {
+                    : () => context.pushNamed(sendGoodsScanRoute, extra: {
                           'driver': _selectedDriver,
                           'nextWarehouse': _selectedWarehouse,
                           'deliveredAt': _deliveredAt!,

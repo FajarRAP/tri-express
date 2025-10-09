@@ -218,9 +218,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                         listener: (context, state) {
                           if (state is CreateShipmentsLoaded) {
                             TopSnackbar.successSnackbar(message: state.message);
-                            context
-                              ..go(menuRoute)
-                              ..push(sendGoodsRoute);
+                            context.goNamed(sendGoodsRoute);
                           }
 
                           if (state is CreateShipmentsError) {
@@ -299,7 +297,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                 onTap: () => showModalBottomSheet(
                   context: context,
                   builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                    onSelected: (selectedGoods) => context.push(
+                    onSelected: (selectedGoods) => context.pushNamed(
                       receiveGoodsDetailRoute,
                       extra: {
                         'batch': state.batches[index],

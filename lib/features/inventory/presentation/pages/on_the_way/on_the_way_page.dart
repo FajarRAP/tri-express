@@ -136,8 +136,8 @@ class OnTheWayPage extends StatelessWidget {
                             context: context,
                             builder: (context) =>
                                 ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) =>
-                                  context.push(onTheWayDetailRoute, extra: {
+                              onSelected: (selectedGood) => context
+                                  .pushNamed(onTheWayDetailRoute, extra: {
                                 'batch': state.batches[index],
                                 'good': selectedGood.first,
                               }),

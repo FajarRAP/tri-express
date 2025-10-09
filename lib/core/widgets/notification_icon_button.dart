@@ -19,7 +19,7 @@ class NotificationIconButton extends StatelessWidget {
       builder: (context, state) {
         final (void Function()? onTap, count) = switch (state) {
           final FetchNotificationsLoaded s => (
-              () => context.push(notificationRoute),
+              () => context.pushNamed(notificationRoute),
               s.notifications.length
             ),
           _ => (null, 0),

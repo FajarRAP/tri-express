@@ -27,7 +27,7 @@ class UniqueCodeActionBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ListTile(
-            onTap: () => context.push(scanBarcodeInnerRoute),
+            onTap: () => context.pushNamed(scanBarcodeInnerRoute),
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(

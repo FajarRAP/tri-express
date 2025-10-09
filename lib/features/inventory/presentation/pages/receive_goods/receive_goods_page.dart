@@ -59,7 +59,8 @@ class ReceiveGoodsPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () => context.push(receiveGoodsFilterRoute),
+                          onTap: () =>
+                              context.pushNamed(receiveGoodsFilterRoute),
                           icon: const Icon(Icons.add_outlined),
                         ),
                       ],
@@ -108,7 +109,7 @@ class ReceiveGoodsPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => context.push(
+                          onTap: () => context.pushNamed(
                             receiptNumbersRoute,
                             extra: state.batches[index],
                           ),

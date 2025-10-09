@@ -244,7 +244,7 @@ class SettingPage extends StatelessWidget {
                   listener: (context, state) {
                     if (state is LogoutLoaded) {
                       TopSnackbar.successSnackbar(message: state.message);
-                      context.go(loginRoute);
+                      context.goNamed(loginRoute);
                     }
                     if (state is LogoutError) {
                       TopSnackbar.dangerSnackbar(message: state.message);

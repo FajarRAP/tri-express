@@ -63,7 +63,8 @@ class PrepareGoodsPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () => context.push(prepareGoodsFilterRoute),
+                          onTap: () =>
+                              context.pushNamed(prepareGoodsFilterRoute),
                           icon: const Icon(Icons.add_outlined),
                         ),
                       ],
@@ -143,7 +144,7 @@ class PrepareGoodsPage extends StatelessWidget {
                             context: context,
                             builder: (context) =>
                                 ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) => context.push(
+                              onSelected: (selectedGood) => context.pushNamed(
                                 prepareGoodsDetailRoute,
                                 extra: {
                                   'batch': state.batches[index],

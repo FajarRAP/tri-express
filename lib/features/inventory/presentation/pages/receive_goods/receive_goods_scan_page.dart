@@ -137,9 +137,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           listener: (context, state) {
             if (state is CreateShipmentsLoaded) {
               TopSnackbar.successSnackbar(message: state.message);
-              context
-                ..go(menuRoute)
-                ..push(receiveGoodsRoute);
+              context.goNamed(receiveGoodsRoute);
             }
 
             if (state is CreateShipmentsError) {
@@ -227,7 +225,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
               itemBuilder: (context, index) => BatchCardItem(
-                onTap: () => context.push(
+                onTap: () => context.pushNamed(
                   receiptNumbersRoute,
                   extra: state.batches[index],
                 ),

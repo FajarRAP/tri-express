@@ -187,9 +187,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                     listener: (context, state) {
                       if (state is CreateShipmentsLoaded) {
                         TopSnackbar.successSnackbar(message: state.message);
-                        context
-                          ..go(menuRoute)
-                          ..push(prepareGoodsRoute);
+                        context.goNamed(prepareGoodsRoute);
                       }
 
                       if (state is CreateShipmentsError) {

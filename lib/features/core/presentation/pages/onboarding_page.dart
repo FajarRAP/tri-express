@@ -64,13 +64,19 @@ class OnboardingPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 50),
-                      SizedBox(
-                        width: double.infinity,
-                        child: PrimaryButton(
-                          onPressed: () => context
-                            ..read<CoreCubit>().completeOnboarding()
-                            ..go(loginRoute),
-                          child: const Text('Mulai Sekarang'),
+                      BlocListener<CoreCubit, CoreState>(
+                        listener: (context, state) {
+                          if (state is CompleteOnboardingLoaded) {
+                            context.goNamed(loginRoute);
+                          }
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: PrimaryButton(
+                            onPressed:
+                                context.read<CoreCubit>().completeOnboarding,
+                            child: const Text('Mulai Sekarang'),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),

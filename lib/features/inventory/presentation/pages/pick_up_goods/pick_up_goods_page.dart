@@ -60,7 +60,7 @@ class PickUpGoodsPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () => context.push(pickUpGoodsScanRoute),
+                          onTap: () => context.pushNamed(pickUpGoodsScanRoute),
                           icon: const Icon(Icons.add_outlined),
                         ),
                       ],
@@ -108,7 +108,7 @@ class PickUpGoodsPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => GoodCardItem(
-                          onTap: () => context.push(
+                          onTap: () => context.pushNamed(
                             pickUpGoodsDetailRoute,
                             extra: state.pickedGoods[index],
                           ),

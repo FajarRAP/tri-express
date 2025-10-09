@@ -100,7 +100,8 @@ class InventoryPage extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             DecoratedIconButton(
-                              onTap: () => context.push(scanBarcodeInnerRoute),
+                              onTap: () =>
+                                  context.pushNamed(scanBarcodeInnerRoute),
                               icon: const Icon(Icons.qr_code_scanner_outlined),
                             ),
                           ],
@@ -136,8 +137,8 @@ class InventoryPage extends StatelessWidget {
                             context: context,
                             builder: (context) =>
                                 ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) =>
-                                  context.push(inventoryDetailRoute, extra: {
+                              onSelected: (selectedGood) => context
+                                  .pushNamed(inventoryDetailRoute, extra: {
                                 'good': selectedGood.first,
                                 'batch': state.batches[index],
                               }),

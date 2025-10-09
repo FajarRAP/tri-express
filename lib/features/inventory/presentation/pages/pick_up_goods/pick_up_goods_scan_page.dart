@@ -178,7 +178,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                         const message = 'Pilih barang yang akan diambil';
                         return TopSnackbar.dangerSnackbar(message: message);
                       }
-                      context.push(
+                      context.pushNamed(
                         pickUpGoodsConfirmationRoute,
                         extra: _selectedCodes,
                       );

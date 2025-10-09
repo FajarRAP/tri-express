@@ -181,7 +181,7 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                         (isStaging && _shippedAt == null) ||
                         _batchNameController.text.isEmpty
                     ? null
-                    : () => context.push(
+                    : () => context.pushNamed(
                           prepareGoodsScanRoute,
                           extra: {
                             'shippedAt': _shippedAt!,

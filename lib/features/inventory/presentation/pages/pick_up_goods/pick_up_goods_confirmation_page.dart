@@ -157,9 +157,7 @@ class _TariState extends State<_Tari> {
                 listener: (context, state) {
                   if (state is CreateShipmentsLoaded) {
                     TopSnackbar.successSnackbar(message: state.message);
-                    context
-                      ..go(menuRoute)
-                      ..push(pickUpGoodsRoute);
+                    context.goNamed(pickUpGoodsRoute);
                   }
 
                   if (state is CreateShipmentsError) {
@@ -953,9 +951,7 @@ class _ClaudeState extends State<_Claude> {
                   onPressed: (totalSelectedItems > 0 && _pickedImage != null)
                       ? () {
                           // Implement save functionality
-                          context
-                            ..go(menuRoute)
-                            ..push(pickUpGoodsRoute);
+                          context.goNamed(pickUpGoodsRoute);
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                 title: GestureDetector(
-                  onTap: () => context.go(settingRoute),
+                  onTap: () => context.goNamed(settingRoute),
                   child: ProfileRow(user: state.user),
                 ),
                 actions: <Widget>[
@@ -141,22 +141,22 @@ class HomePage extends StatelessWidget {
                       shrinkWrap: true,
                       children: <Widget>[
                         ActionCard(
-                          onTap: () => context.push(receiveGoodsRoute),
+                          onTap: () => context.pushNamed(receiveGoodsRoute),
                           icon: boxSvgPath,
                           title: 'Terima Barang',
                         ),
                         ActionCard(
-                          onTap: () => context.push(prepareGoodsRoute),
+                          onTap: () => context.pushNamed(prepareGoodsRoute),
                           icon: boxAddSvgPath,
                           title: 'Persiapan Barang',
                         ),
                         ActionCard(
-                          onTap: () => context.push(sendGoodsRoute),
+                          onTap: () => context.pushNamed(sendGoodsRoute),
                           icon: truckSvgPath,
                           title: 'Kirim Barang',
                         ),
                         ActionCard(
-                          onTap: () => context.push(pickUpGoodsRoute),
+                          onTap: () => context.pushNamed(pickUpGoodsRoute),
                           icon: helmetSvgPath,
                           title: 'Ambil di Gudang',
                         ),

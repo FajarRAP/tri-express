@@ -61,7 +61,7 @@ class SendGoodsPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () => context.push(sendGoodsFilterRoute),
+                          onTap: () => context.pushNamed(sendGoodsFilterRoute),
                           icon: const Icon(Icons.add_outlined),
                         ),
                       ],
@@ -113,7 +113,7 @@ class SendGoodsPage extends StatelessWidget {
                           onTap: () => showModalBottomSheet(
                             builder: (context) =>
                                 ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGoods) => context.push(
+                              onSelected: (selectedGoods) => context.pushNamed(
                                 sendGoodsDetailRoute,
                                 extra: {
                                   'good': selectedGoods.first,

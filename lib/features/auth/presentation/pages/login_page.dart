@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                                 if (state is LoginLoaded) {
                                   TopSnackbar.successSnackbar(
                                       message: 'success login');
-                                  context.go(menuRoute);
+                                  context.goNamed(menuRoute);
                                 }
                                 if (state is LoginError) {
                                   TopSnackbar.dangerSnackbar(

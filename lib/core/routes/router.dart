@@ -25,6 +25,7 @@ import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_page.dart';
 import '../../features/inventory/presentation/pages/prepare_goods/prepare_goods_scan_page.dart';
+import '../../features/inventory/presentation/pages/receipt_number_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_detail_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/receive_goods/receive_goods_page.dart';
@@ -44,8 +45,8 @@ const onboardingRoute = '/onboarding';
 const loginRoute = '/login';
 
 const menuRoute = '/menu';
-const receiveGoodsRoute = '/receive-goods';
-const receiveGoodsFilterRoute = '$receiveGoodsRoute/filter';
+const receiveGoodsRoute = 'receive-goods';
+const receiveGoodsFilterRoute = '$receiveGoodsRoute-filter';
 const receiveGoodsScanRoute = '$receiveGoodsRoute/scan';
 const receiveGoodsDetailRoute = '$receiveGoodsRoute/detail';
 const prepareGoodsRoute = '/prepare-goods';
@@ -73,6 +74,8 @@ const notificationRoute = '/notification';
 
 const scanBarcodeRoute = '/scan-barcode';
 const scanBarcodeInnerRoute = '/scan-barcode-inner';
+
+const receiptNumbersRoute = '/receipt-numbers';
 
 class _GoRouterObserver extends NavigatorObserver {
   @override
@@ -117,159 +120,239 @@ final router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: '/menu',
+          name: menuRoute,
           builder: (context, state) => const HomePage(),
+          routes: [
+            // Receive Goods
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'receive-goods',
+              name: receiveGoodsRoute,
+              builder: (context, state) => const ReceiveGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'filter',
+                  name: receiveGoodsFilterRoute,
+                  builder: (context, state) => const ReceiveGoodsFilterPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'scan',
+                  name: receiveGoodsScanRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final origin = extras['origin'] as DropdownEntity;
+                    final receivedAt = extras['receivedAt'] as DateTime;
+
+                    return ReceiveGoodsScanPage(
+                      origin: origin,
+                      receivedAt: receivedAt,
+                    );
+                  },
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'detail',
+                  name: receiveGoodsDetailRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final good = extras['good'] as GoodEntity;
+                    final batch = extras['batch'] as BatchEntity;
+
+                    return ReceiveGoodsDetailPage(
+                      batch: batch,
+                      good: good,
+                    );
+                  },
+                ),
+              ],
+            ),
+            // Prepare Goods
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'prepare-goods',
+              name: prepareGoodsRoute,
+              builder: (context, state) => const PrepareGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'filter',
+                  name: prepareGoodsFilterRoute,
+                  builder: (context, state) => const PrepareGoodsFilterPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'scan',
+                  name: prepareGoodsScanRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final shippedAt = extras['shippedAt'] as DateTime;
+                    final estimatedAt = extras['estimatedAt'] as DateTime;
+                    final nextWarehouse =
+                        extras['nextWarehouse'] as DropdownEntity;
+                    final transportMode =
+                        extras['transportMode'] as DropdownEntity;
+                    final batchName = extras['batchName'] as String;
+
+                    return PrepareGoodsScanPage(
+                      shippedAt: shippedAt,
+                      estimatedAt: estimatedAt,
+                      nextWarehouse: nextWarehouse,
+                      transportMode: transportMode,
+                      batchName: batchName,
+                    );
+                  },
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'detail',
+                  name: prepareGoodsDetailRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final good = extras['good'] as GoodEntity;
+                    final batch = extras['batch'] as BatchEntity;
+
+                    return PrepareGoodsDetailPage(
+                      batch: batch,
+                      good: good,
+                    );
+                  },
+                ),
+              ],
+            ),
+            // Send Goods
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'send-goods',
+              name: sendGoodsRoute,
+              builder: (context, state) => const SendGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'filter',
+                  name: sendGoodsFilterRoute,
+                  builder: (context, state) => const SendGoodsFilterPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'scan',
+                  name: sendGoodsScanRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final driver = extras['driver'] as DropdownEntity;
+                    final nextWarehouse =
+                        extras['nextWarehouse'] as DropdownEntity;
+                    final deliveredAt = extras['deliveredAt'] as DateTime;
+
+                    return SendGoodsScanPage(
+                      driver: driver,
+                      nextWarehouse: nextWarehouse,
+                      deliveredAt: deliveredAt,
+                    );
+                  },
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'detail',
+                  name: sendGoodsDetailRoute,
+                  builder: (context, state) {
+                    final extras = state.extra as Map<String, dynamic>;
+                    final good = extras['good'] as GoodEntity;
+                    final batch = extras['batch'] as BatchEntity;
+
+                    return SendGoodsDetailPage(
+                      batch: batch,
+                      good: good,
+                    );
+                  },
+                )
+              ],
+            ),
+            // Pick Up Goods
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'pick-up-goods',
+              name: pickUpGoodsRoute,
+              builder: (context, state) => const PickUpGoodsPage(),
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'scan',
+                  name: pickUpGoodsScanRoute,
+                  builder: (context, state) => const PickUpGoodsScanPage(),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'confirmation',
+                  name: pickUpGoodsConfirmationRoute,
+                  builder: (context, state) => PickUpGoodsConfirmationPage(
+                    selectedCodes: state.extra as Map<String, Set<String>>,
+                  ),
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: 'detail',
+                  name: pickUpGoodsDetailRoute,
+                  builder: (context, state) => PickUpGoodsDetailPage(
+                    pickedGood: state.extra as PickedGoodEntity,
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: '/on-the-way',
+          name: onTheWayRoute,
           builder: (context, state) => const OnTheWayPage(),
+          routes: <RouteBase>[
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'detail',
+              name: onTheWayDetailRoute,
+              builder: (context, state) {
+                final extras = state.extra as Map<String, dynamic>;
+                final batch = extras['batch'] as BatchEntity;
+                final good = extras['good'] as GoodEntity;
+
+                return OnTheWayDetailPage(
+                  batch: batch,
+                  good: good,
+                );
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/inventory',
+          name: inventoryRoute,
           builder: (context, state) => const InventoryPage(),
+          routes: <RouteBase>[
+            GoRoute(
+              parentNavigatorKey: _rootNavigatorKey,
+              path: 'detail',
+              name: inventoryDetailRoute,
+              builder: (context, state) {
+                final extras = state.extra as Map<String, dynamic>;
+                final good = extras['good'] as GoodEntity;
+                final batch = extras['batch'] as BatchEntity;
+
+                return InventoryDetailPage(
+                  batch: batch,
+                  good: good,
+                );
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/setting',
+          name: settingRoute,
           builder: (context, state) => const SettingPage(),
         ),
       ],
     ),
-
-    // Receive Goods
-    GoRoute(
-      path: '/receive-goods',
-      builder: (context, state) => const ReceiveGoodsPage(),
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'filter',
-          builder: (context, state) => const ReceiveGoodsFilterPage(),
-        ),
-        GoRoute(
-          path: 'scan',
-          builder: (context, state) => ReceiveGoodsScanPage(
-            receivedAt: state.extra as DateTime,
-          ),
-        ),
-        GoRoute(
-          path: 'detail',
-          builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
-            final good = extras['good'] as GoodEntity;
-            final batch = extras['batch'] as BatchEntity;
-
-            return ReceiveGoodsDetailPage(
-              batch: batch,
-              good: good,
-            );
-          },
-        ),
-      ],
-    ),
-    // Prepare Goods
-    GoRoute(
-      path: '/prepare-goods',
-      builder: (context, state) => const PrepareGoodsPage(),
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'filter',
-          builder: (context, state) => const PrepareGoodsFilterPage(),
-        ),
-        GoRoute(
-          path: 'scan',
-          builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
-            final shippedAt = extras['shippedAt'] as DateTime;
-            final estimatedAt = extras['estimatedAt'] as DateTime;
-            final nextWarehouse = extras['nextWarehouse'] as DropdownEntity;
-            final transportMode = extras['transportMode'] as DropdownEntity;
-            final batchName = extras['batchName'] as String;
-
-            return PrepareGoodsScanPage(
-              shippedAt: shippedAt,
-              estimatedAt: estimatedAt,
-              nextWarehouse: nextWarehouse,
-              transportMode: transportMode,
-              batchName: batchName,
-            );
-          },
-        ),
-        GoRoute(
-          path: 'detail',
-          builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
-            final good = extras['good'] as GoodEntity;
-            final batch = extras['batch'] as BatchEntity;
-
-            return PrepareGoodsDetailPage(
-              batch: batch,
-              good: good,
-            );
-          },
-        ),
-      ],
-    ),
-    // Send Goods
-    GoRoute(
-      path: '/send-goods',
-      builder: (context, state) => const SendGoodsPage(),
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'filter',
-          builder: (context, state) => const SendGoodsFilterPage(),
-        ),
-        GoRoute(
-          path: 'scan',
-          builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
-            final driver = extras['driver'] as DropdownEntity;
-            final nextWarehouse = extras['nextWarehouse'] as DropdownEntity;
-            final deliveredAt = extras['deliveredAt'] as DateTime;
-
-            return SendGoodsScanPage(
-              driver: driver,
-              nextWarehouse: nextWarehouse,
-              deliveredAt: deliveredAt,
-            );
-          },
-        ),
-        GoRoute(
-          path: 'detail',
-          builder: (context, state) {
-            final extras = state.extra as Map<String, dynamic>;
-            final good = extras['good'] as GoodEntity;
-            final batch = extras['batch'] as BatchEntity;
-
-            return SendGoodsDetailPage(
-              batch: batch,
-              good: good,
-            );
-          },
-        )
-      ],
-    ),
-    // Pick Up Goods
-    GoRoute(
-      path: '/pick-up-goods',
-      builder: (context, state) => const PickUpGoodsPage(),
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'confirmation',
-          builder: (context, state) => PickUpGoodsConfirmationPage(
-            selectedCodes: state.extra as Map<String, Set<String>>,
-          ),
-        ),
-        GoRoute(
-          path: 'scan',
-          builder: (context, state) => const PickUpGoodsScanPage(),
-        ),
-        GoRoute(
-          path: 'detail',
-          builder: (context, state) => PickUpGoodsDetailPage(
-            pickedGood: state.extra as PickedGoodEntity,
-          ),
-        )
-      ],
-    ),
-
     GoRoute(
       path: '/splash',
       pageBuilder: (context, state) => CustomTransitionPage(
@@ -284,54 +367,32 @@ final router = GoRouter(
         child: const SplashPage(),
       ),
     ),
-
     GoRoute(
       path: '/onboarding',
+      name: onboardingRoute,
       builder: (context, state) => const OnboardingPage(),
     ),
-
     GoRoute(
       path: '/login',
+      name: loginRoute,
       builder: (context, state) => const LoginPage(),
     ),
-
-    GoRoute(
-      path: '/on-the-way-detail',
-      builder: (context, state) {
-        final extras = state.extra as Map<String, dynamic>;
-        final batch = extras['batch'] as BatchEntity;
-        final good = extras['good'] as GoodEntity;
-
-        return OnTheWayDetailPage(
-          batch: batch,
-          good: good,
-        );
-      },
-    ),
-
-    GoRoute(
-      path: '/inventory-detail',
-      builder: (context, state) {
-        final extras = state.extra as Map<String, dynamic>;
-        final good = extras['good'] as GoodEntity;
-        final batch = extras['batch'] as BatchEntity;
-
-        return InventoryDetailPage(
-          batch: batch,
-          good: good,
-        );
-      },
-    ),
-
     GoRoute(
       path: '/notification',
+      name: notificationRoute,
       builder: (context, state) => const NotificationPage(),
     ),
-
     GoRoute(
       path: '/scan-barcode-inner',
+      name: scanBarcodeInnerRoute,
       builder: (context, state) =>
           MobileScannerSimplePage(onDetect: context.pop),
     ),
+    GoRoute(
+      path: '/receipt-numbers',
+      name: receiptNumbersRoute,
+      builder: (context, state) =>
+          ReceiptNumberPage(batch: state.extra as BatchEntity),
+    )
   ],
 );

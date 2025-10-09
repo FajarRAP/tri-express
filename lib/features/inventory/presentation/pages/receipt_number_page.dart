@@ -80,7 +80,7 @@ class ReceiptNumberPage extends StatelessWidget {
 
               return SliverList.separated(
                 itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => context.push(
+                  onTap: () => context.pushNamed(
                     receiveGoodsDetailRoute,
                     extra: {
                       'batch': batch,
@@ -122,7 +122,7 @@ class ReceiptNumberPage extends StatelessWidget {
                         ),
                         const Spacer(),
                         TextButton(
-                          onPressed: () => context.push(
+                          onPressed: () => context.pushNamed(
                             receiveGoodsDetailRoute,
                             extra: {
                               'batch': batch,

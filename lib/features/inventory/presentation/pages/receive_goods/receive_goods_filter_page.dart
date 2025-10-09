@@ -109,7 +109,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                 onPressed: _selectedWarehouse == null ||
                         (isStaging && _receivedAt == null)
                     ? null
-                    : () => context.push(receiveGoodsScanRoute, extra: {
+                    : () => context.pushNamed(receiveGoodsScanRoute, extra: {
                           'origin': _selectedWarehouse!,
                           'receivedAt': _receivedAt!,
                         }),
