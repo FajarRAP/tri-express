@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
@@ -98,7 +99,6 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _inventories = <BatchEntity>[];
   final _onTheWayBatches = <BatchEntity>[];
   final _prepareBatches = <BatchEntity>[];
-  final _receiveBatches = <BatchEntity>[];
   final _pickedGoods = <PickedGoodEntity>[];
 
   final previewGoods = <GoodEntity>[];
@@ -427,7 +427,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(batches: batches)),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
+          allBatches: batches, batches: batches)),
     );
   }
 
@@ -466,11 +467,13 @@ class InventoryCubit extends Cubit<InventoryState> {
   }
 
   Future<void> fetchPreviewReceiveShipments(
-      {required List<UHFResultEntity> uhfresults}) async {
+      {required DropdownEntity origin,
+      required List<UHFResultEntity> uhfresults}) async {
     emit(FetchPreviewBatchesShipmentsLoading());
 
     final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
     final params = FetchPreviewReceiveShipmentsUseCaseParams(
+      origin: origin,
       uniqueCodes: uniqueCodes,
     );
 
@@ -479,7 +482,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewBatchesShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(batches: batches)),
+      (batches) => emit(FetchPreviewBatchesShipmentsLoaded(
+          allBatches: batches, batches: batches)),
     );
   }
 
@@ -487,39 +491,86 @@ class InventoryCubit extends Cubit<InventoryState> {
     emit(FetchReceiveShipmentsLoading());
 
     final params = FetchReceiveShipmentsUseCaseParams(
-      page: _currentPage = 1,
+      page: 1,
       search: search,
     );
     final result = await _fetchReceiveShipmentsUseCase(params);
 
     result.fold(
       (failure) => emit(FetchReceiveShipmentsError(message: failure.message)),
-      (batches) => emit(FetchReceiveShipmentsLoaded(
-          batches: _receiveBatches
-            ..clear()
-            ..addAll(batches))),
+      (batches) => emit(FetchReceiveShipmentsLoaded(batches: batches)),
     );
   }
 
   Future<void> fetchReceiveShipmentsPaginate({String? search}) async {
-    emit(ListPaginateLoading());
+    final currentState = state;
+    if (currentState is! FetchReceiveShipmentsLoaded) return;
+    if (currentState.isLastPage) return;
 
     final params = FetchReceiveShipmentsUseCaseParams(
-      page: ++_currentPage,
+      page: currentState.currentPage + 1,
       search: search,
     );
     final result = await _fetchReceiveShipmentsUseCase(params);
 
     result.fold(
-      (failure) => emit(ListPaginateError(message: failure.message)),
+      (failure) => emit(FetchReceiveShipmentsError(message: failure.message)),
       (batches) => batches.isEmpty
-          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(FetchReceiveShipmentsLoaded(
-              batches: _receiveBatches..addAll(batches))),
+          ? emit(currentState.copyWithPage(isLastPage: true))
+          : emit(currentState.copyWith(
+              batches: [...currentState.batches, ...batches],
+              currentPage: currentState.currentPage + 1,
+              isLastPage: false,
+            )),
     );
+  }
+
+  void searchBatches(String keyword) {
+    final currentState = state;
+    if (currentState is! FetchPreviewBatchesShipmentsLoaded) return;
+
+    final filteredBatches = <BatchEntity>[];
+    if (keyword.isEmpty) {
+      filteredBatches.addAll(currentState.allBatches);
+    } else {
+      final lowerKeyword = keyword.toLowerCase();
+      final results = currentState.allBatches.where(
+        (batch) {
+          final batchNameMatch =
+              batch.name.toLowerCase().contains(lowerKeyword);
+          final trackingNumberMatch =
+              batch.trackingNumber.toLowerCase().contains(lowerKeyword);
+
+          return batchNameMatch || trackingNumberMatch;
+        },
+      ).toList();
+      filteredBatches.addAll(results);
+    }
+
+    emit(currentState.copyWith(batches: filteredBatches));
+  }
+
+  void searchReceiptNumbers(BatchEntity selectedBatch, [String keyword = '']) {
+    final currentState = state;
+    if (currentState is! ReceiptNumberSearchableState) return;
+
+    final filteredReceiptNumbers = <GoodEntity>[];
+    if (keyword.isEmpty) {
+      filteredReceiptNumbers.addAll(selectedBatch.goods);
+    } else {
+      final lowerKeyword = keyword.toLowerCase();
+      final results = selectedBatch.goods
+          .where(
+              (good) => good.receiptNumber.toLowerCase().contains(lowerKeyword))
+          .toList();
+      filteredReceiptNumbers.addAll(results);
+    }
+
+    emit(currentState.copyWithGoods(goods: filteredReceiptNumbers));
   }
 
   void onUHFScan() => emit(OnUHFScan());
   void qrCodeScan() => emit(QRCodeScan());
   void resetUHFScan() => emit(ResetUHFScan());
+  void resetState() => emit(InventoryInitial());
 }
