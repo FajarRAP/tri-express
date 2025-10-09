@@ -68,7 +68,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
         '/delivery/store',
         data: {
           'next_warehouse_id': params.nextWarehouse.id,
-          'delivery_date': params.deliveredAt.toIso8601String(),
+          'delivery_date': params.deliveredAt.toYYYYMMDD,
           'user_id': params.driver.id,
           'codes': params.uniqueCodes,
           'shipment_ids': params.shipmentIds,
@@ -95,7 +95,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
             'codes': params.uniqueCodes,
             'note': params.note,
             'foto': await MultipartFile.fromFile(params.imagePath),
-            'delivery_date': params.pickedUpAt.toIso8601String(),
+            'delivery_date': params.pickedUpAt.toYYYYMMDD,
           },
           ListFormat.multiCompatible,
         ),
@@ -116,8 +116,8 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final response = await dio.post(
         '/prepare/store',
         data: {
-          'shipment_date': params.shippedAt.toIso8601String(),
-          'estimate_date': params.estimatedAt.toIso8601String(),
+          'shipment_date': params.shippedAt.toYYYYMMDD,
+          'estimate_date': params.estimatedAt.toYYYYMMDD,
           'batch_code': params.batchName,
           'next_warehouse_id': params.nextWarehouse.id,
           'type': params.transportMode.id,
@@ -140,7 +140,7 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final response = await dio.post(
         '/receive/store',
         data: {
-          'receive_date': params.receivedAt.toIso8601String(),
+          'receive_date': params.receivedAt.toYYYYMMDD,
           'codes': params.uniqueCodes,
         },
       );
