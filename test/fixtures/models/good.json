@@ -1,244 +1,164 @@
 {
-    "batch_tracking_number": "TRI.2509031633550",
-    "count": 12,
-    "count_all": 12,
+    "batch_tracking_number": "TRI.251007121308705",
+    "status": 3,
+    "status_label": "Tiba di Gudang Tujuan",
+    "count": 1,
     "receipt_item": {
-        "id": 33,
-        "receipt_id": 25,
-        "item_name": "tes",
-        "quantity": 12,
-        "group_code": "tes|12|12x11x11",
-        "group_label": "tes - 12 kg - 12x11x11 cm",
-        "berat": 12,
-        "panjang": 12,
-        "lebar": 11,
-        "tinggi": 11,
-        "berat_volume": "1.50",
-        "pembagi": "1000.00",
-        "volume_used_total": "144.00",
-        "berat_volume_total": "18.00",
-        "berat_total": "144.00",
-        "volume_total": "17424.00",
-        "volume_used": "12.00",
-        "jalur": 1,
-        "price": "12.00",
-        "price_total": "144.00",
-        "keterangan": "coba",
-        "created_at": "2025-09-03T09:33:14.000000Z",
-        "updated_at": "2025-09-04T03:58:09.000000Z",
-        "jalur_label": "Darat Lokal",
+        "id": 272,
+        "receipt_id": 268,
+        "item_name": "CTN/Prime",
+        "quantity": 2,
+        "group_code": "CTN/Prime|51.3|41x31x35",
+        "group_label": "CTN/Prime - 51.3 kg - 41x31x35 cm",
+        "berat": 51.3,
+        "panjang": 41,
+        "lebar": 31,
+        "tinggi": 35,
+        "berat_volume": "12.71",
+        "pembagi": "3500.00",
+        "volume_used_total": "104.00",
+        "berat_volume_total": "25.42",
+        "berat_total": "102.60",
+        "volume_total": "88970.00",
+        "volume_used": "52.00",
+        "jalur": 3,
+        "price": "52.00",
+        "price_total": "104.00",
+        "keterangan": "TH215 - CTN 12",
+        "created_at": "2025-10-01T05:33:16.000000Z",
+        "updated_at": "2025-10-01T05:33:16.000000Z",
+        "jalur_label": "Laut",
+        "receipt": {
+            "id": 268,
+            "customer_id": "019999ee-f9de-73c8-b52c-d442506a6c0a",
+            "warehouse_id": "019999c9-e7bd-707e-b365-b306855dfaef",
+            "destination_warehouse_id": "019999ce-4a4d-711b-a89a-8c008148b4e9",
+            "invoice_code": "INV.251001123316105",
+            "receipt_date": "2025-09-30T17:00:00.000000Z",
+            "price_all": "104.00",
+            "volume_all": "104.00",
+            "jalur": 1,
+            "created_at": "2025-10-01T05:33:16.000000Z",
+            "updated_at": "2025-10-01T05:33:16.000000Z",
+            "customer": {
+                "id": "019999ee-f9de-73c8-b52c-d442506a6c0a",
+                "negara_id": "019999c7-be1d-70c3-b8ab-7ecc01621581",
+                "kode": "001",
+                "nama": "AUGUS",
+                "no_telp": "08672187",
+                "alamat": "jalan tempura 3",
+                "jenis": 1,
+                "keterangan": "kantor augus",
+                "latitude": null,
+                "longitude": null,
+                "provinsi_id": null,
+                "kota_id": null,
+                "kecamatan_id": null,
+                "desa_id": null,
+                "created_at": "2025-09-30T09:23:19.000000Z",
+                "updated_at": "2025-09-30T09:23:19.000000Z"
+            },
+            "warehouse": {
+                "id": "019999c9-e7bd-707e-b365-b306855dfaef",
+                "negara_id": "019999c7-3def-70df-8c6d-4a53dae4682a",
+                "kode": "THA",
+                "title": "thailand",
+                "no_telp": "09890",
+                "alamat": "jalan lele7",
+                "longitude": "106.82708242921241",
+                "latitude": "-6.173421305040958",
+                "keterangan": "G_thailand",
+                "created_at": "2025-09-30T08:42:50.000000Z",
+                "updated_at": "2025-09-30T08:42:50.000000Z"
+            },
+            "destination_warehouse": {
+                "id": "019999ce-4a4d-711b-a89a-8c008148b4e9",
+                "negara_id": "019999c7-be1d-70c3-b8ab-7ecc01621581",
+                "kode": "MDN",
+                "title": "medan",
+                "no_telp": "624308347",
+                "alamat": "jalan medan jaya 6",
+                "longitude": "106.82708242921241",
+                "latitude": "-6.173421305040958",
+                "keterangan": "G_medan",
+                "created_at": "2025-09-30T08:47:37.000000Z",
+                "updated_at": "2025-09-30T08:47:37.000000Z"
+            }
+        },
         "transport": {
-            "id": 1,
-            "name": "Darat Lokal",
-            "value": 1000,
+            "id": 3,
+            "name": "Laut",
+            "value": 3500,
             "status": 1,
-            "created_at": "2025-09-01T06:33:56.000000Z",
-            "updated_at": "2025-09-01T06:33:56.000000Z"
+            "created_at": "2025-09-30T08:41:41.000000Z",
+            "updated_at": "2025-09-30T08:41:41.000000Z"
         }
     },
     "receipt": {
-        "id": 25,
-        "customer_id": "019903c3-d125-7316-9e3b-575fa7280743",
-        "warehouse_id": "019903c3-ca8b-713f-9037-0ef28cab6905",
-        "destination_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072",
-        "invoice_code": "INV.2509031633991",
-        "receipt_date": "2025-08-19T17:00:00.000000Z",
-        "price_all": "3456.00",
-        "volume_all": "288.00",
+        "id": 268,
+        "customer_id": "019999ee-f9de-73c8-b52c-d442506a6c0a",
+        "warehouse_id": "019999c9-e7bd-707e-b365-b306855dfaef",
+        "destination_warehouse_id": "019999ce-4a4d-711b-a89a-8c008148b4e9",
+        "invoice_code": "INV.251001123316105",
+        "receipt_date": "2025-09-30T17:00:00.000000Z",
+        "price_all": "104.00",
+        "volume_all": "104.00",
         "jalur": 1,
-        "created_at": "2025-09-03T09:33:14.000000Z",
-        "updated_at": "2025-09-04T03:58:09.000000Z",
+        "created_at": "2025-10-01T05:33:16.000000Z",
+        "updated_at": "2025-10-01T05:33:16.000000Z",
         "customer": {
-            "id": "019903c3-d125-7316-9e3b-575fa7280743",
-            "negara_id": "019903c3-c9dc-7146-a788-aaf896e78fab",
-            "kode": "CUST000004",
-            "nama": "Endra Karsana Zulkarnain",
-            "no_telp": "025 1486 849",
-            "alamat": "Jln. Gajah Mada No. 178",
+            "id": "019999ee-f9de-73c8-b52c-d442506a6c0a",
+            "negara_id": "019999c7-be1d-70c3-b8ab-7ecc01621581",
+            "kode": "001",
+            "nama": "AUGUS",
+            "no_telp": "08672187",
+            "alamat": "jalan tempura 3",
             "jenis": 1,
-            "keterangan": null,
+            "keterangan": "kantor augus",
             "latitude": null,
             "longitude": null,
             "provinsi_id": null,
             "kota_id": null,
             "kecamatan_id": null,
             "desa_id": null,
-            "created_at": "2025-09-01T05:33:08.000000Z",
-            "updated_at": "2025-09-01T05:33:08.000000Z"
+            "created_at": "2025-09-30T09:23:19.000000Z",
+            "updated_at": "2025-09-30T09:23:19.000000Z"
         },
         "warehouse": {
-            "id": "019903c3-ca8b-713f-9037-0ef28cab6905",
-            "negara_id": "019903c3-c994-70a8-b5ea-a2e3aa4ddf8c",
-            "kode": "QWXR",
-            "title": "Gudang Palopo",
-            "no_telp": "(+62) 943 6595 355",
-            "alamat": "Ds. Sudirman No. 158",
-            "longitude": "125.315517",
-            "latitude": "2.472032",
-            "keterangan": "Mollitia et reprehenderit consequatur.",
-            "created_at": "2025-09-01T05:33:07.000000Z",
-            "updated_at": "2025-09-01T05:33:07.000000Z"
+            "id": "019999c9-e7bd-707e-b365-b306855dfaef",
+            "negara_id": "019999c7-3def-70df-8c6d-4a53dae4682a",
+            "kode": "THA",
+            "title": "thailand",
+            "no_telp": "09890",
+            "alamat": "jalan lele7",
+            "longitude": "106.82708242921241",
+            "latitude": "-6.173421305040958",
+            "keterangan": "G_thailand",
+            "created_at": "2025-09-30T08:42:50.000000Z",
+            "updated_at": "2025-09-30T08:42:50.000000Z"
         },
         "destination_warehouse": {
-            "id": "019903c3-ca54-7183-96d2-381bce035072",
-            "negara_id": "019903c3-c9e1-73f2-9a60-1054fa4a55a4",
-            "kode": "MHUO",
-            "title": "Gudang Pekalongan",
-            "no_telp": "(+62) 758 8958 1894",
-            "alamat": "Jr. Krakatau No. 972",
-            "longitude": "126.409562",
-            "latitude": "-9.319892",
-            "keterangan": "Eligendi eos quis reiciendis eum est.",
-            "created_at": "2025-09-01T05:33:07.000000Z",
-            "updated_at": "2025-09-01T05:33:07.000000Z"
+            "id": "019999ce-4a4d-711b-a89a-8c008148b4e9",
+            "negara_id": "019999c7-be1d-70c3-b8ab-7ecc01621581",
+            "kode": "MDN",
+            "title": "medan",
+            "no_telp": "624308347",
+            "alamat": "jalan medan jaya 6",
+            "longitude": "106.82708242921241",
+            "latitude": "-6.173421305040958",
+            "keterangan": "G_medan",
+            "created_at": "2025-09-30T08:47:37.000000Z",
+            "updated_at": "2025-09-30T08:47:37.000000Z"
         }
     },
     "units": [
         {
-            "unique_code": "A00000000248",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000249",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000250",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000251",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000252",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000253",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000254",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000255",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000256",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000257",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000258",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000259",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        }
-    ],
-    "units_all": [
-        {
-            "unique_code": "A00000000248",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000249",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000250",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000251",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000252",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000253",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000254",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000255",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000256",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000257",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000258",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
-        },
-        {
-            "unique_code": "A00000000259",
-            "status": 5,
-            "status_label": "Tiba di Gudang Tujuan Akhir",
-            "current_warehouse_id": "019903c3-ca54-7183-96d2-381bce035072"
+            "unit_id": 640,
+            "unique_code": "A00000000640",
+            "status": 3,
+            "status_label": "Tiba di Gudang Tujuan",
+            "current_warehouse_id": "019999cd-0835-73e7-a396-4f70d9d6f317",
+            "updated_at": "2025-10-07T05:15:22.000000Z"
         }
     ]
 }

@@ -13,6 +13,7 @@ class PickedGoodModel extends PickedGoodEntity {
     required super.customer,
     required super.origin,
     required super.destination,
+    required super.allUniqueCodes,
     required super.uniqueCodes,
     required super.deliveryCode,
     required super.note,
@@ -22,6 +23,7 @@ class PickedGoodModel extends PickedGoodEntity {
 
   factory PickedGoodModel.fromJson(Map<String, dynamic> json) {
     final units = List.from(json['units']);
+    final allUnits = List.from(json['units_all']);
 
     return PickedGoodModel(
       id: '${json['receipt']['id']}',
@@ -35,6 +37,7 @@ class PickedGoodModel extends PickedGoodEntity {
       destination:
           WarehouseModel.fromJson(json['receipt']['destination_warehouse'])
               .toEntity(),
+      allUniqueCodes: allUnits.map((e) => '${e['unique_code']}').toList(),
       uniqueCodes: units.map((e) => '${e['unique_code']}').toList(),
       deliveryCode: json['delivery_code'],
       note: json['note'],
@@ -54,6 +57,7 @@ class PickedGoodModel extends PickedGoodEntity {
       customer: customer,
       origin: origin,
       destination: destination,
+      allUniqueCodes: allUniqueCodes,
       uniqueCodes: uniqueCodes,
       deliveryCode: deliveryCode,
       note: note,

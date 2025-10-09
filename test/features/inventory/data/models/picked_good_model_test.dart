@@ -39,6 +39,7 @@ void main() {
     customer: tCustomerModel,
     origin: tWarehouseModel,
     destination: tWarehouseModel,
+    allUniqueCodes: [],
     uniqueCodes: [],
     deliveryCode: 'deliveryCode',
     note: 'note',
