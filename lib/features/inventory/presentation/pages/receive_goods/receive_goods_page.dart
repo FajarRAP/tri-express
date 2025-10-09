@@ -7,12 +7,12 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class ReceiveGoodsPage extends StatelessWidget {
   const ReceiveGoodsPage({super.key});
@@ -25,14 +25,11 @@ class ReceiveGoodsPage extends StatelessWidget {
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchReceiveShipmentsPaginate(search: search);
-          }
-
-          return false;
-        },
+        onNotification: (notification) => paginateWhenScrollEnd(
+          notification,
+          paginate: () =>
+              inventoryCubit.fetchReceiveShipmentsPaginate(search: search),
+        ),
         child: RefreshIndicator(
           onRefresh: inventoryCubit.fetchReceiveShipments,
           child: CustomScrollView(
@@ -111,20 +108,9 @@ class ReceiveGoodsPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => showModalBottomSheet(
-                            builder: (context) =>
-                                ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGoods) => context.push(
-                                receiveGoodsDetailRoute,
-                                extra: {
-                                  'batch': state.batches[index],
-                                  'good': selectedGoods.first,
-                                },
-                              ),
-                              batch: state.batches[index],
-                            ),
-                            context: context,
-                            isScrollControlled: true,
+                          onTap: () => context.push(
+                            receiptNumbersRoute,
+                            extra: state.batches[index],
                           ),
                           batch: state.batches[index],
                           quantity: _renderQuantity(state.batches[index]),
