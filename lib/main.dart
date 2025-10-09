@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'core/routes/router.dart';
@@ -21,6 +23,7 @@ void main() async {
   setupServiceLocator();
 
   timeago.setLocaleMessages('id', timeago.IdMessages());
+  Intl.defaultLocale = 'id_ID';
 
   runApp(const MyApp());
 }
@@ -46,6 +49,15 @@ class MyApp extends StatelessWidget {
             }),
           ],
         ),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const <Locale>[
+          Locale('en'), // English
+          Locale('id'), // Indonesian
+        ],
         routerConfig: router,
         theme: theme,
         title: 'Tri Express',
