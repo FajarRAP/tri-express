@@ -14,17 +14,20 @@ import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../../core/widgets/triple_floating_action_buttons.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../../core/domain/entities/dropdown_entity.dart';
+import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/scanned_item_card.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class ReceiveGoodsScanPage extends StatefulWidget {
   const ReceiveGoodsScanPage({
     super.key,
+    required this.origin,
     required this.receivedAt,
   });
 
+  final DropdownEntity origin;
   final DateTime receivedAt;
 
   @override
@@ -40,7 +43,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
   void initState() {
     super.initState();
     _authCubit = context.read<AuthCubit>();
-    _inventoryCubit = context.read<InventoryCubit>();
+    _inventoryCubit = context.read<InventoryCubit>()..resetState();
     initUHFMethodHandler(platform);
   }
 
@@ -48,8 +51,9 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
   InventoryCubit get inventoryCubit => _inventoryCubit;
 
   @override
-  void Function() get onInventoryStop => () =>
-      _inventoryCubit.fetchPreviewReceiveShipments(uhfresults: uhfResults);
+  void Function() get onInventoryStop =>
+      () => _inventoryCubit.fetchPreviewReceiveShipments(
+          origin: widget.origin, uhfresults: uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +90,10 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                     const SizedBox(height: 24),
                     Row(
                       children: <Widget>[
-                        const Expanded(
+                        Expanded(
                           child: TextField(
-                            decoration: InputDecoration(
+                            onChanged: _inventoryCubit.searchBatches,
+                            decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
                             ),
@@ -191,6 +196,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
       buildWhen: (previous, current) =>
           current is FetchPreviewBatchesShipments || current is UHFAction,
       builder: (context, state) {
+        print('BOKEP $state');
         if (state is FetchPreviewBatchesShipmentsLoading) {
           return const SliverFillRemaining(
             hasScrollBody: false,
@@ -201,27 +207,51 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
         }
 
         if (state is FetchPreviewBatchesShipmentsLoaded) {
+          if (state.batches.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Center(
+                  child: Text(
+                    'Pengiriman tidak ditemukan, silahkan cek nama batch atau kode pengiriman',
+                    style: label[medium].copyWith(color: primaryGradientEnd),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          }
+
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
               itemBuilder: (context, index) => BatchCardItem(
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                    onSelected: (selectedGoods) => context.push(
-                      receiveGoodsDetailRoute,
-                      extra: {
-                        'batch': state.batches[index],
-                        'good': selectedGoods.first,
-                      },
-                    ),
-                    batch: state.batches[index],
-                  ),
+                onTap: () => context.push(
+                  receiptNumbersRoute,
+                  extra: state.batches[index],
                 ),
                 batch: state.batches[index],
+                quantity: _renderQuantity(state.batches[index]),
               ),
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemCount: state.batches.length,
+            ),
+          );
+        }
+
+        if (state is FetchPreviewBatchesShipmentsError) {
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Center(
+                child: Text(
+                  state.message,
+                  style: label[medium].copyWith(color: primaryGradientEnd),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           );
         }
@@ -253,11 +283,14 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
         final (String title, String value) = switch (state) {
           FetchPreviewBatchesShipmentsLoading() => ('Memuat', '...'),
           FetchPreviewBatchesShipmentsLoaded s => (
-              'Total Koli Aktual',
-              '${s.batches.fold<int>(0, (prev, e) => prev + e.totalAllUnits)}'
+              'Total Pengiriman',
+              '${s.batches.length}'
             ),
-          OnUHFScan() => ('Total Koli Terscan', '${uhfResults.length}'),
-          _ => ('Mulai scan untuk melihat total koli', '...'),
+          OnUHFScan() || QRCodeScan() => (
+              'Total Koli Terscan',
+              '${uhfResults.length}'
+            ),
+          _ => ('Mulai scan untuk melihat pengiriman', '...'),
         };
         final style = paragraphSmall[medium].copyWith(color: light);
 
@@ -270,6 +303,30 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           ],
         );
       },
+    );
+  }
+
+  Widget _renderQuantity(BatchEntity batch) {
+    if (batch.receivedUnits < batch.deliveredUnits) {
+      return RichText(
+        text: TextSpan(
+          children: <InlineSpan>[
+            TextSpan(
+              text: '${batch.goods.length}',
+              style: label[regular].copyWith(color: black),
+            ),
+            TextSpan(
+              text: '/${batch.deliveredUnits - batch.receivedUnits} Koli',
+              style: label[bold].copyWith(color: black),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Text(
+      '${batch.totalAllUnits} Koli',
+      style: label[bold].copyWith(color: black),
     );
   }
 }
