@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import 'unique_code_input_bottom_sheet.dart';
 import '../../../../core/fonts/fonts.dart';
@@ -9,10 +10,12 @@ import '../../../../core/themes/colors.dart';
 class UniqueCodeActionBottomSheet extends StatelessWidget {
   const UniqueCodeActionBottomSheet({
     super.key,
-    this.onPressed,
+    required this.onScanned,
+    required this.onPressed,
   });
 
-  final void Function()? onPressed;
+  final void Function(String value)? onScanned;
+  final void Function(String value)? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,12 @@ class UniqueCodeActionBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ListTile(
-            onTap: () => context.pushNamed(scanBarcodeInnerRoute),
+            onTap: () async {
+              final result =
+                  await context.pushNamed<Barcode>(scanBarcodeInnerRoute);
+              if (result == null) return;
+              onScanned!(result.rawValue!);
+            },
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -45,9 +53,8 @@ class UniqueCodeActionBottomSheet extends StatelessWidget {
           const Divider(),
           ListTile(
             onTap: () => showModalBottomSheet(
-              builder: (context) => UniqueCodeInputBottomSheet(
-                onPressed: onPressed,
-              ),
+              builder: (context) =>
+                  UniqueCodeInputBottomSheet(onPressed: onPressed),
               context: context,
               isScrollControlled: true,
             ),
