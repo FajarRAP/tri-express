@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
@@ -12,13 +11,14 @@ import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
-import '../../../../../core/widgets/triple_floating_action_buttons.dart';
+import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/scanned_item_card.dart';
+import '../../widgets/unique_code_action_bottom_sheet.dart';
 
 class ReceiveGoodsScanPage extends StatefulWidget {
   const ReceiveGoodsScanPage({
@@ -101,13 +101,11 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () async {
-                            final result = await context
-                                .push<Barcode>(scanBarcodeInnerRoute);
-                            if (result == null) return;
-
-                            onQRScan('${result.displayValue}');
-                          },
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) =>
+                                UniqueCodeActionBottomSheet(onResult: onQRScan),
+                          ),
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
                       ],
@@ -144,7 +142,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
               TopSnackbar.dangerSnackbar(message: state.message);
             }
           },
-          child: TripleFloatingActionButtons(
+          child: FloatingActionButtonBar(
             onReset: onReset,
             onScan: onScan,
             onSave: () => showModalBottomSheet(
@@ -164,6 +162,8 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
                 },
               ),
             ),
+            onSync: () => _inventoryCubit.fetchPreviewReceiveShipments(
+                origin: widget.origin, uhfresults: uhfResults),
             isScanning: isInventoryRunning,
           ),
         ),
@@ -194,7 +194,6 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
       buildWhen: (previous, current) =>
           current is FetchPreviewBatchesShipments || current is UHFAction,
       builder: (context, state) {
-        print('BOKEP $state');
         if (state is FetchPreviewBatchesShipmentsLoading) {
           return const SliverFillRemaining(
             hasScrollBody: false,
@@ -258,10 +257,8 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
-              itemBuilder: (context, index) => ScannedItemCard(
-                number: index + 1,
-                item: uhfResults[index],
-              ),
+              itemBuilder: (context, index) =>
+                  ScannedItemCard(item: uhfResults[index]),
               itemCount: uhfResults.length,
             ),
           );
