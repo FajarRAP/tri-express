@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../themes/colors.dart';
 
-class TripleFloatingActionButtons extends StatelessWidget {
-  const TripleFloatingActionButtons({
+class FloatingActionButtonBar extends StatelessWidget {
+  const FloatingActionButtonBar({
     super.key,
     this.onReset,
     this.onScan,
     this.onSave,
+    this.onSync,
     this.isScanning = false,
   });
 
   final void Function()? onReset;
   final void Function()? onScan;
   final void Function()? onSave;
+  final void Function()? onSync;
   final bool isScanning;
 
   @override
@@ -33,7 +35,7 @@ class TripleFloatingActionButtons extends StatelessWidget {
             side: const BorderSide(color: danger),
           ),
           tooltip: 'Scan Ulang',
-          child: const Icon(Icons.restore),
+          child: const Icon(Icons.replay),
         ),
         FloatingActionButton.small(
           onPressed: onScan,
@@ -49,6 +51,19 @@ class TripleFloatingActionButtons extends StatelessWidget {
           child: isScanning
               ? const Icon(Icons.stop)
               : const Icon(Icons.play_arrow),
+        ),
+        FloatingActionButton.small(
+          onPressed: onSync,
+          backgroundColor: light,
+          elevation: 1,
+          foregroundColor: primary,
+          heroTag: 'sync',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(color: primary),
+          ),
+          tooltip: 'Sinkronkan',
+          child: const Icon(Icons.send),
         ),
         FloatingActionButton.small(
           onPressed: onSave,
