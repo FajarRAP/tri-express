@@ -46,11 +46,25 @@ class GoodCardCheckbox extends StatelessWidget {
                         good.name,
                         style: paragraphMedium[medium].copyWith(color: black),
                       ),
+                      // Niatnya
                       // 5 yang dipilih di bottom sheet
                       // 10 yang di inventory
-                      Text(
-                        '${selectedCodesCount}/${good.totalItem} Koli',
-                        style: label[bold].copyWith(color: black),
+                      // Sekarang
+                      // 5 yang dipilih di bottom sheet
+                      // 10 yang berhasil discan
+                      RichText(
+                        text: TextSpan(
+                          children: <InlineSpan>[
+                            TextSpan(
+                              text: '${selectedCodesCount}',
+                              style: label[regular].copyWith(color: black),
+                            ),
+                            TextSpan(
+                              text: '/${good.totalItem} Koli',
+                              style: label[bold].copyWith(color: black),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
