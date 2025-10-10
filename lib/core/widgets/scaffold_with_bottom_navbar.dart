@@ -106,15 +106,14 @@ class _UniqueCodeActionBuilder extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final onPressed = switch (state) {
+        final onResult = switch (state) {
           FetchLostGoodLoading() => null,
           _ => (String value) =>
               context.read<InventoryCubit>().fetchLostGoods(uniqueCode: value)
         };
 
         return UniqueCodeActionBottomSheet(
-          onPressed: onPressed,
-          onScanned: onPressed,
+          onResult: onResult,
         );
       },
     );
