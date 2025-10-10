@@ -10,12 +10,10 @@ import '../../../../core/themes/colors.dart';
 class UniqueCodeActionBottomSheet extends StatelessWidget {
   const UniqueCodeActionBottomSheet({
     super.key,
-    required this.onScanned,
-    required this.onPressed,
+    required this.onResult,
   });
 
-  final void Function(String value)? onScanned;
-  final void Function(String value)? onPressed;
+  final void Function(String value)? onResult;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class UniqueCodeActionBottomSheet extends StatelessWidget {
               final result =
                   await context.pushNamed<Barcode>(scanBarcodeInnerRoute);
               if (result == null) return;
-              onScanned!(result.rawValue!);
+              onResult!(result.rawValue!);
             },
             leading: Container(
               padding: const EdgeInsets.all(8),
@@ -54,7 +52,7 @@ class UniqueCodeActionBottomSheet extends StatelessWidget {
           ListTile(
             onTap: () => showModalBottomSheet(
               builder: (context) =>
-                  UniqueCodeInputBottomSheet(onPressed: onPressed),
+                  UniqueCodeInputBottomSheet(onPressed: onResult),
               context: context,
               isScrollControlled: true,
             ),
