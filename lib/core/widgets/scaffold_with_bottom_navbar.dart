@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/inventory/presentation/cubit/inventory_cubit.dart';
+import '../../features/inventory/presentation/widgets/unique_code_action_bottom_sheet.dart';
 import '../routes/router.dart';
 import '../themes/colors.dart';
+import '../utils/top_snackbar.dart';
 
 class ScaffoldWithBottomNavbar extends StatelessWidget {
   const ScaffoldWithBottomNavbar({
@@ -58,15 +62,18 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.go(menuRoute);
+        context.goNamed(menuRoute);
       case 1:
-        context.go(onTheWayRoute);
+        context.goNamed(onTheWayRoute);
       case 2:
-        context.push(scanBarcodeInnerRoute);
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => const _UniqueCodeActionBuilder(),
+        );
       case 3:
-        context.go(inventoryRoute);
+        context.goNamed(inventoryRoute);
       case 4:
-        context.go(settingRoute);
+        context.goNamed(settingRoute);
     }
   }
 
@@ -80,5 +87,37 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
     if (path.startsWith(settingRoute)) return 4;
 
     return 0;
+  }
+}
+
+class _UniqueCodeActionBuilder extends StatelessWidget {
+  const _UniqueCodeActionBuilder();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<InventoryCubit, InventoryState>(
+      buildWhen: (previous, current) => current is FetchLostGood,
+      listener: (context, state) {
+        if (state is FetchLostGoodLoaded) {
+          context.pushNamed(lostGoodRoute, extra: state.lostGood);
+        }
+
+        if (state is FetchLostGoodError) {
+          TopSnackbar.dangerSnackbar(message: state.message);
+        }
+      },
+      builder: (context, state) {
+        final onPressed = switch (state) {
+          FetchLostGoodLoading() => null,
+          _ => (String value) =>
+              context.read<InventoryCubit>().fetchLostGoods(uniqueCode: value)
+        };
+
+        return UniqueCodeActionBottomSheet(
+          onPressed: onPressed,
+          onScanned: onPressed,
+        );
+      },
+    );
   }
 }
