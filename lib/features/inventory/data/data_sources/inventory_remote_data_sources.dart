@@ -4,6 +4,7 @@ import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/entities/lost_good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
@@ -20,6 +21,7 @@ import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../models/batch_model.dart';
 import '../models/good_model.dart';
+import '../models/lost_good_model.dart';
 import '../models/picked_good_model.dart';
 import '../models/timeline_summary_model.dart';
 
@@ -53,6 +55,7 @@ abstract class InventoryRemoteDataSources {
       FetchPreviewReceiveShipmentsUseCaseParams params);
   Future<List<BatchEntity>> fetchReceiveShipments(
       FetchReceiveShipmentsUseCaseParams params);
+  Future<LostGoodEntity> fetchLostGood(String uniqueCode);
 }
 
 class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
@@ -234,6 +237,22 @@ class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
       final response = await dio.get('/inventory/total');
 
       return response.data['data']['total_units'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<LostGoodEntity> fetchLostGood(String uniqueCode) async {
+    try {
+      final response = await dio.get(
+        '/inventory/search',
+        queryParameters: {'code': uniqueCode},
+      );
+
+      return LostGoodModel.fromJson(response.data['data']).toEntity();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

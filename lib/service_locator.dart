@@ -39,6 +39,7 @@ import 'features/inventory/domain/use_cases/fetch_delivery_shipments_use_case.da
 import 'features/inventory/domain/use_cases/fetch_good_timeline_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_count_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_inventories_use_case.dart';
+import 'features/inventory/domain/use_cases/fetch_lost_good_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_prepare_shipments_use_case.dart';
@@ -140,6 +141,7 @@ void setupServiceLocator() {
     ..registerSingleton(FetchInventoriesUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchInventoriesCountUseCase(inventoryRepositories: getIt()))
+    ..registerSingleton(FetchLostGoodUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
@@ -166,6 +168,7 @@ void setupServiceLocator() {
         fetchGoodTimelineUseCase: getIt(),
         fetchInventoriesUseCase: getIt(),
         fetchInventoriesCountUseCase: getIt(),
+        fetchLostGoodUseCase: getIt(),
         fetchOnTheWayShipmentsUseCase: getIt(),
         fetchPickedUpGoodsUseCase: getIt(),
         fetchPrepareShipmentsUseCase: getIt(),

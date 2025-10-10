@@ -3,6 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/failure/failure.dart';
 import '../entities/batch_entity.dart';
 import '../entities/good_entity.dart';
+import '../entities/lost_good_entity.dart';
 import '../entities/picked_good_entity.dart';
 import '../entities/timeline_summary_entity.dart';
 import '../use_cases/create_delivery_shipments_use_case.dart';
@@ -35,6 +36,7 @@ abstract class InventoryRepositories {
   Future<Either<Failure, List<BatchEntity>>> fetchInventories(
       FetchInventoriesUseCaseParams params);
   Future<Either<Failure, int>> fetchInventoriesCount();
+  Future<Either<Failure, LostGoodEntity>> fetchLostGood(String uniqueCode);
   Future<Either<Failure, List<BatchEntity>>> fetchOnTheWayShipments(
       FetchOnTheWayShipmentsUseCaseParams params);
   Future<Either<Failure, List<PickedGoodEntity>>> fetchPickedUpGoods(

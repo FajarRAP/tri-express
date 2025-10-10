@@ -10,10 +10,12 @@ import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
 import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
 import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
+import 'package:tri_express/features/inventory/data/models/lost_good_model.dart';
 import 'package:tri_express/features/inventory/data/models/picked_good_model.dart';
 import 'package:tri_express/features/inventory/data/models/timeline_summary_model.dart';
 import 'package:tri_express/features/inventory/domain/entities/batch_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/good_entity.dart';
+import 'package:tri_express/features/inventory/domain/entities/lost_good_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/picked_good_entity.dart';
 import 'package:tri_express/features/inventory/domain/entities/timeline_summary_entity.dart';
 import 'package:tri_express/features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
@@ -866,6 +868,68 @@ void main() {
 
       // act
       final result = dataSource.fetchGoodTimeline(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<InternalException>()));
+    });
+  });
+
+  group('fetch lost good remote data sources test', () {
+    const params = '707';
+
+    test('should return LostGoodEntity when request status code is 200',
+        () async {
+      // arrange
+      final jsonString = fixtureReader('data_sources/get_lost_good.json');
+      final json = jsonDecode(jsonString);
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: json,
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      final result = await dataSource.fetchLostGood(params);
+
+      // assert
+      expect(result, isA<LostGoodEntity>());
+      expect(result, isNot(isA<LostGoodModel>()));
+    });
+
+    test('should throw ServerException when request status code is not 200',
+        () async {
+      // arrange
+      when(() => mockDio.get(any(),
+          queryParameters: any(named: 'queryParameters'))).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(),
+          response: Response(
+            requestOptions: RequestOptions(),
+            data: {'message': 'Unauthorized'},
+            statusCode: 401,
+          ),
+        ),
+      );
+
+      // act
+      final result = dataSource.fetchLostGood(params);
+
+      // assert
+      await expectLater(result, throwsA(isA<ServerException>()));
+    });
+
+    test('should throw InternalException when an unexpected error occurs',
+        () async {
+      // arrange
+      when(() => mockDio.get(any(),
+              queryParameters: any(named: 'queryParameters')))
+          .thenThrow(Exception('Unexpected error happen'));
+
+      // act
+      final result = dataSource.fetchLostGood(params);
 
       // assert
       await expectLater(result, throwsA(isA<InternalException>()));

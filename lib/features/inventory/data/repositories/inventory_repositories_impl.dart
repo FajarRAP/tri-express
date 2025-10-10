@@ -5,6 +5,7 @@ import '../../../../core/exceptions/server_exception.dart';
 import '../../../../core/failure/failure.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
+import '../../domain/entities/lost_good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/repositories/inventory_repositories.dart';
@@ -22,8 +23,8 @@ import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../data_sources/inventory_remote_data_sources.dart';
 
-class InventoryRepositoriesImpl extends InventoryRepositories {
-  InventoryRepositoriesImpl({required this.inventoryRemoteDataSources});
+class InventoryRepositoriesImpl implements InventoryRepositories {
+  const InventoryRepositoriesImpl({required this.inventoryRemoteDataSources});
 
   final InventoryRemoteDataSources inventoryRemoteDataSources;
 
@@ -198,6 +199,26 @@ class InventoryRepositoriesImpl extends InventoryRepositories {
   Future<Either<Failure, int>> fetchInventoriesCount() async {
     try {
       final result = await inventoryRemoteDataSources.fetchInventoriesCount();
+
+      return Right(result);
+    } on ServerException catch (se) {
+      return Left(ServerFailure(
+        message: se.message,
+        statusCode: se.statusCode,
+      ));
+    } on InternalException catch (ie) {
+      return Left(Failure(
+        message: ie.message,
+        statusCode: ie.statusCode,
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LostGoodEntity>> fetchLostGood(
+      String uniqueCode) async {
+    try {
+      final result = await inventoryRemoteDataSources.fetchLostGood(uniqueCode);
 
       return Right(result);
     } on ServerException catch (se) {

@@ -59,6 +59,8 @@ class UHFAction extends InventoryState {}
 
 class FetchPickedGoods extends InventoryState {}
 
+class FetchLostGood extends InventoryState {}
+
 class ListPaginateLoading extends ListPaginate {}
 
 class ListPaginateLoaded extends ListPaginate {}
@@ -406,6 +408,26 @@ class FetchGoodTimelineLoaded extends FetchGoodTimeline {
 
 class FetchGoodTimelineError extends FetchGoodTimeline {
   FetchGoodTimelineError({required this.message});
+
+  final String message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class FetchLostGoodLoading extends FetchLostGood {}
+
+class FetchLostGoodLoaded extends FetchLostGood {
+  FetchLostGoodLoaded({required this.lostGood});
+
+  final LostGoodEntity lostGood;
+
+  @override
+  List<Object?> get props => [lostGood];
+}
+
+class FetchLostGoodError extends FetchLostGood {
+  FetchLostGoodError({required this.message});
 
   final String message;
 
