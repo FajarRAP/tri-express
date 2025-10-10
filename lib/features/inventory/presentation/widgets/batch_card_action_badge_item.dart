@@ -115,7 +115,7 @@ class BatchCardActionBadgeItem extends StatelessWidget {
                 ),
                 const Spacer(),
                 Icon(
-                  Icons.keyboard_arrow_down,
+                  Icons.keyboard_arrow_right,
                   color: Colors.grey.shade600,
                 ),
               ],
