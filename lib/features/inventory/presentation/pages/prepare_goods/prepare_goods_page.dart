@@ -7,13 +7,13 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/batch_card_action_badge_item.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class PrepareGoodsPage extends StatelessWidget {
   const PrepareGoodsPage({super.key});
@@ -26,14 +26,11 @@ class PrepareGoodsPage extends StatelessWidget {
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchPrepareShipmentsPaginate(search: search);
-          }
-
-          return false;
-        },
+        onNotification: (scrollState) => paginateWhenScrollEnd(
+          scrollState,
+          paginate: () =>
+              inventoryCubit.fetchPrepareShipmentsPaginate(search: search),
+        ),
         child: RefreshIndicator(
           onRefresh: inventoryCubit.fetchPrepareShipments,
           child: CustomScrollView(
@@ -140,20 +137,8 @@ class PrepareGoodsPage extends StatelessWidget {
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) =>
                             BatchCardActionBadgeItem(
-                          onTap: () => showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) => context.pushNamed(
-                                prepareGoodsDetailRoute,
-                                extra: {
-                                  'batch': state.batches[index],
-                                  'good': selectedGood.first,
-                                },
-                              ),
-                              batch: state.batches[index],
-                            ),
-                          ),
+                          onTap: () => context.pushNamed(receiptNumbersRoute,
+                              extra: state.batches[index]),
                           onDelete: () => showModalBottomSheet(
                             context: context,
                             builder: (context) =>

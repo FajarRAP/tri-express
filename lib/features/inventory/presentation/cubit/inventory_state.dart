@@ -14,6 +14,12 @@ abstract interface class BatchSearchableState extends InventoryState {
   BatchSearchableState copyWithBatches({required List<BatchEntity> batches});
 }
 
+abstract interface class GoodSearchableState extends InventoryState {
+  List<GoodEntity> get goods;
+
+  GoodSearchableState copyWithGoods({required List<GoodEntity> goods});
+}
+
 abstract interface class ReceiptNumberSearchableState extends InventoryState {
   List<GoodEntity> get goods;
 
@@ -185,13 +191,50 @@ class FetchReceiveShipmentsError extends FetchReceiveShipments {
 
 class FetchPrepareShipmentsLoading extends FetchPrepareShipments {}
 
-class FetchPrepareShipmentsLoaded extends FetchPrepareShipments {
-  FetchPrepareShipmentsLoaded({required this.batches});
+class FetchPrepareShipmentsLoaded extends FetchPrepareShipments
+    implements ReceiptNumberSearchableState, ListPaginationState {
+  FetchPrepareShipmentsLoaded({
+    required this.batches,
+    this.goods = const [],
+    required this.currentPage,
+    required this.isLastPage,
+  });
 
   final List<BatchEntity> batches;
+  @override
+  final List<GoodEntity> goods;
+  @override
+  final int currentPage;
+  @override
+  final bool isLastPage;
+
+  FetchPrepareShipmentsLoaded copyWith({
+    List<BatchEntity>? batches,
+    List<GoodEntity>? goods,
+    int? currentPage,
+    bool? isLastPage,
+  }) {
+    return FetchPrepareShipmentsLoaded(
+      batches: batches ?? this.batches,
+      goods: goods ?? this.goods,
+      currentPage: currentPage ?? this.currentPage,
+      isLastPage: isLastPage ?? this.isLastPage,
+    );
+  }
 
   @override
-  List<Object?> get props => [batches];
+  List<Object?> get props => [batches, goods, currentPage, isLastPage];
+
+  @override
+  ListPaginationState copyWithPage({int? currentPage, bool? isLastPage}) {
+    return copyWith(currentPage: currentPage, isLastPage: isLastPage);
+  }
+
+  @override
+  ReceiptNumberSearchableState copyWithGoods(
+      {required List<GoodEntity> goods}) {
+    return copyWith(goods: goods);
+  }
 }
 
 class FetchPrepareShipmentsError extends FetchPrepareShipments {
@@ -317,13 +360,34 @@ class FetchPreviewBatchesShipmentsError extends FetchPreviewBatchesShipments {
 
 class FetchPreviewGoodsShipmentsLoading extends FetchPreviewGoodsShipments {}
 
-class FetchPreviewGoodsShipmentsLoaded extends FetchPreviewGoodsShipments {
-  FetchPreviewGoodsShipmentsLoaded({required this.goods});
+class FetchPreviewGoodsShipmentsLoaded extends FetchPreviewGoodsShipments
+    implements GoodSearchableState {
+  FetchPreviewGoodsShipmentsLoaded({
+    required this.allGoods,
+    required this.goods,
+  });
 
+  final List<GoodEntity> allGoods;
+  @override
   final List<GoodEntity> goods;
 
+  FetchPreviewGoodsShipmentsLoaded copyWith({
+    List<GoodEntity>? allGoods,
+    List<GoodEntity>? goods,
+  }) {
+    return FetchPreviewGoodsShipmentsLoaded(
+      allGoods: allGoods ?? this.allGoods,
+      goods: goods ?? this.goods,
+    );
+  }
+
   @override
-  List<Object?> get props => [goods];
+  List<Object?> get props => [allGoods, goods];
+
+  @override
+  GoodSearchableState copyWithGoods({required List<GoodEntity> goods}) {
+    return copyWith(goods: goods);
+  }
 }
 
 class FetchPreviewGoodsShipmentsError extends FetchPreviewGoodsShipments {

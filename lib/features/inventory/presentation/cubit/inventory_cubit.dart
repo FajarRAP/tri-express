@@ -103,9 +103,7 @@ class InventoryCubit extends Cubit<InventoryState> {
   final _deliveryBatches = <BatchEntity>[];
   final _inventories = <BatchEntity>[];
   final _onTheWayBatches = <BatchEntity>[];
-  final _prepareBatches = <BatchEntity>[];
   final _pickedGoods = <PickedGoodEntity>[];
-
   final previewGoods = <GoodEntity>[];
 
   Future<void> createDeliveryShipments({
@@ -394,7 +392,7 @@ class InventoryCubit extends Cubit<InventoryState> {
     emit(FetchPrepareShipmentsLoading());
 
     final params = FetchPrepareShipmentsUseCaseParams(
-      page: _currentPage = 1,
+      page: 1,
       search: search,
     );
     final result = await _fetchPrepareShipmentsUseCase(params);
@@ -402,27 +400,29 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) => emit(FetchPrepareShipmentsError(message: failure.message)),
       (batches) => emit(FetchPrepareShipmentsLoaded(
-          batches: _prepareBatches
-            ..clear()
-            ..addAll(batches))),
+          currentPage: 1, isLastPage: batches.isEmpty, batches: batches)),
     );
   }
 
   Future<void> fetchPrepareShipmentsPaginate({String? search}) async {
-    emit(ListPaginateLoading());
+    final currentState = state;
+    if (currentState is! FetchPrepareShipmentsLoaded) return;
+    if (currentState.isLastPage) return;
 
     final params = FetchPrepareShipmentsUseCaseParams(
-      page: ++_currentPage,
+      page: currentState.currentPage + 1,
       search: search,
     );
     final result = await _fetchPrepareShipmentsUseCase(params);
 
     result.fold(
-      (failure) => emit(ListPaginateError(message: failure.message)),
+      (failure) => emit(FetchPrepareShipmentsError(message: failure.message)),
       (batches) => batches.isEmpty
-          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(FetchPrepareShipmentsLoaded(
-              batches: _prepareBatches..addAll(batches))),
+          ? emit(currentState.copyWithPage(isLastPage: true))
+          : emit(currentState.copyWith(
+              batches: [...currentState.batches, ...batches],
+              currentPage: currentState.currentPage + 1,
+              isLastPage: false)),
     );
   }
 
@@ -458,10 +458,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewGoodsShipmentsError(message: failure.message)),
-      (goods) => emit(FetchPreviewGoodsShipmentsLoaded(
-          goods: previewGoods
-            ..clear()
-            ..addAll(goods))),
+      (goods) =>
+          emit(FetchPreviewGoodsShipmentsLoaded(allGoods: goods, goods: goods)),
     );
   }
 
@@ -475,10 +473,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) =>
           emit(FetchPreviewGoodsShipmentsError(message: failure.message)),
-      (goods) => emit(FetchPreviewGoodsShipmentsLoaded(
-          goods: previewGoods
-            ..clear()
-            ..addAll(goods))),
+      (goods) =>
+          emit(FetchPreviewGoodsShipmentsLoaded(allGoods: goods, goods: goods)),
     );
   }
 
@@ -566,6 +562,28 @@ class InventoryCubit extends Cubit<InventoryState> {
     emit(currentState.copyWith(batches: filteredBatches));
   }
 
+  void searchGoods(String keyword) {
+    final currentState = state;
+    if (currentState is! FetchPreviewGoodsShipmentsLoaded) return;
+
+    final filteredGoods = <GoodEntity>[];
+    if (keyword.isEmpty) {
+      filteredGoods.addAll(currentState.allGoods);
+    } else {
+      final lowerKeyword = keyword.toLowerCase();
+      final results = currentState.allGoods.where((good) {
+        final nameMatch = good.name.toLowerCase().contains(lowerKeyword);
+        final receiptNumberMatch =
+            good.receiptNumber.toLowerCase().contains(lowerKeyword);
+
+        return receiptNumberMatch || nameMatch;
+      }).toList();
+      filteredGoods.addAll(results);
+    }
+
+    emit(currentState.copyWithGoods(goods: filteredGoods));
+  }
+
   void searchReceiptNumbers(BatchEntity selectedBatch, [String keyword = '']) {
     final currentState = state;
     if (currentState is! ReceiptNumberSearchableState) return;
@@ -589,4 +607,11 @@ class InventoryCubit extends Cubit<InventoryState> {
   void qrCodeScan() => emit(QRCodeScan());
   void resetUHFScan() => emit(ResetUHFScan());
   void resetState() => emit(InventoryInitial());
+  void clearPreviewedData() => switch (state) {
+        final FetchPreviewBatchesShipmentsLoaded s =>
+          emit(s.copyWithBatches(batches: [])),
+        final FetchPreviewGoodsShipmentsLoaded s =>
+          emit(s.copyWithGoods(goods: [])),
+        _ => null
+      };
 }

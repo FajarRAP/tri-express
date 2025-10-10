@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
@@ -11,12 +10,14 @@ import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
+import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
-import '../../../../../core/widgets/triple_floating_action_buttons.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
+import '../../../domain/entities/good_entity.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/good_card_checkbox.dart';
 import '../../widgets/scanned_item_card.dart';
+import '../../widgets/unique_code_action_bottom_sheet.dart';
 import '../../widgets/unique_codes_bottom_sheet.dart';
 
 class PrepareGoodsScanPage extends StatefulWidget {
@@ -105,9 +106,10 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                     const SizedBox(height: 24),
                     Row(
                       children: <Widget>[
-                        const Expanded(
+                        Expanded(
                           child: TextField(
-                            decoration: InputDecoration(
+                            onChanged: _inventoryCubit.searchGoods,
+                            decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
                             ),
@@ -115,13 +117,20 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () async {
-                            final result = await context
-                                .push<Barcode>(scanBarcodeInnerRoute);
-                            if (result == null) return;
-
-                            onQRScan('${result.displayValue}');
-                          },
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) => UniqueCodeActionBottomSheet(
+                              onResult: (value) {
+                                if (uhfResults.any((e) => e.epcId == value)) {
+                                  return TopSnackbar.dangerSnackbar(
+                                      message: 'Kode sudah discan');
+                                }
+                                onQRScan(value);
+                                TopSnackbar.successSnackbar(
+                                    message: 'Berhasil ditambahkan');
+                              },
+                            ),
+                          ),
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
                       ],
@@ -147,76 +156,104 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: CheckboxListTile.adaptive(
-                onChanged: (value) {
-                  if (value == null) return;
+        child: BlocConsumer<InventoryCubit, InventoryState>(
+          buildWhen: (previous, current) =>
+              current is FetchPreviewGoodsShipmentsLoaded ||
+              current is QRCodeScan,
+          listener: (context, state) {
+            if (state is FetchPreviewGoodsShipmentsError) {
+              TopSnackbar.dangerSnackbar(message: state.message);
+            }
+          },
+          builder: (context, state) {
+            final allGoods = state is FetchPreviewGoodsShipmentsLoaded
+                ? state.allGoods
+                : <GoodEntity>[];
+            final goods = state is FetchPreviewGoodsShipmentsLoaded
+                ? state.goods
+                : <GoodEntity>[];
 
-                  setState(() {
-                    if (value) {
-                      for (final good in _inventoryCubit.previewGoods) {
-                        _selectedCodes[good.id] = good.uniqueCodes.toSet();
-                      }
-                    } else {
+            return Row(
+              children: <Widget>[
+                if (goods.isNotEmpty && state is! QRCodeScan)
+                  Expanded(
+                    child: CheckboxListTile.adaptive(
+                      onChanged: (value) {
+                        if (value == null) return;
+
+                        setState(() {
+                          if (value) {
+                            for (final good in allGoods) {
+                              _selectedCodes[good.id] =
+                                  good.uniqueCodes.toSet();
+                            }
+                          } else {
+                            _selectedCodes.clear();
+                          }
+                        });
+                      },
+                      title: Text(
+                        'Semua',
+                        style: label[medium].copyWith(color: primary),
+                      ),
+                      value: allGoods.every((good) =>
+                              (_selectedCodes[good.id]?.length ?? 0) ==
+                              good.uniqueCodes.length) &&
+                          allGoods.isNotEmpty,
+                      side: const BorderSide(color: primary),
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                  ),
+                Expanded(
+                  child: FloatingActionButtonBar(
+                    onReset: () {
                       _selectedCodes.clear();
-                    }
-                  });
-                },
-                title: Text(
-                  'Semua',
-                  style: label[medium].copyWith(color: primary),
-                ),
-                value: _inventoryCubit.previewGoods.every((good) =>
-                        (_selectedCodes[good.id]?.length ?? 0) ==
-                        good.uniqueCodes.length) &&
-                    _inventoryCubit.previewGoods.isNotEmpty,
-                side: const BorderSide(color: primary),
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-            ),
-            Expanded(
-              child: TripleFloatingActionButtons(
-                onReset: onReset,
-                onScan: onScan,
-                onSave: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) =>
-                      BlocConsumer<InventoryCubit, InventoryState>(
-                    listener: (context, state) {
-                      if (state is CreateShipmentsLoaded) {
-                        TopSnackbar.successSnackbar(message: state.message);
-                        context.goNamed(prepareGoodsRoute);
-                      }
-
-                      if (state is CreateShipmentsError) {
-                        TopSnackbar.dangerSnackbar(message: state.message);
-                      }
+                      _inventoryCubit.clearPreviewedData();
+                      onReset();
                     },
-                    builder: (context, state) {
-                      final onPressed = switch (state) {
-                        CreateShipmentsLoading() => null,
-                        _ => () => _inventoryCubit.createPrepareShipments(
-                            shippedAt: widget.shippedAt,
-                            estimatedAt: widget.estimatedAt,
-                            nextWarehouse: widget.nextWarehouse,
-                            transportMode: widget.transportMode,
-                            batchName: widget.batchName,
-                            selectedCodes: _selectedCodes),
-                      };
+                    onScan: onScan,
+                    onSave: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) =>
+                          BlocConsumer<InventoryCubit, InventoryState>(
+                        listener: (context, state) {
+                          if (state is CreateShipmentsLoaded) {
+                            TopSnackbar.successSnackbar(message: state.message);
+                            context.goNamed(prepareGoodsRoute);
+                          }
 
-                      return ActionConfirmationBottomSheet(
-                        onPressed: onPressed,
-                        message: 'Apakah anda yakin akan menyimpan barang ini?',
-                      );
-                    },
+                          if (state is CreateShipmentsError) {
+                            TopSnackbar.dangerSnackbar(message: state.message);
+                          }
+                        },
+                        builder: (context, state) {
+                          final onPressed = switch (state) {
+                            CreateShipmentsLoading() => null,
+                            _ => () => _inventoryCubit.createPrepareShipments(
+                                shippedAt: widget.shippedAt,
+                                estimatedAt: widget.estimatedAt,
+                                nextWarehouse: widget.nextWarehouse,
+                                transportMode: widget.transportMode,
+                                batchName: widget.batchName,
+                                selectedCodes: _selectedCodes),
+                          };
+
+                          return ActionConfirmationBottomSheet(
+                            onPressed: onPressed,
+                            message:
+                                'Apakah anda yakin akan menyimpan barang ini?',
+                          );
+                        },
+                      ),
+                    ),
+                    onSync: () => _inventoryCubit.fetchPreviewPrepareShipments(
+                        uhfresults: uhfResults),
+                    isScanning: isInventoryRunning,
                   ),
                 ),
-                isScanning: isInventoryRunning,
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -251,6 +288,19 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
         }
 
         if (state is FetchPreviewGoodsShipmentsLoaded) {
+          if (state.goods.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Text(
+                  'Barang tidak ditemukan, silahkan cek nama barang atau nomor resi',
+                  style: label[medium].copyWith(color: primaryGradientEnd),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.separated(
@@ -294,10 +344,8 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
-              itemBuilder: (context, index) => ScannedItemCard(
-                number: index + 1,
-                item: uhfResults[index],
-              ),
+              itemBuilder: (context, index) =>
+                  ScannedItemCard(item: uhfResults[index]),
               itemCount: uhfResults.length,
             ),
           );
