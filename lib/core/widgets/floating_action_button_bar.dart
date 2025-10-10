@@ -20,8 +20,8 @@ class FloatingActionButtonBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
       spacing: 10,
       children: <Widget>[
         FloatingActionButton.small(
