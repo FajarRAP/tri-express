@@ -5,9 +5,6 @@ import '../../../../../../core/fonts/fonts.dart';
 import '../../../../../../core/themes/colors.dart';
 import '../../../../../../core/utils/helpers.dart';
 import '../../../../../../core/widgets/base_card.dart';
-import '../../../../../core/widgets/badges/secondary_badge.dart';
-import '../../../../../core/widgets/badges/success_badge.dart';
-import '../../../../../core/widgets/badges/warning_badge.dart';
 import '../../../domain/entities/batch_entity.dart';
 import '../../../domain/entities/good_entity.dart';
 import '../../cubit/inventory_cubit.dart';
@@ -81,7 +78,7 @@ class Tari extends StatelessWidget {
                           ),
                           const SizedBox(width: 24),
                           Expanded(
-                            child: _determineBadge(
+                            child: determineBadge(
                               good.status ?? batch.status,
                               good.statusLabel ?? batch.statusLabel,
                             ),
@@ -319,7 +316,7 @@ class _Gemini extends StatelessWidget {
               ),
               const SizedBox(width: 24),
               Expanded(
-                child: _determineBadge(
+                child: determineBadge(
                   good.status ?? batch.status,
                   good.statusLabel ?? batch.statusLabel,
                 ),
@@ -531,7 +528,7 @@ class _Claude extends StatelessWidget {
                 ),
                 const SizedBox(width: 24),
                 Expanded(
-                  child: _determineBadge(
+                  child: determineBadge(
                     good.status ?? batch.status,
                     good.statusLabel ?? batch.statusLabel,
                   ),
@@ -909,19 +906,4 @@ class _Claude extends StatelessWidget {
   }
 }
 
-Widget _determineBadge(int status, String label) {
-  switch (status) {
-    case 0:
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-      return SuccessBadge(label: label);
-    case 4:
-    case 6:
-    case 8:
-      return WarningBadge(label: label);
-    default:
-      return SecondaryBadge(label: label);
-  }
-}
+
