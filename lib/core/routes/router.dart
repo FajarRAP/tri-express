@@ -12,9 +12,11 @@ import '../../features/core/presentation/pages/onboarding_page.dart';
 import '../../features/core/presentation/pages/splash_page.dart';
 import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
+import '../../features/inventory/domain/entities/lost_good_entity.dart';
 import '../../features/inventory/domain/entities/picked_good_entity.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_page.dart';
+import '../../features/inventory/presentation/pages/lost_good_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
@@ -41,41 +43,39 @@ import '../widgets/scaffold_with_bottom_navbar.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-const onboardingRoute = '/onboarding';
-const loginRoute = '/login';
+const onboardingRoute = 'onboarding';
+const loginRoute = 'login';
 
-const menuRoute = '/menu';
+const menuRoute = 'menu';
 const receiveGoodsRoute = 'receive-goods';
-const receiveGoodsFilterRoute = '$receiveGoodsRoute-filter';
-const receiveGoodsScanRoute = '$receiveGoodsRoute/scan';
-const receiveGoodsDetailRoute = '$receiveGoodsRoute/detail';
-const prepareGoodsRoute = '/prepare-goods';
-const prepareGoodsFilterRoute = '$prepareGoodsRoute/filter';
-const prepareGoodsScanRoute = '$prepareGoodsRoute/scan';
-const prepareGoodsDetailRoute = '$prepareGoodsRoute/detail';
-const sendGoodsRoute = '/send-goods';
-const sendGoodsFilterRoute = '$sendGoodsRoute/filter';
-const sendGoodsScanRoute = '$sendGoodsRoute/scan';
-const sendGoodsDetailRoute = '$sendGoodsRoute/detail';
-const pickUpGoodsRoute = '/pick-up-goods';
-const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute/confirmation';
-const pickUpGoodsScanRoute = '$pickUpGoodsRoute/scan';
-const pickUpGoodsDetailRoute = '$pickUpGoodsRoute/detail';
+const receiveGoodsFilterRoute = '$receiveGoodsRoute.filter';
+const receiveGoodsScanRoute = '$receiveGoodsRoute.scan';
+const receiveGoodsDetailRoute = '$receiveGoodsRoute.detail';
+const prepareGoodsRoute = 'prepare-goods';
+const prepareGoodsFilterRoute = '$prepareGoodsRoute.filter';
+const prepareGoodsScanRoute = '$prepareGoodsRoute.scan';
+const prepareGoodsDetailRoute = '$prepareGoodsRoute.detail';
+const sendGoodsRoute = 'send-goods';
+const sendGoodsFilterRoute = '$sendGoodsRoute.filter';
+const sendGoodsScanRoute = '$sendGoodsRoute.scan';
+const sendGoodsDetailRoute = '$sendGoodsRoute.detail';
+const pickUpGoodsRoute = 'pick-up-goods';
+const pickUpGoodsConfirmationRoute = '$pickUpGoodsRoute.confirmation';
+const pickUpGoodsScanRoute = '$pickUpGoodsRoute.scan';
+const pickUpGoodsDetailRoute = '$pickUpGoodsRoute.detail';
+const receiptNumbersRoute = 'receipt-numbers';
 
-const onTheWayRoute = '/on-the-way';
-const onTheWayDetailRoute = '/on-the-way-detail';
+const onTheWayRoute = 'on-the-way';
+const onTheWayDetailRoute = 'on-the-way.detail';
 
-const inventoryRoute = '/inventory';
-const inventoryDetailRoute = '/inventory-detail';
+const scanBarcodeInnerRoute = 'scan-barcode-inner';
+const lostGoodRoute = 'lost-good';
 
-const settingRoute = '/setting';
+const inventoryRoute = 'inventory';
+const inventoryDetailRoute = 'inventory.detail';
 
-const notificationRoute = '/notification';
-
-const scanBarcodeRoute = '/scan-barcode';
-const scanBarcodeInnerRoute = '/scan-barcode-inner';
-
-const receiptNumbersRoute = '/receipt-numbers';
+const settingRoute = 'setting';
+const notificationRoute = 'notification';
 
 class _GoRouterObserver extends NavigatorObserver {
   @override
@@ -393,6 +393,12 @@ final router = GoRouter(
       name: receiptNumbersRoute,
       builder: (context, state) =>
           ReceiptNumberPage(batch: state.extra as BatchEntity),
-    )
+    ),
+    GoRoute(
+      path: '/lost-good',
+      name: lostGoodRoute,
+      builder: (context, state) =>
+          LostGoodPage(lostGood: state.extra as LostGoodEntity),
+    ),
   ],
 );

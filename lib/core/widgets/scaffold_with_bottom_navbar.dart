@@ -82,7 +82,6 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
 
     if (path.startsWith(menuRoute)) return 0;
     if (path.startsWith(onTheWayRoute)) return 1;
-    if (path.startsWith(scanBarcodeRoute)) return 2;
     if (path.startsWith(inventoryRoute)) return 3;
     if (path.startsWith(settingRoute)) return 4;
 
