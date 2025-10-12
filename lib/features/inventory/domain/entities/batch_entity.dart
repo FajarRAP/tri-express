@@ -1,7 +1,9 @@
+import 'package:equatable/equatable.dart';
+
 import 'good_entity.dart';
 import 'warehouse_entity.dart';
 
-class BatchEntity {
+class BatchEntity extends Equatable {
   const BatchEntity({
     required this.id,
     required this.name,
@@ -22,6 +24,46 @@ class BatchEntity {
     required this.shippedAt,
   });
 
+  BatchEntity copyWith({
+    String? id,
+    String? name,
+    String? statusLabel,
+    String? transportMode,
+    String? trackingNumber,
+    int? status,
+    int? receivedUnits,
+    int? preparedUnits,
+    int? deliveredUnits,
+    int? totalAllUnits,
+    List<GoodEntity>? goods,
+    WarehouseEntity? origin,
+    WarehouseEntity? destination,
+    DateTime? deliveredAt,
+    DateTime? estimateAt,
+    DateTime? receivedAt,
+    DateTime? shippedAt,
+  }) {
+    return BatchEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      statusLabel: statusLabel ?? this.statusLabel,
+      transportMode: transportMode ?? this.transportMode,
+      trackingNumber: trackingNumber ?? this.trackingNumber,
+      status: status ?? this.status,
+      receivedUnits: receivedUnits ?? this.receivedUnits,
+      preparedUnits: preparedUnits ?? this.preparedUnits,
+      deliveredUnits: deliveredUnits ?? this.deliveredUnits,
+      totalAllUnits: totalAllUnits ?? this.totalAllUnits,
+      goods: goods ?? this.goods,
+      origin: origin ?? this.origin,
+      destination: destination ?? this.destination,
+      deliveredAt: deliveredAt ?? this.deliveredAt,
+      estimateAt: estimateAt ?? this.estimateAt,
+      receivedAt: receivedAt ?? this.receivedAt,
+      shippedAt: shippedAt ?? this.shippedAt,
+    );
+  }
+
   final String id;
   final String name;
   final String statusLabel;
@@ -39,4 +81,25 @@ class BatchEntity {
   final DateTime estimateAt;
   final DateTime? receivedAt;
   final DateTime shippedAt;
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        statusLabel,
+        transportMode,
+        trackingNumber,
+        status,
+        receivedUnits,
+        preparedUnits,
+        deliveredUnits,
+        totalAllUnits,
+        goods,
+        origin,
+        destination,
+        deliveredAt,
+        estimateAt,
+        receivedAt,
+        shippedAt,
+      ];
 }
