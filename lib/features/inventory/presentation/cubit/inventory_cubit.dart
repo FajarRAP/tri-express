@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
-import '../../../core/domain/entities/dropdown_entity.dart';
 import '../../../core/domain/entities/uhf_result_entity.dart';
 import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
@@ -11,64 +10,43 @@ import '../../domain/entities/lost_good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
-import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
-import '../../domain/use_cases/delete_prepared_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_good_timeline_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
 import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_lost_good_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
-import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_pick_up_goods_use_case.dart';
-import '../../domain/use_cases/fetch_preview_prepare_shipments_use_case.dart';
 
 part 'inventory_state.dart';
 
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
     required CreatePickedUpGoodsUseCase createPickedUpGoodsUseCase,
-    required CreatePrepareShipmentsUseCase createPrepareShipmentsUseCase,
-    required DeletePreparedShipmentsUseCase deletePreparedShipmentsUseCase,
     required FetchGoodTimelineUseCase fetchGoodTimelineUseCase,
     required FetchInventoriesUseCase fetchInventoriesUseCase,
     required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
     required FetchLostGoodUseCase fetchLostGoodUseCase,
     required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
-    required FetchPreviewPrepareShipmentsUseCase
-        fetchPreviewPrepareShipmentsUseCase,
-    required FetchPrepareShipmentsUseCase fetchPrepareShipmentsUseCase,
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
     required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
   })  : _createPickedUpGoodsUseCase = createPickedUpGoodsUseCase,
-        _createPrepareShipmentsUseCase = createPrepareShipmentsUseCase,
-        _deletePreparedShipmentsUseCase = deletePreparedShipmentsUseCase,
         _fetchGoodTimelineUseCase = fetchGoodTimelineUseCase,
         _fetchInventoriesUseCase = fetchInventoriesUseCase,
         _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchLostGoodUseCase = fetchLostGoodUseCase,
         _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
-        _fetchPreviewPrepareShipmentsUseCase =
-            fetchPreviewPrepareShipmentsUseCase,
-        _fetchPrepareShipmentsUseCase = fetchPrepareShipmentsUseCase,
         _fetchPickedUpGoodsUseCase = fetchPickedUpGoodsUseCase,
         _fetchPreviewPickUpGoodsUseCase = fetchPreviewPickUpGoodsUseCase,
         super(InventoryInitial());
 
   final CreatePickedUpGoodsUseCase _createPickedUpGoodsUseCase;
-  final CreatePrepareShipmentsUseCase _createPrepareShipmentsUseCase;
-  final DeletePreparedShipmentsUseCase _deletePreparedShipmentsUseCase;
   final FetchGoodTimelineUseCase _fetchGoodTimelineUseCase;
   final FetchInventoriesUseCase _fetchInventoriesUseCase;
   final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
   final FetchLostGoodUseCase _fetchLostGoodUseCase;
   final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
-
-  final FetchPreviewPrepareShipmentsUseCase
-      _fetchPreviewPrepareShipmentsUseCase;
   final FetchPreviewPickUpGoodsUseCase _fetchPreviewPickUpGoodsUseCase;
-  final FetchPrepareShipmentsUseCase _fetchPrepareShipmentsUseCase;
-
   final FetchPickedUpGoodsUseCase _fetchPickedUpGoodsUseCase;
 
   var _currentPage = 1;
@@ -98,44 +76,6 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) => emit(CreateShipmentsError(message: failure.message)),
       (message) => emit(CreateShipmentsLoaded(message: message)),
-    );
-  }
-
-  Future<void> createPrepareShipments({
-    required DateTime shippedAt,
-    required DateTime estimatedAt,
-    required DropdownEntity nextWarehouse,
-    required DropdownEntity transportMode,
-    required String batchName,
-    required Map<String, Set<String>> selectedCodes,
-  }) async {
-    emit(CreateShipmentsLoading());
-
-    final uniqueCodes = selectedCodes.values.expand((codes) => codes).toList();
-    final params = CreatePrepareShipmentsUseCaseParams(
-      shippedAt: shippedAt,
-      estimatedAt: estimatedAt,
-      nextWarehouse: nextWarehouse,
-      transportMode: transportMode,
-      batchName: batchName,
-      uniqueCodes: uniqueCodes,
-    );
-    final result = await _createPrepareShipmentsUseCase(params);
-
-    result.fold(
-      (failure) => emit(CreateShipmentsError(message: failure.message)),
-      (message) => emit(CreateShipmentsLoaded(message: message)),
-    );
-  }
-
-  Future<void> deletePreparedShipments({required String shipmentId}) async {
-    emit(DeleteShipmentsLoading());
-
-    final result = await _deletePreparedShipmentsUseCase(shipmentId);
-
-    result.fold(
-      (failure) => emit(DeleteShipmentsError(message: failure.message)),
-      (message) => emit(DeleteShipmentsLoaded(message: message)),
     );
   }
 
@@ -280,65 +220,12 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchPrepareShipments({String? search}) async {
-    emit(FetchPrepareShipmentsLoading());
-
-    final params = FetchPrepareShipmentsUseCaseParams(
-      page: 1,
-      search: search,
-    );
-    final result = await _fetchPrepareShipmentsUseCase(params);
-
-    result.fold(
-      (failure) => emit(FetchPrepareShipmentsError(message: failure.message)),
-      (batches) => emit(FetchPrepareShipmentsLoaded(
-          currentPage: 1, isLastPage: batches.isEmpty, batches: batches)),
-    );
-  }
-
-  Future<void> fetchPrepareShipmentsPaginate({String? search}) async {
-    final currentState = state;
-    if (currentState is! FetchPrepareShipmentsLoaded) return;
-    if (currentState.isLastPage) return;
-
-    final params = FetchPrepareShipmentsUseCaseParams(
-      page: currentState.currentPage + 1,
-      search: search,
-    );
-    final result = await _fetchPrepareShipmentsUseCase(params);
-
-    result.fold(
-      (failure) => emit(FetchPrepareShipmentsError(message: failure.message)),
-      (batches) => batches.isEmpty
-          ? emit(currentState.copyWithPage(isLastPage: true))
-          : emit(currentState.copyWith(
-              batches: [...currentState.batches, ...batches],
-              currentPage: currentState.currentPage + 1,
-              isLastPage: false)),
-    );
-  }
-
   Future<void> fetchPreviewPickUpGoods(
       {required List<UHFResultEntity> uhfResults}) async {
     emit(FetchPreviewGoodsShipmentsLoading());
 
     final uniqueCodes = uhfResults.map((e) => e.epcId).toList();
     final result = await _fetchPreviewPickUpGoodsUseCase(uniqueCodes);
-
-    result.fold(
-      (failure) =>
-          emit(FetchPreviewGoodsShipmentsError(message: failure.message)),
-      (goods) =>
-          emit(FetchPreviewGoodsShipmentsLoaded(allGoods: goods, goods: goods)),
-    );
-  }
-
-  Future<void> fetchPreviewPrepareShipments(
-      {required List<UHFResultEntity> uhfresults}) async {
-    emit(FetchPreviewGoodsShipmentsLoading());
-
-    final uniqueCodes = uhfresults.map((e) => e.epcId).toList();
-    final result = await _fetchPreviewPrepareShipmentsUseCase(uniqueCodes);
 
     result.fold(
       (failure) =>

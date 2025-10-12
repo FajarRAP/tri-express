@@ -50,6 +50,7 @@ import 'features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_
 import 'features/inventory/domain/use_cases/fetch_receive_shipments_use_case.dart';
 import 'features/inventory/presentation/cubit/delivery_cubit.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'features/inventory/presentation/cubit/prepare_cubit.dart';
 import 'features/inventory/presentation/cubit/receive_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -162,25 +163,26 @@ void setupServiceLocator() {
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createPickedUpGoodsUseCase: getIt(),
-        createPrepareShipmentsUseCase: getIt(),
-        deletePreparedShipmentsUseCase: getIt(),
         fetchGoodTimelineUseCase: getIt(),
         fetchInventoriesUseCase: getIt(),
         fetchInventoriesCountUseCase: getIt(),
         fetchLostGoodUseCase: getIt(),
         fetchOnTheWayShipmentsUseCase: getIt(),
         fetchPickedUpGoodsUseCase: getIt(),
+        fetchPreviewPickUpGoodsUseCase: getIt()))
+    ..registerLazySingleton(() => ReceiveCubit(
+        createReceiveShipmentsUseCase: getIt(),
+        fetchReceiveShipmentsUseCase: getIt(),
+        fetchPreviewReceiveShipmentsUseCase: getIt()))
+    ..registerLazySingleton(() => PrepareCubit(
+        createPrepareShipmentsUseCase: getIt(),
+        deletePreparedShipmentsUseCase: getIt(),
         fetchPrepareShipmentsUseCase: getIt(),
-        fetchPreviewPickUpGoodsUseCase: getIt(),
         fetchPreviewPrepareShipmentsUseCase: getIt()))
     ..registerLazySingleton(() => DeliveryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         fetchDeliveryShipmentsUseCase: getIt(),
-        fetchPreviewDeliveryShipmentsUseCase: getIt()))
-    ..registerLazySingleton(() => ReceiveCubit(
-        createReceiveShipmentsUseCase: getIt(),
-        fetchReceiveShipmentsUseCase: getIt(),
-        fetchPreviewReceiveShipmentsUseCase: getIt()));
+        fetchPreviewDeliveryShipmentsUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors
