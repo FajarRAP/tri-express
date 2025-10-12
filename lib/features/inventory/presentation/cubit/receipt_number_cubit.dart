@@ -14,10 +14,10 @@ class ReceiptNumberCubit extends Cubit<ReceiptNumberState> {
     final filteredReceiptNumbers = <GoodEntity>[];
 
     if (keyword.isEmpty) {
-      filteredReceiptNumbers.addAll(state.batch.goods);
+      filteredReceiptNumbers.addAll(state._batch.goods);
     } else {
       final lowerKeyword = keyword.toLowerCase();
-      final results = state.batch.goods
+      final results = state._batch.goods
           .where((e) => e.receiptNumber.toLowerCase().contains(lowerKeyword))
           .toList();
       filteredReceiptNumbers.addAll(results);
