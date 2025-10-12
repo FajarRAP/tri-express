@@ -7,33 +7,32 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../../domain/entities/batch_entity.dart';
+import '../../cubit/delivery_cubit.dart';
 import '../../widgets/batch_card_item.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class SendGoodsPage extends StatelessWidget {
   const SendGoodsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final deliveryCubit = context.read<DeliveryCubit>();
     final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
     String? search;
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchDeliveryShipmentsPaginate(search: search);
-          }
-
-          return false;
-        },
+        onNotification: (scrollState) => paginateWhenScrollEnd(
+          scrollState,
+          paginate: () =>
+              deliveryCubit.fetchDeliveryShipmentsPaginate(search: search),
+        ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchDeliveryShipments,
+          onRefresh: deliveryCubit.fetchDeliveryShipments,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -51,7 +50,7 @@ class SendGoodsPage extends StatelessWidget {
                         Expanded(
                           child: TextField(
                             onChanged: (value) => debouncer.run(() =>
-                                inventoryCubit.fetchDeliveryShipments(
+                                deliveryCubit.fetchDeliveryShipments(
                                     search: search = value)),
                             decoration: const InputDecoration(
                               hintText: 'Cari batch pengiriman',
@@ -73,12 +72,11 @@ class SendGoodsPage extends StatelessWidget {
                 pinned: true,
                 title: const Text('Kirim Barang'),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchDeliveryShipments(),
-                buildWhen: (previous, current) =>
-                    current is FetchDeliveryShipments,
+              BlocBuilder<DeliveryCubit, ReusableState<List<BatchEntity>>>(
+                bloc: deliveryCubit..fetchDeliveryShipments(),
+                buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
-                  if (state is FetchDeliveryShipmentsLoading) {
+                  if (state is FetchShipmentsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -87,8 +85,8 @@ class SendGoodsPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchDeliveryShipmentsLoaded) {
-                    if (state.batches.isEmpty) {
+                  if (state is FetchShipmentsLoaded) {
+                    if (state.data.isEmpty) {
                       return SliverFillRemaining(
                         hasScrollBody: false,
                         child: Padding(
@@ -110,25 +108,18 @@ class SendGoodsPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => showModalBottomSheet(
-                            builder: (context) =>
-                                ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGoods) => context.pushNamed(
-                                sendGoodsDetailRoute,
-                                extra: {
-                                  'good': selectedGoods.first,
-                                  'batch': state.batches[index],
-                                },
-                              ),
-                              batch: state.batches[index],
-                            ),
-                            context: context,
+                          onTap: () => context.pushNamed(
+                            receiptNumbersRoute,
+                            extra: {
+                              'batch': state.data[index],
+                              'routeDetailName': sendGoodsDetailRoute,
+                            },
                           ),
-                          batch: state.batches[index],
+                          batch: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.batches.length,
+                        itemCount: state.data.length,
                       ),
                     );
                   }
