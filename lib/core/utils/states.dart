@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../features/inventory/domain/entities/batch_entity.dart';
+import '../../features/inventory/domain/entities/good_entity.dart';
 import '../failure/failure.dart';
 
 abstract class ReusableState<T> extends Equatable {
@@ -87,5 +88,15 @@ abstract interface class BatchSearchableState extends Equatable {
   BatchSearchableState copyWithFiltered({
     List<BatchEntity>? allBatches,
     required List<BatchEntity> filteredBatches,
+  });
+}
+
+abstract interface class GoodSearchableState extends Equatable {
+  List<GoodEntity> get allGoods;
+  List<GoodEntity> get filteredGoods;
+
+  GoodSearchableState copyWithFiltered({
+    List<GoodEntity>? allGoods,
+    required List<GoodEntity> filteredGoods,
   });
 }
