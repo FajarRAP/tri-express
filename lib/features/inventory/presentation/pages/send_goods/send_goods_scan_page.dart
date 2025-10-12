@@ -47,7 +47,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
   @override
   void initState() {
     super.initState();
-    _deliveryCubit = context.read<DeliveryCubit>();
+    _deliveryCubit = context.read<DeliveryCubit>()..clearBatches();
     _scannerCubit = context.read<ScannerCubit>();
     initUHFMethodHandler(platform);
   }
@@ -92,30 +92,68 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                     SizedBox(
                       width: double.infinity,
                       child: PrimaryGradientCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const Text(
-                              'Siap Kirim',
-                              style: const TextStyle(
-                                color: light,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            BlocBuilder<ScannerCubit, ScannerState>(
-                              builder: (context, state) {
-                                return Text(
-                                  '${state.uhfResults.length}',
-                                  style: const TextStyle(
-                                    color: light,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
+                        child: BlocBuilder<ScannerCubit, ScannerState>(
+                          builder: (context, scannerState) {
+                            if (scannerState.isFromQRScanner ||
+                                scannerState.isFromUHFReader) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    'Koli Berhasil Discan',
+                                    style: const TextStyle(
+                                      color: light,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
+                                  Text(
+                                    '${scannerState.uhfResults.length}',
+                                    style: const TextStyle(
+                                      color: light,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            return BlocBuilder<DeliveryCubit,
+                                ReusableState<List<BatchEntity>>>(
+                              buildWhen: (previous, current) =>
+                                  current is FetchPreviewShipments,
+                              builder: (context, state) {
+                                final count = switch (state) {
+                                  FetchPreviewShipmentsLoaded() =>
+                                    state.allBatches.length,
+                                  _ => 0,
+                                };
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Siap Kirim',
+                                      style: const TextStyle(
+                                        color: light,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$count',
+                                      style: const TextStyle(
+                                        color: light,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
                                 );
                               },
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -208,7 +246,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                       child: FloatingActionButtonBar(
                         onReset: () {
                           _selectedBatches.clear();
-                          _deliveryCubit.clearPreviewBatches();
+                          _deliveryCubit.clearBatches();
                           onReset();
                         },
                         onScan: onScan,
@@ -249,6 +287,12 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                           context: context,
                         ),
                         onSync: () {
+                          if (scannerState.uhfResults.isEmpty) {
+                            return TopSnackbar.dangerSnackbar(
+                              message: 'Belum ada barang yang discan',
+                            );
+                          }
+
                           _scannerCubit.updateInventoryStatus(false);
                           _deliveryCubit.fetchPreviewDeliveryShipments(
                             nextWarehouse: widget.nextWarehouse,
@@ -309,7 +353,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
             }
 
             if (state is FetchPreviewShipmentsLoaded) {
-              if (state.filteredData.isEmpty) {
+              if (state.filteredBatches.isEmpty) {
                 return SliverFillRemaining(
                   child: Center(
                     child: Text(
@@ -329,29 +373,30 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                       if (value == null) return;
 
                       setState(() => value
-                          ? _selectedBatches.add(state.filteredData[index])
-                          : _selectedBatches.remove(state.filteredData[index]));
+                          ? _selectedBatches.add(state.filteredBatches[index])
+                          : _selectedBatches
+                              .remove(state.filteredBatches[index]));
                     },
                     onTap: () => context.pushNamed(
                       receiptNumbersRoute,
                       extra: {
-                        'batch': state.filteredData[index],
+                        'batch': state.filteredBatches[index],
                         'routeDetailName': sendGoodsDetailRoute,
                       },
                     ),
                     isActive:
-                        _selectedBatches.contains(state.filteredData[index]),
-                    batch: state.filteredData[index],
-                    quantity: _renderQuantity(state.filteredData[index]),
+                        _selectedBatches.contains(state.filteredBatches[index]),
+                    batch: state.filteredBatches[index],
+                    quantity: _renderQuantity(state.filteredBatches[index]),
                   ),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 12),
-                  itemCount: state.filteredData.length,
+                  itemCount: state.filteredBatches.length,
                 ),
               );
             }
 
-            if (state is Error<List<BatchEntity>>) {
+            if (state is FetchPreviewShipmentsError) {
               return SliverFillRemaining(
                 child: Center(
                   child: Text(
