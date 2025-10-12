@@ -48,30 +48,45 @@ class FetchPreviewShipmentsLoading extends Loading<List<BatchEntity>>
     implements FetchPreviewShipments {}
 
 class FetchPreviewShipmentsLoaded extends Loaded<List<BatchEntity>>
-    implements FetchPreviewShipments {
+    implements FetchPreviewShipments, BatchSearchableState {
   const FetchPreviewShipmentsLoaded({
     required super.data,
-    required this.filteredData,
+    this.filteredBatches = const [],
   });
 
-  final List<BatchEntity> filteredData;
+  @override
+  List<BatchEntity> get allBatches => data;
+
+  @override
+  final List<BatchEntity> filteredBatches;
 
   @override
   FetchPreviewShipmentsLoaded copyWith({
     List<BatchEntity>? data,
-    List<BatchEntity>? filteredData,
+    List<BatchEntity>? filteredBatches,
     int? currentPage,
     bool? hasReachedMax,
     bool? isPaginating,
   }) {
     return FetchPreviewShipmentsLoaded(
       data: data ?? this.data,
-      filteredData: filteredData ?? this.filteredData,
+      filteredBatches: filteredBatches ?? this.filteredBatches,
     );
   }
 
   @override
-  List<Object> get props => [data, filteredData];
+  BatchSearchableState copyWithFiltered({
+    List<BatchEntity>? allBatches,
+    required List<BatchEntity> filteredBatches,
+  }) {
+    return copyWith(
+      data: allBatches ?? this.data,
+      filteredBatches: filteredBatches,
+    );
+  }
+
+  @override
+  List<Object> get props => [data, filteredBatches];
 }
 
 class FetchPreviewShipmentsError extends Error<List<BatchEntity>>

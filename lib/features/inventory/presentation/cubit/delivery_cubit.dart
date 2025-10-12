@@ -7,10 +7,12 @@ import '../../domain/entities/batch_entity.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_preview_delivery_shipments_use_case.dart';
+import 'mixins/preview_batch_mixin.dart';
 
 part 'delivery_state.dart';
 
-class DeliveryCubit extends Cubit<ReusableState<List<BatchEntity>>> {
+class DeliveryCubit extends Cubit<ReusableState<List<BatchEntity>>>
+    with PreviewBatchMixin {
   DeliveryCubit({
     required CreateDeliveryShipmentsUseCase createDeliveryShipmentsUseCase,
     required FetchDeliveryShipmentsUseCase fetchDeliveryShipmentsUseCase,
@@ -105,39 +107,7 @@ class DeliveryCubit extends Cubit<ReusableState<List<BatchEntity>>> {
     result.fold(
       (failure) => emit(FetchPreviewShipmentsError(failure)),
       (batches) => emit(
-          FetchPreviewShipmentsLoaded(data: batches, filteredData: batches)),
+          FetchPreviewShipmentsLoaded(data: batches, filteredBatches: batches)),
     );
-  }
-
-  void searchBatches(String keyword) {
-    final currentState = state;
-    if (currentState is! FetchPreviewShipmentsLoaded) return;
-
-    final filteredBatches = <BatchEntity>[];
-    if (keyword.isEmpty) {
-      filteredBatches.addAll(currentState.data);
-    } else {
-      final lowerKeyword = keyword.toLowerCase();
-      final results = currentState.data.where(
-        (batch) {
-          final batchNameMatch =
-              batch.name.toLowerCase().contains(lowerKeyword);
-          final trackingNumberMatch =
-              batch.trackingNumber.toLowerCase().contains(lowerKeyword);
-
-          return batchNameMatch || trackingNumberMatch;
-        },
-      ).toList();
-      filteredBatches.addAll(results);
-    }
-
-    emit(currentState.copyWith(filteredData: filteredBatches));
-  }
-
-  void clearPreviewBatches() {
-    final currentState = state;
-    if (currentState is! FetchPreviewShipmentsLoaded) return;
-
-    emit(currentState.copyWith(data: [], filteredData: []));
   }
 }
