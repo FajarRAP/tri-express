@@ -6,10 +6,13 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
-import '../../cubit/inventory_cubit.dart';
+// import '../../cubit/inventory_cubit.dart';
+import '../../cubit/shipment_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
@@ -19,20 +22,17 @@ class OnTheWayPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final inventoryCubit = context.read<InventoryCubit>();
+    final shipmentCubit = context.read<ShipmentCubit>();
+    // final inventoryCubit = context.read<InventoryCubit>();
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchOnTheWayShipmentsPaginate();
-          }
-
-          return false;
-        },
+        onNotification: (scrollState) => paginateWhenScrollEnd(
+          scrollState,
+          paginate: shipmentCubit.fetchOnTheWayShipmentsPaginate,
+        ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchOnTheWayShipments,
+          onRefresh: shipmentCubit.fetchOnTheWayShipments,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -61,21 +61,18 @@ class OnTheWayPage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                BlocBuilder<InventoryCubit, InventoryState>(
+                                BlocBuilder<ShipmentCubit, ReusableState>(
                                   buildWhen: (previous, current) =>
-                                      current is FetchOnTheWayShipments,
+                                      current is FetchShipments,
                                   builder: (context, state) {
-                                    if (state is FetchOnTheWayShipmentsLoaded) {
-                                      return Text(
-                                        '${state.batches.length}',
-                                        style: heading5[bold].copyWith(
-                                          color: light,
-                                        ),
-                                      );
-                                    }
+                                    final count = switch (state) {
+                                      final FetchShipmentsLoaded s =>
+                                        s.data.length,
+                                      _ => 0,
+                                    };
 
                                     return Text(
-                                      '...',
+                                      '$count',
                                       style: heading5[bold].copyWith(
                                         color: light,
                                       ),
@@ -95,12 +92,11 @@ class OnTheWayPage extends StatelessWidget {
                 snap: true,
                 title: const Text('On The Way'),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchOnTheWayShipments(),
-                buildWhen: (previous, current) =>
-                    current is FetchOnTheWayShipments,
+              BlocBuilder<ShipmentCubit, ReusableState>(
+                bloc: shipmentCubit..fetchOnTheWayShipments(),
+                buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
-                  if (state is FetchOnTheWayShipmentsLoading) {
+                  if (state is FetchShipmentsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -109,8 +105,8 @@ class OnTheWayPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchOnTheWayShipmentsLoaded) {
-                    if (state.batches.isEmpty) {
+                  if (state is FetchShipmentsLoaded) {
+                    if (state.data.isEmpty) {
                       return SliverFillRemaining(
                         hasScrollBody: false,
                         child: Padding(
@@ -138,17 +134,17 @@ class OnTheWayPage extends StatelessWidget {
                                 ShipmentReceiptNumbersBottomSheet(
                               onSelected: (selectedGood) => context
                                   .pushNamed(onTheWayDetailRoute, extra: {
-                                'batch': state.batches[index],
+                                'batch': state.data[index],
                                 'good': selectedGood.first,
                               }),
-                              batch: state.batches[index],
+                              batch: state.data[index],
                             ),
                           ),
-                          batch: state.batches[index],
+                          batch: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.batches.length,
+                        itemCount: state.data.length,
                       ),
                     );
                   }

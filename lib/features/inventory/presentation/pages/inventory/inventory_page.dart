@@ -7,33 +7,31 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/shipment_cubit.dart';
 import '../../widgets/batch_card_item.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class InventoryPage extends StatelessWidget {
   const InventoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final shipmentCubit = context.read<ShipmentCubit>();
     final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
     String? search;
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchInventoriesPaginate(search: search);
-          }
-
-          return false;
-        },
+        onNotification: (scrollState) => paginateWhenScrollEnd(
+          scrollState,
+          paginate: () =>
+              shipmentCubit.fetchInventoriesPaginate(search: search),
+        ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchInventories,
+          onRefresh: shipmentCubit.fetchInventories,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -58,22 +56,16 @@ class InventoryPage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                BlocBuilder<InventoryCubit, InventoryState>(
-                                  bloc: inventoryCubit..fetchInventoriesCount(),
+                                BlocBuilder<ShipmentCubit, ReusableState>(
                                   buildWhen: (previous, current) =>
-                                      current is FetchInventoriesCount,
+                                      current is FetchShipments,
                                   builder: (context, state) {
-                                    if (state is FetchInventoriesCountLoaded) {
-                                      return Text(
-                                        '${state.count}',
-                                        style: heading5[bold].copyWith(
-                                          color: light,
-                                        ),
-                                      );
-                                    }
+                                    final count = state is FetchShipmentsLoaded
+                                        ? state.totalAllUnits
+                                        : 0;
 
                                     return Text(
-                                      '...',
+                                      '$count',
                                       style: heading5[bold].copyWith(
                                         color: light,
                                       ),
@@ -90,7 +82,7 @@ class InventoryPage extends StatelessWidget {
                             Expanded(
                               child: TextField(
                                 onChanged: (value) => debouncer.run(() =>
-                                    inventoryCubit.fetchInventories(
+                                    shipmentCubit.fetchInventories(
                                         search: search = value)),
                                 decoration: const InputDecoration(
                                   hintText: 'Cari resi atau invoice',
@@ -115,11 +107,11 @@ class InventoryPage extends StatelessWidget {
                 snap: true,
                 title: const Text('Inventory Gudang'),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchInventories(),
-                buildWhen: (previous, current) => current is FetchInventories,
+              BlocBuilder<ShipmentCubit, ReusableState>(
+                bloc: shipmentCubit..fetchInventories(),
+                buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
-                  if (state is FetchInventoriesLoading) {
+                  if (state is FetchShipmentsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -128,28 +120,23 @@ class InventoryPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchInventoriesLoaded) {
+                  if (state is FetchShipmentsLoaded) {
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) => context
-                                  .pushNamed(inventoryDetailRoute, extra: {
-                                'good': selectedGood.first,
-                                'batch': state.batches[index],
-                              }),
-                              batch: state.batches[index],
-                            ),
+                          onTap: () => context.pushNamed(
+                            receiptNumbersRoute,
+                            extra: {
+                              'batch': state.data[index],
+                              'routeDetailName': inventoryDetailRoute,
+                            },
                           ),
-                          batch: state.batches[index],
+                          batch: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.batches.length,
+                        itemCount: state.data.length,
                       ),
                     );
                   }

@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/states.dart';
 import '../../../../core/widgets/base_card.dart';
 import '../../domain/entities/lost_good_entity.dart';
-import '../cubit/inventory_cubit.dart';
+import '../../domain/entities/timeline_summary_entity.dart';
+import '../cubit/shipment_cubit.dart';
 import '../widgets/info_tile.dart';
 import '../widgets/timeline_indicator.dart';
 
@@ -20,24 +22,23 @@ class LostGoodPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final shipmentCubit = context.read<ShipmentCubit>();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Barang'),
       ),
-      body: BlocBuilder<InventoryCubit, InventoryState>(
-        bloc: inventoryCubit
+      body: BlocBuilder<ShipmentCubit, ReusableState>(
+        bloc: shipmentCubit
           ..fetchGoodTimeline(receiptNumber: lostGood.receiptNumber),
-        buildWhen: (previous, current) => current is FetchGoodTimeline,
         builder: (context, state) {
-          if (state is FetchGoodTimelineLoading) {
+          if (state is Loading<TimelineSummaryEntity>) {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
             );
           }
 
-          if (state is FetchGoodTimelineLoaded) {
+          if (state is Loaded<TimelineSummaryEntity>) {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -206,12 +207,11 @@ class LostGoodPage extends StatelessWidget {
                       ListView.builder(
                         itemBuilder: (context, index) => IntrinsicHeight(
                           child: TimelineIndicator(
-                            timeline: state.timeline.timelines[index],
-                            isLast:
-                                index == state.timeline.timelines.length - 1,
+                            timeline: state.data.timelines[index],
+                            isLast: index == state.data.timelines.length - 1,
                           ),
                         ),
-                        itemCount: state.timeline.timelines.length,
+                        itemCount: state.data.timelines.length,
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                       ),
