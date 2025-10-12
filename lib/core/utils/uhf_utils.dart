@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../features/core/data/models/uhf_result_model.dart';
 import '../../features/core/domain/entities/uhf_result_entity.dart';
 import '../../features/inventory/presentation/cubit/inventory_cubit.dart';
+import '../../features/inventory/presentation/cubit/scanner_cubit.dart';
 import 'constants.dart';
 import 'top_snackbar.dart';
 
@@ -97,7 +98,7 @@ mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
     );
 
     setState(() => index != -1
-        ? _uhfResults[index].updateInfo(tagInfo: result)
+        ? _uhfResults[index] = _uhfResults[index].updateInfo(tagInfo: result)
         : _uhfResults.add(result));
     inventoryCubit.qrCodeScan();
   }
@@ -106,7 +107,7 @@ mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
     final index = _uhfResults.indexWhere((e) => e.epcId == tagInfo.epcId);
 
     setState(() => index != -1
-        ? _uhfResults[index].updateInfo(tagInfo: tagInfo)
+        ? _uhfResults[index] = _uhfResults[index].updateInfo(tagInfo: tagInfo)
         : _uhfResults.add(tagInfo));
   }
 
@@ -114,6 +115,50 @@ mixin UHFMethodHandlerMixin<T extends StatefulWidget> on State<T> {
     setState(() => _isInventoryRunning = response.statusCode == 1);
 
     !_isInventoryRunning ? onInventoryStop() : inventoryCubit.onUHFScan();
+
+    toggleCase == startInventoryMethod
+        ? TopSnackbar.successSnackbar(message: response.message)
+        : TopSnackbar.dangerSnackbar(message: response.message);
+  }
+}
+
+mixin UHFMethodHandlerMixinV2 {
+  ScannerCubit get scannerCubit;
+  void Function() get onInventoryStop;
+
+  late final UHFMethodHandler _uhfMethodHandler;
+
+  void initUHFMethodHandler(MethodChannel platform) {
+    _uhfMethodHandler = UHFMethodHandler(platform);
+    platform.setMethodCallHandler(
+      (call) async => await _uhfMethodHandler.methodHandler(
+        call,
+        onGetTag: _handleGetTag,
+        onToggleInventory: _handleInventory,
+      ),
+    );
+  }
+
+  void onReset() => scannerCubit.resetScanner();
+
+  void onScan() async {
+    final result = await _uhfMethodHandler.invokeHandleInventory();
+    scannerCubit.updateInventoryStatus(result == 1);
+  }
+
+  void onQRScan(String barcodeDisplayValue) =>
+      scannerCubit.addFromQRScanner(barcodeDisplayValue);
+
+  void _handleGetTag(UHFResultEntity tagInfo) =>
+      scannerCubit.addFromUHFReader(tagInfo);
+
+  void _handleInventory(String toggleCase, UHFResponse response) {
+    final isRunning = response.statusCode == 1;
+    scannerCubit.updateInventoryStatus(isRunning);
+
+    if (!isRunning) {
+      onInventoryStop();
+    }
 
     toggleCase == startInventoryMethod
         ? TopSnackbar.successSnackbar(message: response.message)
