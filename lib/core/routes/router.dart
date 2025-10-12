@@ -148,9 +148,12 @@ final router = GoRouter(
                     final origin = extras['origin'] as DropdownEntity;
                     final receivedAt = extras['receivedAt'] as DateTime;
 
-                    return ReceiveGoodsScanPage(
-                      origin: origin,
-                      receivedAt: receivedAt,
+                    return BlocProvider(
+                      create: (context) => ScannerCubit(),
+                      child: ReceiveGoodsScanPage(
+                        origin: origin,
+                        receivedAt: receivedAt,
+                      ),
                     );
                   },
                 ),
