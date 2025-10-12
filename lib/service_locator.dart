@@ -52,6 +52,7 @@ import 'features/inventory/presentation/cubit/delivery_cubit.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
 import 'features/inventory/presentation/cubit/prepare_cubit.dart';
 import 'features/inventory/presentation/cubit/receive_cubit.dart';
+import 'features/inventory/presentation/cubit/shipment_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -163,11 +164,7 @@ void setupServiceLocator() {
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
         createPickedUpGoodsUseCase: getIt(),
-        fetchGoodTimelineUseCase: getIt(),
-        fetchInventoriesUseCase: getIt(),
-        fetchInventoriesCountUseCase: getIt(),
         fetchLostGoodUseCase: getIt(),
-        fetchOnTheWayShipmentsUseCase: getIt(),
         fetchPickedUpGoodsUseCase: getIt(),
         fetchPreviewPickUpGoodsUseCase: getIt()))
     ..registerLazySingleton(() => ReceiveCubit(
@@ -182,7 +179,12 @@ void setupServiceLocator() {
     ..registerLazySingleton(() => DeliveryCubit(
         createDeliveryShipmentsUseCase: getIt(),
         fetchDeliveryShipmentsUseCase: getIt(),
-        fetchPreviewDeliveryShipmentsUseCase: getIt()));
+        fetchPreviewDeliveryShipmentsUseCase: getIt()))
+    ..registerLazySingleton(() => ShipmentCubit(
+        fetchOnTheWayShipmentsUseCase: getIt(),
+        fetchInventoriesUseCase: getIt(),
+        fetchInventoriesCountUseCase: getIt(),
+        fetchGoodTimelineUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors

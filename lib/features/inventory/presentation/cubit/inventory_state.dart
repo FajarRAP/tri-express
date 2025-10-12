@@ -8,46 +8,17 @@ sealed class InventoryState extends Equatable {
   List<Object?> get props => [];
 }
 
-abstract interface class BatchSearchableState extends InventoryState {
-  List<BatchEntity> get batches;
-
-  BatchSearchableState copyWithBatches({required List<BatchEntity> batches});
-}
-
 abstract interface class GoodSearchableState extends InventoryState {
   List<GoodEntity> get goods;
 
   GoodSearchableState copyWithGoods({required List<GoodEntity> goods});
 }
 
-abstract interface class ReceiptNumberSearchableState extends InventoryState {
-  List<GoodEntity> get goods;
-
-  ReceiptNumberSearchableState copyWithGoods({required List<GoodEntity> goods});
-}
-
-abstract interface class ListPaginationState extends InventoryState {
-  int get currentPage;
-  bool get isLastPage;
-
-  ListPaginationState copyWithPage({int? currentPage, bool? isLastPage});
-}
-
 final class InventoryInitial extends InventoryState {}
 
 class ListPaginate extends InventoryState {}
 
-class FetchInventories extends InventoryState {}
-
-class FetchInventoriesCount extends InventoryState {}
-
-class FetchOnTheWayShipments extends InventoryState {}
-
-class FetchPreviewBatchesShipments extends InventoryState {}
-
 class FetchPreviewGoodsShipments extends InventoryState {}
-
-class FetchGoodTimeline extends InventoryState {}
 
 class FetchShipmentReceiptNumbers extends InventoryState {}
 
@@ -97,118 +68,6 @@ class FetchShipmentReceiptNumbersLoaded extends FetchShipmentReceiptNumbers {
 class FetchShipmentReceiptNumbersError extends FetchShipmentReceiptNumbers {
   FetchShipmentReceiptNumbersError({required this.message});
 
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class FetchOnTheWayShipmentsLoading extends FetchOnTheWayShipments {}
-
-class FetchOnTheWayShipmentsLoaded extends FetchOnTheWayShipments {
-  FetchOnTheWayShipmentsLoaded({required this.batches});
-
-  final List<BatchEntity> batches;
-
-  @override
-  List<Object?> get props => [batches];
-}
-
-class FetchOnTheWayShipmentsError extends FetchOnTheWayShipments {
-  FetchOnTheWayShipmentsError({required this.message});
-
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class FetchInventoriesLoading extends FetchInventories {}
-
-class FetchInventoriesLoaded extends FetchInventories {
-  FetchInventoriesLoaded({required this.batches});
-
-  final List<BatchEntity> batches;
-
-  @override
-  List<Object?> get props => [batches];
-}
-
-class FetchInventoriesError extends FetchInventories {
-  FetchInventoriesError({required this.message});
-
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class FetchInventoriesCountLoading extends FetchInventoriesCount {}
-
-class FetchInventoriesCountLoaded extends FetchInventoriesCount {
-  FetchInventoriesCountLoaded({required this.count});
-
-  final int count;
-
-  @override
-  List<Object?> get props => [count];
-}
-
-class FetchInventoriesCountError extends FetchInventoriesCount {
-  FetchInventoriesCountError({required this.message});
-
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class FetchPreviewBatchesShipmentsLoading
-    extends FetchPreviewBatchesShipments {}
-
-class FetchPreviewBatchesShipmentsLoaded extends FetchPreviewBatchesShipments
-    implements BatchSearchableState, ReceiptNumberSearchableState {
-  FetchPreviewBatchesShipmentsLoaded({
-    required this.allBatches,
-    required this.batches,
-    this.goods = const [],
-  });
-
-  final List<BatchEntity> allBatches;
-  @override
-  final List<BatchEntity> batches;
-  @override
-  final List<GoodEntity> goods;
-
-  FetchPreviewBatchesShipmentsLoaded copyWith({
-    List<BatchEntity>? allBatches,
-    List<BatchEntity>? batches,
-    List<GoodEntity>? goods,
-  }) {
-    return FetchPreviewBatchesShipmentsLoaded(
-      allBatches: allBatches ?? this.allBatches,
-      batches: batches ?? this.batches,
-      goods: goods ?? this.goods,
-    );
-  }
-
-  @override
-  List<Object?> get props => [allBatches, batches, goods];
-
-  @override
-  ReceiptNumberSearchableState copyWithGoods(
-      {required List<GoodEntity> goods}) {
-    return copyWith(goods: goods);
-  }
-
-  @override
-  BatchSearchableState copyWithBatches({required List<BatchEntity> batches}) {
-    return copyWith(batches: batches);
-  }
-}
-
-class FetchPreviewBatchesShipmentsError extends FetchPreviewBatchesShipments {
-  FetchPreviewBatchesShipmentsError({required this.message});
   final String message;
 
   @override
@@ -309,26 +168,6 @@ class FetchPickedGoodsLoaded extends FetchPickedGoods {
 
 class FetchPickedGoodsError extends FetchPickedGoods {
   FetchPickedGoodsError({required this.message});
-
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class FetchGoodTimelineLoading extends FetchGoodTimeline {}
-
-class FetchGoodTimelineLoaded extends FetchGoodTimeline {
-  FetchGoodTimelineLoaded({required this.timeline});
-
-  final TimelineSummaryEntity timeline;
-
-  @override
-  List<Object?> get props => [timeline];
-}
-
-class FetchGoodTimelineError extends FetchGoodTimeline {
-  FetchGoodTimelineError({required this.message});
 
   final String message;
 

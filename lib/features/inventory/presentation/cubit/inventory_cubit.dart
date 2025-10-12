@@ -2,19 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../core/use_case/use_case.dart';
 import '../../../core/domain/entities/uhf_result_entity.dart';
-import '../../domain/entities/batch_entity.dart';
 import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/lost_good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
-import '../../domain/entities/timeline_summary_entity.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
-import '../../domain/use_cases/fetch_good_timeline_use_case.dart';
-import '../../domain/use_cases/fetch_inventories_count_use_case.dart';
-import '../../domain/use_cases/fetch_inventories_use_case.dart';
 import '../../domain/use_cases/fetch_lost_good_use_case.dart';
-import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/fetch_preview_pick_up_goods_use_case.dart';
 
@@ -23,35 +16,21 @@ part 'inventory_state.dart';
 class InventoryCubit extends Cubit<InventoryState> {
   InventoryCubit({
     required CreatePickedUpGoodsUseCase createPickedUpGoodsUseCase,
-    required FetchGoodTimelineUseCase fetchGoodTimelineUseCase,
-    required FetchInventoriesUseCase fetchInventoriesUseCase,
-    required FetchInventoriesCountUseCase fetchInventoriesCountUseCase,
     required FetchLostGoodUseCase fetchLostGoodUseCase,
-    required FetchOnTheWayShipmentsUseCase fetchOnTheWayShipmentsUseCase,
     required FetchPickedUpGoodsUseCase fetchPickedUpGoodsUseCase,
     required FetchPreviewPickUpGoodsUseCase fetchPreviewPickUpGoodsUseCase,
   })  : _createPickedUpGoodsUseCase = createPickedUpGoodsUseCase,
-        _fetchGoodTimelineUseCase = fetchGoodTimelineUseCase,
-        _fetchInventoriesUseCase = fetchInventoriesUseCase,
-        _fetchInventoriesCountUseCase = fetchInventoriesCountUseCase,
         _fetchLostGoodUseCase = fetchLostGoodUseCase,
-        _fetchOnTheWayShipmentsUseCase = fetchOnTheWayShipmentsUseCase,
         _fetchPickedUpGoodsUseCase = fetchPickedUpGoodsUseCase,
         _fetchPreviewPickUpGoodsUseCase = fetchPreviewPickUpGoodsUseCase,
         super(InventoryInitial());
 
   final CreatePickedUpGoodsUseCase _createPickedUpGoodsUseCase;
-  final FetchGoodTimelineUseCase _fetchGoodTimelineUseCase;
-  final FetchInventoriesUseCase _fetchInventoriesUseCase;
-  final FetchInventoriesCountUseCase _fetchInventoriesCountUseCase;
   final FetchLostGoodUseCase _fetchLostGoodUseCase;
-  final FetchOnTheWayShipmentsUseCase _fetchOnTheWayShipmentsUseCase;
   final FetchPreviewPickUpGoodsUseCase _fetchPreviewPickUpGoodsUseCase;
   final FetchPickedUpGoodsUseCase _fetchPickedUpGoodsUseCase;
 
   var _currentPage = 1;
-  final _inventories = <BatchEntity>[];
-  final _onTheWayBatches = <BatchEntity>[];
   final _pickedGoods = <PickedGoodEntity>[];
   final previewGoods = <GoodEntity>[];
 
@@ -79,64 +58,6 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  Future<void> fetchGoodTimeline({required String receiptNumber}) async {
-    emit(FetchGoodTimelineLoading());
-
-    final result = await _fetchGoodTimelineUseCase(receiptNumber);
-
-    result.fold(
-      (failure) => emit(FetchGoodTimelineError(message: failure.message)),
-      (timeline) => emit(FetchGoodTimelineLoaded(timeline: timeline)),
-    );
-  }
-
-  Future<void> fetchInventories({String? search}) async {
-    emit(FetchInventoriesLoading());
-
-    final params = FetchInventoriesUseCaseParams(
-      page: _currentPage = 1,
-      search: search,
-    );
-    final result = await _fetchInventoriesUseCase(params);
-
-    result.fold(
-      (failure) => emit(FetchInventoriesError(message: failure.message)),
-      (batches) => emit(FetchInventoriesLoaded(
-          batches: _inventories
-            ..clear()
-            ..addAll(batches))),
-    );
-  }
-
-  Future<void> fetchInventoriesCount() async {
-    emit(FetchInventoriesCountLoading());
-
-    final result = await _fetchInventoriesCountUseCase(NoParams());
-
-    result.fold(
-      (failure) => emit(FetchInventoriesCountError(message: failure.message)),
-      (count) => emit(FetchInventoriesCountLoaded(count: count)),
-    );
-  }
-
-  Future<void> fetchInventoriesPaginate({String? search}) async {
-    emit(ListPaginateLoading());
-
-    final params = FetchInventoriesUseCaseParams(
-      page: ++_currentPage,
-      search: search,
-    );
-    final result = await _fetchInventoriesUseCase(params);
-
-    result.fold(
-      (failure) => emit(ListPaginateError(message: failure.message)),
-      (batches) => batches.isEmpty
-          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(
-              FetchInventoriesLoaded(batches: _inventories..addAll(batches))),
-    );
-  }
-
   Future<void> fetchLostGoods({required String uniqueCode}) async {
     emit(FetchLostGoodLoading());
 
@@ -145,42 +66,6 @@ class InventoryCubit extends Cubit<InventoryState> {
     result.fold(
       (failure) => emit(FetchLostGoodError(message: failure.message)),
       (lostGood) => emit(FetchLostGoodLoaded(lostGood: lostGood)),
-    );
-  }
-
-  Future<void> fetchOnTheWayShipments({String? search}) async {
-    emit(FetchOnTheWayShipmentsLoading());
-
-    final params = FetchOnTheWayShipmentsUseCaseParams(
-      page: _currentPage = 1,
-      search: search,
-    );
-    final result = await _fetchOnTheWayShipmentsUseCase(params);
-
-    result.fold(
-      (failure) => emit(FetchOnTheWayShipmentsError(message: failure.message)),
-      (batches) => emit(FetchOnTheWayShipmentsLoaded(
-          batches: _onTheWayBatches
-            ..clear()
-            ..addAll(batches))),
-    );
-  }
-
-  Future<void> fetchOnTheWayShipmentsPaginate({String? search}) async {
-    emit(ListPaginateLoading());
-
-    final params = FetchOnTheWayShipmentsUseCaseParams(
-      page: ++_currentPage,
-      search: search,
-    );
-    final result = await _fetchOnTheWayShipmentsUseCase(params);
-
-    result.fold(
-      (failure) => emit(ListPaginateError(message: failure.message)),
-      (batches) => batches.isEmpty
-          ? emit(ListPaginateLast(currentPage: _currentPage = 1))
-          : emit(FetchOnTheWayShipmentsLoaded(
-              batches: _onTheWayBatches..addAll(batches))),
     );
   }
 
@@ -235,81 +120,8 @@ class InventoryCubit extends Cubit<InventoryState> {
     );
   }
 
-  void searchBatches(String keyword) {
-    final currentState = state;
-    if (currentState is! FetchPreviewBatchesShipmentsLoaded) return;
-
-    final filteredBatches = <BatchEntity>[];
-    if (keyword.isEmpty) {
-      filteredBatches.addAll(currentState.allBatches);
-    } else {
-      final lowerKeyword = keyword.toLowerCase();
-      final results = currentState.allBatches.where(
-        (batch) {
-          final batchNameMatch =
-              batch.name.toLowerCase().contains(lowerKeyword);
-          final trackingNumberMatch =
-              batch.trackingNumber.toLowerCase().contains(lowerKeyword);
-
-          return batchNameMatch || trackingNumberMatch;
-        },
-      ).toList();
-      filteredBatches.addAll(results);
-    }
-
-    emit(currentState.copyWith(batches: filteredBatches));
-  }
-
-  void searchGoods(String keyword) {
-    final currentState = state;
-    if (currentState is! FetchPreviewGoodsShipmentsLoaded) return;
-
-    final filteredGoods = <GoodEntity>[];
-    if (keyword.isEmpty) {
-      filteredGoods.addAll(currentState.allGoods);
-    } else {
-      final lowerKeyword = keyword.toLowerCase();
-      final results = currentState.allGoods.where((good) {
-        final nameMatch = good.name.toLowerCase().contains(lowerKeyword);
-        final receiptNumberMatch =
-            good.receiptNumber.toLowerCase().contains(lowerKeyword);
-
-        return receiptNumberMatch || nameMatch;
-      }).toList();
-      filteredGoods.addAll(results);
-    }
-
-    emit(currentState.copyWithGoods(goods: filteredGoods));
-  }
-
-  void searchReceiptNumbers(BatchEntity selectedBatch, [String keyword = '']) {
-    final currentState = state;
-    if (currentState is! ReceiptNumberSearchableState) return;
-
-    final filteredReceiptNumbers = <GoodEntity>[];
-    if (keyword.isEmpty) {
-      filteredReceiptNumbers.addAll(selectedBatch.goods);
-    } else {
-      final lowerKeyword = keyword.toLowerCase();
-      final results = selectedBatch.goods
-          .where(
-              (good) => good.receiptNumber.toLowerCase().contains(lowerKeyword))
-          .toList();
-      filteredReceiptNumbers.addAll(results);
-    }
-
-    emit(currentState.copyWithGoods(goods: filteredReceiptNumbers));
-  }
-
   void onUHFScan() => emit(OnUHFScan());
   void qrCodeScan() => emit(QRCodeScan());
   void resetUHFScan() => emit(ResetUHFScan());
   void resetState() => emit(InventoryInitial());
-  void clearPreviewedData() => switch (state) {
-        final FetchPreviewBatchesShipmentsLoaded s =>
-          emit(s.copyWithBatches(batches: [])),
-        final FetchPreviewGoodsShipmentsLoaded s =>
-          emit(s.copyWithGoods(goods: [])),
-        _ => null
-      };
 }
