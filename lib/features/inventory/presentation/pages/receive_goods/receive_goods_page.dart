@@ -8,10 +8,11 @@ import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../domain/entities/batch_entity.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/receive_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 
 class ReceiveGoodsPage extends StatelessWidget {
@@ -19,7 +20,7 @@ class ReceiveGoodsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final receiveCubit = context.read<ReceiveCubit>();
     final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
     String? search;
 
@@ -28,10 +29,10 @@ class ReceiveGoodsPage extends StatelessWidget {
         onNotification: (notification) => paginateWhenScrollEnd(
           notification,
           paginate: () =>
-              inventoryCubit.fetchReceiveShipmentsPaginate(search: search),
+              receiveCubit.fetchReceiveShipmentsPaginate(search: search),
         ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchReceiveShipments,
+          onRefresh: receiveCubit.fetchReceiveShipments,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -49,7 +50,7 @@ class ReceiveGoodsPage extends StatelessWidget {
                         Expanded(
                           child: TextField(
                             onChanged: (value) => debouncer.run(() =>
-                                inventoryCubit.fetchReceiveShipments(
+                                receiveCubit.fetchReceiveShipments(
                                     search: search = value)),
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
@@ -72,12 +73,11 @@ class ReceiveGoodsPage extends StatelessWidget {
                 snap: true,
                 title: const Text('Terima Barang'),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchReceiveShipments(),
-                buildWhen: (previous, current) =>
-                    current is FetchReceiveShipments,
+              BlocBuilder<ReceiveCubit, ReusableState>(
+                bloc: receiveCubit..fetchReceiveShipments(),
+                buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
-                  if (state is FetchReceiveShipmentsLoading) {
+                  if (state is FetchShipmentsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -86,8 +86,8 @@ class ReceiveGoodsPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchReceiveShipmentsLoaded) {
-                    if (state.batches.isEmpty) {
+                  if (state is FetchShipmentsLoaded) {
+                    if (state.data.isEmpty) {
                       return SliverFillRemaining(
                         hasScrollBody: false,
                         child: Padding(
@@ -111,14 +111,17 @@ class ReceiveGoodsPage extends StatelessWidget {
                         itemBuilder: (context, index) => BatchCardItem(
                           onTap: () => context.pushNamed(
                             receiptNumbersRoute,
-                            extra: state.batches[index],
+                            extra: {
+                              'batch': state.data[index],
+                              'routeDetailName': receiveGoodsDetailRoute,
+                            },
                           ),
-                          batch: state.batches[index],
-                          quantity: _renderQuantity(state.batches[index]),
+                          batch: state.data[index],
+                          quantity: _renderQuantity(state.data[index]),
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.batches.length,
+                        itemCount: state.data.length,
                       ),
                     );
                   }
