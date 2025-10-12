@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
+import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
-import '../../../../../core/widgets/triple_floating_action_buttons.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 import '../../../domain/entities/batch_entity.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/delivery_cubit.dart';
+import '../../cubit/scanner_cubit.dart';
 import '../../widgets/batch_card_checkbox.dart';
 import '../../widgets/scanned_item_card.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
+import '../../widgets/unique_code_action_bottom_sheet.dart';
 
 class SendGoodsScanPage extends StatefulWidget {
   const SendGoodsScanPage({
@@ -38,24 +39,27 @@ class SendGoodsScanPage extends StatefulWidget {
 }
 
 class _SendGoodsScanPageState extends State<SendGoodsScanPage>
-    with UHFMethodHandlerMixin {
-  late final InventoryCubit _inventoryCubit;
+    with UHFMethodHandlerMixinV2 {
+  late final DeliveryCubit _deliveryCubit;
+  late final ScannerCubit _scannerCubit;
   final _selectedBatches = <BatchEntity>{};
 
   @override
   void initState() {
     super.initState();
-    _inventoryCubit = context.read<InventoryCubit>();
+    _deliveryCubit = context.read<DeliveryCubit>();
+    _scannerCubit = context.read<ScannerCubit>();
     initUHFMethodHandler(platform);
   }
 
   @override
-  InventoryCubit get inventoryCubit => _inventoryCubit;
+  ScannerCubit get scannerCubit => _scannerCubit;
 
   @override
   void Function() get onInventoryStop =>
-      () => _inventoryCubit.fetchPreviewDeliveryShipments(
-          nextWarehouse: widget.nextWarehouse, uhfresults: uhfResults);
+      () => _deliveryCubit.fetchPreviewDeliveryShipments(
+          nextWarehouse: widget.nextWarehouse,
+          uhfresults: _scannerCubit.state.uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -99,27 +103,11 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            BlocBuilder<InventoryCubit, InventoryState>(
-                              buildWhen: (previous, current) =>
-                                  current is UHFAction ||
-                                  current is FetchPreviewBatchesShipments,
+                            BlocBuilder<ScannerCubit, ScannerState>(
                               builder: (context, state) {
-                                if (state
-                                        is FetchPreviewBatchesShipmentsLoaded &&
-                                    uhfResults.isNotEmpty) {
-                                  return Text(
-                                    '${state.batches.length}',
-                                    style: const TextStyle(
-                                      color: light,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  );
-                                }
-
-                                return const Text(
-                                  '0',
-                                  style: TextStyle(
+                                return Text(
+                                  '${state.uhfResults.length}',
+                                  style: const TextStyle(
                                     color: light,
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700,
@@ -136,6 +124,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                       children: <Widget>[
                         Expanded(
                           child: TextFormField(
+                            onChanged: _deliveryCubit.searchBatches,
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
@@ -144,13 +133,21 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                         ),
                         const SizedBox(width: 10),
                         DecoratedIconButton(
-                          onTap: () async {
-                            final result = await context
-                                .push<Barcode>(scanBarcodeInnerRoute);
-                            if (result == null) return;
-
-                            onQRScan('${result.displayValue}');
-                          },
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) => UniqueCodeActionBottomSheet(
+                              onResult: (value) {
+                                if (_scannerCubit.state.uhfResults
+                                    .any((e) => e.epcId == value)) {
+                                  return TopSnackbar.dangerSnackbar(
+                                      message: 'Kode sudah discan');
+                                }
+                                onQRScan(value);
+                                TopSnackbar.successSnackbar(
+                                    message: 'Berhasil ditambahkan');
+                              },
+                            ),
+                          ),
                           icon: const Icon(Icons.qr_code_scanner_outlined),
                         ),
                       ],
@@ -176,13 +173,11 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: BlocBuilder<InventoryCubit, InventoryState>(
-          bloc: _inventoryCubit,
-          buildWhen: (previous, current) =>
-              current is FetchPreviewBatchesShipmentsLoaded,
+        child: BlocBuilder<DeliveryCubit, ReusableState<List<BatchEntity>>>(
+          buildWhen: (previous, current) => current is FetchPreviewShipments,
           builder: (context, state) {
-            final batches = state is FetchPreviewBatchesShipmentsLoaded
-                ? state.batches
+            final batches = state is FetchPreviewShipmentsLoaded
+                ? state.data
                 : <BatchEntity>[];
 
             return Row(
@@ -207,44 +202,63 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ),
-                Expanded(
-                  child: TripleFloatingActionButtons(
-                    onReset: onReset,
-                    onScan: onScan,
-                    onSave: () => showModalBottomSheet(
-                      context: context,
-                      builder: (context) =>
-                          BlocConsumer<InventoryCubit, InventoryState>(
-                        listener: (context, state) {
-                          if (state is CreateShipmentsLoaded) {
-                            TopSnackbar.successSnackbar(message: state.message);
-                            context.goNamed(sendGoodsRoute);
-                          }
-
-                          if (state is CreateShipmentsError) {
-                            TopSnackbar.dangerSnackbar(message: state.message);
-                          }
+                BlocBuilder<ScannerCubit, ScannerState>(
+                  builder: (context, scannerState) {
+                    return Expanded(
+                      child: FloatingActionButtonBar(
+                        onReset: () {
+                          _selectedBatches.clear();
+                          _deliveryCubit.clearPreviewBatches();
+                          onReset();
                         },
-                        builder: (context, state) {
-                          final onPressed = switch (state) {
-                            CreateShipmentsLoading() => null,
-                            _ => () => _inventoryCubit.createDeliveryShipments(
-                                  nextWarehouse: widget.nextWarehouse,
-                                  driver: widget.driver,
-                                  batches: _selectedBatches,
-                                  deliveredAt: widget.deliveredAt,
-                                ),
-                          };
-                          return ActionConfirmationBottomSheet(
-                            onPressed: onPressed,
-                            message:
-                                'Apakah anda yakin akan mengirim barang ini?',
+                        onScan: onScan,
+                        onSave: () => showModalBottomSheet(
+                          builder: (context) => BlocConsumer<DeliveryCubit,
+                              ReusableState<List<BatchEntity>>>(
+                            listener: (context, state) {
+                              if (state is ActionSuccess<List<BatchEntity>>) {
+                                TopSnackbar.successSnackbar(
+                                    message: state.message);
+                                context.goNamed(sendGoodsRoute);
+                              }
+
+                              if (state is ActionFailure<List<BatchEntity>>) {
+                                TopSnackbar.dangerSnackbar(
+                                    message: state.failure.message);
+                              }
+                            },
+                            builder: (context, state) {
+                              final onPressed = switch (state) {
+                                ActionInProgress() => null,
+                                _ => () =>
+                                    _deliveryCubit.createDeliveryShipments(
+                                      nextWarehouse: widget.nextWarehouse,
+                                      driver: widget.driver,
+                                      batches: _selectedBatches,
+                                      deliveredAt: widget.deliveredAt,
+                                    ),
+                              };
+
+                              return ActionConfirmationBottomSheet(
+                                onPressed: onPressed,
+                                message:
+                                    'Apakah anda yakin akan mengirim barang ini?',
+                              );
+                            },
+                          ),
+                          context: context,
+                        ),
+                        onSync: () {
+                          _scannerCubit.updateInventoryStatus(false);
+                          _deliveryCubit.fetchPreviewDeliveryShipments(
+                            nextWarehouse: widget.nextWarehouse,
+                            uhfresults: scannerState.uhfResults,
                           );
                         },
+                        isScanning: scannerState.isFromUHFReader,
                       ),
-                    ),
-                    isScanning: isInventoryRunning,
-                  ),
+                    );
+                  },
                 ),
               ],
             );
@@ -257,95 +271,126 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
   }
 
   Widget _buildList() {
-    if (uhfResults.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'Belum tersedia barang. Cek menu “Persiapan” untuk lanjut kirim.',
-            style: label[medium].copyWith(color: primaryGradientEnd),
-            textAlign: TextAlign.center,
-          ),
+    return BlocBuilder<ScannerCubit, ScannerState>(
+      builder: (context, scannerState) {
+        if (scannerState.uhfResults.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'Belum tersedia barang. Cek menu “Persiapan” untuk lanjut kirim.',
+                style: label[medium].copyWith(color: primaryGradientEnd),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+
+        if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
+          return SliverPadding(
+            padding: const EdgeInsets.only(bottom: 96),
+            sliver: SliverList.builder(
+              itemBuilder: (context, index) =>
+                  ScannedItemCard(item: scannerState.uhfResults[index]),
+              itemCount: scannerState.uhfResults.length,
+            ),
+          );
+        }
+
+        return BlocBuilder<DeliveryCubit, ReusableState<List<BatchEntity>>>(
+          buildWhen: (previous, current) => current is FetchPreviewShipments,
+          builder: (context, state) {
+            if (state is FetchPreviewShipmentsLoading) {
+              return const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              );
+            }
+
+            if (state is FetchPreviewShipmentsLoaded) {
+              if (state.filteredData.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      'Tidak ada data yang sesuai.',
+                      style: label[medium].copyWith(color: primaryGradientEnd),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.only(bottom: 96),
+                sliver: SliverList.separated(
+                  itemBuilder: (context, index) => BatchCardCheckbox(
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      setState(() => value
+                          ? _selectedBatches.add(state.filteredData[index])
+                          : _selectedBatches.remove(state.filteredData[index]));
+                    },
+                    onTap: () => context.pushNamed(
+                      receiptNumbersRoute,
+                      extra: {
+                        'batch': state.filteredData[index],
+                        'routeDetailName': sendGoodsDetailRoute,
+                      },
+                    ),
+                    isActive:
+                        _selectedBatches.contains(state.filteredData[index]),
+                    batch: state.filteredData[index],
+                    quantity: _renderQuantity(state.filteredData[index]),
+                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemCount: state.filteredData.length,
+                ),
+              );
+            }
+
+            if (state is Error<List<BatchEntity>>) {
+              return SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    state.failure.message,
+                    style: label[medium].copyWith(color: primaryGradientEnd),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+
+            return const SliverToBoxAdapter();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _renderQuantity(BatchEntity batch) {
+    if (batch.totalAllUnits < batch.preparedUnits) {
+      return RichText(
+        text: TextSpan(
+          children: <InlineSpan>[
+            TextSpan(
+              text: '${batch.totalAllUnits}',
+              style: label[regular].copyWith(color: black),
+            ),
+            TextSpan(
+              text: '/${batch.preparedUnits} Koli',
+              style: label[bold].copyWith(color: black),
+            ),
+          ],
         ),
       );
     }
 
-    return BlocBuilder<InventoryCubit, InventoryState>(
-      buildWhen: (previous, current) =>
-          current is FetchPreviewBatchesShipments || current is UHFAction,
-      builder: (context, state) {
-        if (state is FetchPreviewBatchesShipmentsLoading) {
-          return const SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-          );
-        }
-
-        if (state is FetchPreviewBatchesShipmentsLoaded) {
-          return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 80),
-            sliver: SliverList.separated(
-              itemBuilder: (context, index) => BatchCardCheckbox(
-                onChanged: (value) {
-                  if (value == null) return;
-
-                  setState(() => value
-                      ? _selectedBatches.add(state.batches[index])
-                      : _selectedBatches.remove(state.batches[index]));
-                },
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => ShipmentReceiptNumbersBottomSheet(
-                    onSelected: (selectedGoods) => context.pushNamed(
-                      receiveGoodsDetailRoute,
-                      extra: {
-                        'batch': state.batches[index],
-                        'good': selectedGoods.first,
-                      },
-                    ),
-                    batch: state.batches[index],
-                  ),
-                ),
-                isActive: _selectedBatches.contains(state.batches[index]),
-                batch: state.batches[index],
-                quantity: RichText(
-                  text: TextSpan(
-                    text: '${state.batches[index].totalAllUnits}',
-                    style: label[bold].copyWith(
-                      color: black,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '/${state.batches[index].preparedUnits} Koli',
-                        style: label[regular].copyWith(
-                          color: black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemCount: state.batches.length,
-            ),
-          );
-        }
-
-        if (state is OnUHFScan || state is QRCodeScan) {
-          return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 80),
-            sliver: SliverList.builder(
-              itemBuilder: (context, index) => ScannedItemCard(
-                number: index + 1,
-                item: uhfResults[index],
-              ),
-              itemCount: uhfResults.length,
-            ),
-          );
-        }
-        return const SliverToBoxAdapter();
-      },
+    return Text(
+      '${batch.totalAllUnits} Koli',
+      style: label[bold].copyWith(color: black),
     );
   }
 }
