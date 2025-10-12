@@ -80,10 +80,10 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
   static int getIndex(BuildContext context) {
     final path = GoRouterState.of(context).uri.path;
 
-    if (path.startsWith(menuRoute)) return 0;
-    if (path.startsWith(onTheWayRoute)) return 1;
-    if (path.startsWith(inventoryRoute)) return 3;
-    if (path.startsWith(settingRoute)) return 4;
+    if (path.startsWith('/$menuRoute')) return 0;
+    if (path.startsWith('/$onTheWayRoute')) return 1;
+    if (path.startsWith('/$inventoryRoute')) return 3;
+    if (path.startsWith('/$settingRoute')) return 4;
 
     return 0;
   }
