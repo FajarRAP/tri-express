@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../failure/failure.dart';
 
 abstract class ReusableState<T> extends Equatable {
@@ -77,4 +78,14 @@ class ActionFailure<T> extends ActionState<T> {
 
   @override
   List<Object?> get props => [failure];
+}
+
+abstract interface class BatchSearchableState extends Equatable {
+  List<BatchEntity> get allBatches;
+  List<BatchEntity> get filteredBatches;
+
+  BatchSearchableState copyWithFiltered({
+    List<BatchEntity>? allBatches,
+    required List<BatchEntity> filteredBatches,
+  });
 }
