@@ -12,7 +12,7 @@ import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
-import '../../../../../core/widgets/triple_floating_action_buttons.dart';
+import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../cubit/inventory_cubit.dart';
 import '../../widgets/good_card_checkbox.dart';
@@ -106,7 +106,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                         DecoratedIconButton(
                           onTap: () async {
                             final result = await context
-                                .push<Barcode>(scanBarcodeInnerRoute);
+                                .pushNamed<Barcode>(scanBarcodeInnerRoute);
                             if (result == null) return;
 
                             onQRScan('${result.displayValue}');
@@ -167,7 +167,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
               ),
             ),
             Expanded(
-              child: TripleFloatingActionButtons(
+              child: FloatingActionButtonBar(
                 onReset: onReset,
                 onScan: onScan,
                 onSave: () => showModalBottomSheet(
@@ -274,10 +274,8 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
           return SliverPadding(
             padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
-              itemBuilder: (context, index) => ScannedItemCard(
-                number: index + 1,
-                item: uhfResults[index],
-              ),
+              itemBuilder: (context, index) =>
+                  ScannedItemCard(item: uhfResults[index]),
               itemCount: uhfResults.length,
             ),
           );
