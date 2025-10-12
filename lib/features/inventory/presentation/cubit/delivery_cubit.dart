@@ -82,7 +82,7 @@ class DeliveryCubit extends Cubit<ReusableState<List<BatchEntity>>>
     final result = await _fetchDeliveryShipmentsUseCase(params);
 
     result.fold(
-        (failure) => emit(Error(failure)),
+        (failure) => emit(FetchShipmentsError(failure)),
         (batches) => batches.isEmpty
             ? emit(currentState.copyWith(hasReachedMax: true))
             : emit(currentState.copyWith(
