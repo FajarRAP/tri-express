@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -14,6 +15,8 @@ import '../../features/inventory/domain/entities/batch_entity.dart';
 import '../../features/inventory/domain/entities/good_entity.dart';
 import '../../features/inventory/domain/entities/lost_good_entity.dart';
 import '../../features/inventory/domain/entities/picked_good_entity.dart';
+import '../../features/inventory/presentation/cubit/receipt_number_cubit.dart';
+import '../../features/inventory/presentation/cubit/scanner_cubit.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_page.dart';
 import '../../features/inventory/presentation/pages/lost_good_page.dart';
@@ -245,10 +248,13 @@ final router = GoRouter(
                         extras['nextWarehouse'] as DropdownEntity;
                     final deliveredAt = extras['deliveredAt'] as DateTime;
 
-                    return SendGoodsScanPage(
-                      driver: driver,
-                      nextWarehouse: nextWarehouse,
-                      deliveredAt: deliveredAt,
+                    return BlocProvider(
+                      create: (context) => ScannerCubit(),
+                      child: SendGoodsScanPage(
+                        driver: driver,
+                        nextWarehouse: nextWarehouse,
+                        deliveredAt: deliveredAt,
+                      ),
                     );
                   },
                 ),
@@ -391,8 +397,19 @@ final router = GoRouter(
     GoRoute(
       path: '/receipt-numbers',
       name: receiptNumbersRoute,
-      builder: (context, state) =>
-          ReceiptNumberPage(batch: state.extra as BatchEntity),
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final batch = extras['batch'] as BatchEntity;
+        final routeDetailName = extras['routeDetailName'] as String;
+
+        return BlocProvider(
+          create: (context) => ReceiptNumberCubit(batch: batch),
+          child: ReceiptNumberPage(
+            batch: batch,
+            routeDetailName: routeDetailName,
+          ),
+        );
+      },
     ),
     GoRoute(
       path: '/lost-good',
