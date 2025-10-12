@@ -6,6 +6,7 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/utils/uhf_utils.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
@@ -14,7 +15,9 @@ import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 import '../../../domain/entities/good_entity.dart';
-import '../../cubit/inventory_cubit.dart';
+// import '../../cubit/inventory_cubit.dart';
+import '../../cubit/prepare_cubit.dart';
+import '../../cubit/scanner_cubit.dart';
 import '../../widgets/good_card_checkbox.dart';
 import '../../widgets/scanned_item_card.dart';
 import '../../widgets/unique_code_action_bottom_sheet.dart';
@@ -41,23 +44,27 @@ class PrepareGoodsScanPage extends StatefulWidget {
 }
 
 class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
-    with UHFMethodHandlerMixin {
-  late final InventoryCubit _inventoryCubit;
+    with UHFMethodHandlerMixinV2 {
+  late final PrepareCubit _prepareCubit;
+  late final ScannerCubit _scannerCubit;
   final _selectedCodes = <String, Set<String>>{};
 
   @override
   void initState() {
     super.initState();
-    _inventoryCubit = context.read<InventoryCubit>();
+    _prepareCubit = context.read<PrepareCubit>()
+      ..clearGoods()
+      ..resetState();
+    _scannerCubit = context.read<ScannerCubit>();
     initUHFMethodHandler(platform);
   }
 
   @override
-  InventoryCubit get inventoryCubit => _inventoryCubit;
+  ScannerCubit get scannerCubit => _scannerCubit;
 
   @override
-  void Function() get onInventoryStop => () =>
-      _inventoryCubit.fetchPreviewPrepareShipments(uhfresults: uhfResults);
+  void Function() get onInventoryStop => () => _prepareCubit
+      .fetchPreviewPrepareShipments(uhfresults: _scannerCubit.state.uhfResults);
 
   @override
   Widget build(BuildContext context) {
@@ -86,19 +93,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              'Total Koli Terscan',
-                              style: paragraphSmall[medium].copyWith(
-                                color: light,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${uhfResults.length}',
-                              style: paragraphSmall[medium].copyWith(
-                                color: light,
-                              ),
-                            ),
+                            _buildTotalUnits(),
                           ],
                         ),
                       ),
@@ -108,7 +103,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                       children: <Widget>[
                         Expanded(
                           child: TextField(
-                            onChanged: _inventoryCubit.searchGoods,
+                            onChanged: _prepareCubit.searchGoods,
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
@@ -121,7 +116,8 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                             context: context,
                             builder: (context) => UniqueCodeActionBottomSheet(
                               onResult: (value) {
-                                if (uhfResults.any((e) => e.epcId == value)) {
+                                if (_scannerCubit.state.uhfResults
+                                    .any((e) => e.epcId == value)) {
                                   return TopSnackbar.dangerSnackbar(
                                       message: 'Kode sudah discan');
                                 }
@@ -156,26 +152,19 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
           color: light,
         ),
         padding: const EdgeInsets.all(8),
-        child: BlocConsumer<InventoryCubit, InventoryState>(
-          buildWhen: (previous, current) =>
-              current is FetchPreviewGoodsShipmentsLoaded ||
-              current is QRCodeScan,
-          listener: (context, state) {
-            if (state is FetchPreviewGoodsShipmentsError) {
-              TopSnackbar.dangerSnackbar(message: state.message);
-            }
-          },
+        child: BlocBuilder<PrepareCubit, ReusableState<List>>(
+          buildWhen: (previous, current) => current is FetchPreviewShipments,
           builder: (context, state) {
-            final allGoods = state is FetchPreviewGoodsShipmentsLoaded
-                ? state.allGoods
+            final allGoods = state is FetchPreviewShipmentsLoaded
+                ? state.data
                 : <GoodEntity>[];
-            final goods = state is FetchPreviewGoodsShipmentsLoaded
-                ? state.goods
+            final goods = state is FetchPreviewShipmentsLoaded
+                ? state.filteredGoods
                 : <GoodEntity>[];
 
             return Row(
               children: <Widget>[
-                if (goods.isNotEmpty && state is! QRCodeScan)
+                if (goods.isNotEmpty)
                   Expanded(
                     child: CheckboxListTile.adaptive(
                       onChanged: (value) {
@@ -204,52 +193,67 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ),
-                Expanded(
-                  child: FloatingActionButtonBar(
-                    onReset: () {
-                      _selectedCodes.clear();
-                      _inventoryCubit.clearPreviewedData();
-                      onReset();
-                    },
-                    onScan: onScan,
-                    onSave: () => showModalBottomSheet(
-                      context: context,
-                      builder: (context) =>
-                          BlocConsumer<InventoryCubit, InventoryState>(
-                        listener: (context, state) {
-                          if (state is CreateShipmentsLoaded) {
-                            TopSnackbar.successSnackbar(message: state.message);
-                            context.goNamed(prepareGoodsRoute);
+                BlocBuilder<ScannerCubit, ScannerState>(
+                  builder: (context, scannerState) {
+                    return Expanded(
+                      child: FloatingActionButtonBar(
+                        onReset: () {
+                          _selectedCodes.clear();
+                          _prepareCubit.clearGoods();
+                          onReset();
+                        },
+                        onScan: onScan,
+                        onSave: () => showModalBottomSheet(
+                          context: context,
+                          builder: (context) =>
+                              BlocConsumer<PrepareCubit, ReusableState<List>>(
+                            listener: (context, state) {
+                              if (state is ActionSuccess<List>) {
+                                TopSnackbar.successSnackbar(
+                                    message: state.message);
+                                context.goNamed(prepareGoodsRoute);
+                              }
+
+                              if (state is ActionFailure<List>) {
+                                TopSnackbar.dangerSnackbar(
+                                    message: state.failure.message);
+                              }
+                            },
+                            builder: (context, state) {
+                              final onPressed = switch (state) {
+                                ActionInProgress() => null,
+                                _ => () => _prepareCubit.createPrepareShipments(
+                                    shippedAt: widget.shippedAt,
+                                    estimatedAt: widget.estimatedAt,
+                                    nextWarehouse: widget.nextWarehouse,
+                                    transportMode: widget.transportMode,
+                                    batchName: widget.batchName,
+                                    selectedCodes: _selectedCodes),
+                              };
+
+                              return ActionConfirmationBottomSheet(
+                                onPressed: onPressed,
+                                message:
+                                    'Apakah anda yakin akan menyimpan barang ini?',
+                              );
+                            },
+                          ),
+                        ),
+                        onSync: () {
+                          if (scannerState.uhfResults.isEmpty) {
+                            return TopSnackbar.dangerSnackbar(
+                              message: 'Belum ada barang yang discan',
+                            );
                           }
 
-                          if (state is CreateShipmentsError) {
-                            TopSnackbar.dangerSnackbar(message: state.message);
-                          }
+                          _scannerCubit.updateInventoryStatus(false);
+                          _prepareCubit.fetchPreviewPrepareShipments(
+                              uhfresults: scannerState.uhfResults);
                         },
-                        builder: (context, state) {
-                          final onPressed = switch (state) {
-                            CreateShipmentsLoading() => null,
-                            _ => () => _inventoryCubit.createPrepareShipments(
-                                shippedAt: widget.shippedAt,
-                                estimatedAt: widget.estimatedAt,
-                                nextWarehouse: widget.nextWarehouse,
-                                transportMode: widget.transportMode,
-                                batchName: widget.batchName,
-                                selectedCodes: _selectedCodes),
-                          };
-
-                          return ActionConfirmationBottomSheet(
-                            onPressed: onPressed,
-                            message:
-                                'Apakah anda yakin akan menyimpan barang ini?',
-                          );
-                        },
+                        isScanning: scannerState.isFromUHFReader,
                       ),
-                    ),
-                    onSync: () => _inventoryCubit.fetchPreviewPrepareShipments(
-                        uhfresults: uhfResults),
-                    isScanning: isInventoryRunning,
-                  ),
+                    );
+                  },
                 ),
               ],
             );
@@ -262,96 +266,154 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
   }
 
   Widget _buildList() {
-    if (uhfResults.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
-            style: label[medium].copyWith(color: primaryGradientEnd),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-
-    return BlocBuilder<InventoryCubit, InventoryState>(
-      buildWhen: (previous, current) =>
-          current is FetchPreviewGoodsShipments || current is UHFAction,
-      builder: (context, state) {
-        if (state is FetchPreviewGoodsShipmentsLoading) {
-          return const SliverFillRemaining(
-            hasScrollBody: false,
+    return BlocBuilder<ScannerCubit, ScannerState>(
+      builder: (context, scannerState) {
+        if (scannerState.uhfResults.isEmpty) {
+          return SliverFillRemaining(
             child: Center(
-              child: CircularProgressIndicator.adaptive(),
+              child: Text(
+                'Belum ada item di gudang, klik pada icon scan untuk menerima item dengan RFID',
+                style: label[medium].copyWith(color: primaryGradientEnd),
+                textAlign: TextAlign.center,
+              ),
             ),
           );
         }
 
-        if (state is FetchPreviewGoodsShipmentsLoaded) {
-          if (state.goods.isEmpty) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Text(
-                  'Barang tidak ditemukan, silahkan cek nama barang atau nomor resi',
-                  style: label[medium].copyWith(color: primaryGradientEnd),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
-
+        if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
           return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 80),
-            sliver: SliverList.separated(
-              itemBuilder: (context, index) => GoodCardCheckbox(
-                onChanged: (value) {
-                  if (value == null) return;
-
-                  setState(() => value
-                      ? _selectedCodes[state.goods[index].id] =
-                          state.goods[index].uniqueCodes.toSet()
-                      : _selectedCodes.remove(state.goods[index].id));
-                },
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  builder: (context) => UniqueCodesBottomSheet(
-                    onSelected: (selectedCodes) {
-                      context.pop();
-                      setState(() => selectedCodes.isEmpty
-                          ? _selectedCodes.remove(state.goods[index].id)
-                          : _selectedCodes[state.goods[index].id] =
-                              selectedCodes.toSet());
-                    },
-                    goodName: state.goods[index].name,
-                    selectedCodes:
-                        _selectedCodes[state.goods[index].id]?.toList() ?? [],
-                    uniqueCodes: state.goods[index].uniqueCodes,
-                  ),
-                ),
-                good: state.goods[index],
-                isActive: _selectedCodes.containsKey(state.goods[index].id),
-                selectedCodesCount:
-                    _selectedCodes[state.goods[index].id]?.length ?? 0,
-              ),
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemCount: state.goods.length,
-            ),
-          );
-        }
-
-        if (state is OnUHFScan || state is QRCodeScan) {
-          return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 80),
+            padding: const EdgeInsets.only(bottom: 96),
             sliver: SliverList.builder(
               itemBuilder: (context, index) =>
-                  ScannedItemCard(item: uhfResults[index]),
-              itemCount: uhfResults.length,
+                  ScannedItemCard(item: scannerState.uhfResults[index]),
+              itemCount: scannerState.uhfResults.length,
             ),
           );
         }
 
-        return const SliverToBoxAdapter();
+        return BlocBuilder<PrepareCubit, ReusableState<List>>(
+          buildWhen: (previous, current) => current is FetchPreviewShipments,
+          builder: (context, state) {
+            if (state is FetchPreviewShipmentsLoading) {
+              return const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              );
+            }
+
+            if (state is FetchPreviewShipmentsLoaded) {
+              final goods = state.filteredGoods;
+              if (goods.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      'Barang tidak ditemukan, silahkan cek nama barang atau nomor resi',
+                      style: label[medium].copyWith(color: primaryGradientEnd),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.only(bottom: 96),
+                sliver: SliverList.separated(
+                  itemBuilder: (context, index) => GoodCardCheckbox(
+                    onChanged: (value) {
+                      if (value == null) return;
+
+                      setState(() => value
+                          ? _selectedCodes[goods[index].id] =
+                              goods[index].uniqueCodes.toSet()
+                          : _selectedCodes.remove(goods[index].id));
+                    },
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) => UniqueCodesBottomSheet(
+                        onSelected: (selectedCodes) {
+                          context.pop();
+                          setState(() => selectedCodes.isEmpty
+                              ? _selectedCodes.remove(goods[index].id)
+                              : _selectedCodes[goods[index].id] =
+                                  selectedCodes.toSet());
+                        },
+                        goodName: goods[index].name,
+                        selectedCodes:
+                            _selectedCodes[goods[index].id]?.toList() ?? [],
+                        uniqueCodes: goods[index].uniqueCodes,
+                      ),
+                    ),
+                    good: goods[index],
+                    isActive: _selectedCodes.containsKey(goods[index].id),
+                    selectedCodesCount:
+                        _selectedCodes[goods[index].id]?.length ?? 0,
+                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemCount: goods.length,
+                ),
+              );
+            }
+
+            if (state is FetchPreviewShipmentsError) {
+              return SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    state.failure.message,
+                    style: label[medium].copyWith(color: primaryGradientEnd),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+
+            return const SliverToBoxAdapter();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTotalUnits() {
+    final style = paragraphSmall[medium].copyWith(color: light);
+
+    return BlocBuilder<ScannerCubit, ScannerState>(
+      builder: (context, scannerState) {
+        if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Koli Berhasil Dipindai', style: style),
+              const SizedBox(height: 8),
+              Text('${scannerState.uhfResults.length}', style: style),
+            ],
+          );
+        }
+
+        return BlocBuilder<PrepareCubit, ReusableState<List>>(
+          builder: (context, state) {
+            final (String title, String value) = switch (state) {
+              FetchPreviewShipmentsLoading() => ('Memuat', '-'),
+              FetchPreviewShipmentsLoaded s => (
+                  'Total Barang',
+                  '${s.data.length}'
+                ),
+              _ => ('Mulai scan untuk melihat barang', '-'),
+            };
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: style),
+                const SizedBox(height: 8),
+                Text(value, style: style),
+              ],
+            );
+          },
+        );
       },
     );
   }

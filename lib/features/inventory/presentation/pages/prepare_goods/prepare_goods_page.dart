@@ -8,11 +8,12 @@ import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/action_confirmation_bottom_sheet.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/prepare_cubit.dart';
 import '../../widgets/batch_card_action_badge_item.dart';
 
 class PrepareGoodsPage extends StatelessWidget {
@@ -20,7 +21,7 @@ class PrepareGoodsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final prepareCubit = context.read<PrepareCubit>();
     final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
     String? search;
 
@@ -29,10 +30,10 @@ class PrepareGoodsPage extends StatelessWidget {
         onNotification: (scrollState) => paginateWhenScrollEnd(
           scrollState,
           paginate: () =>
-              inventoryCubit.fetchPrepareShipmentsPaginate(search: search),
+              prepareCubit.fetchPrepareShipmentsPaginate(search: search),
         ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchPrepareShipments,
+          onRefresh: prepareCubit.fetchPrepareShipments,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -50,7 +51,7 @@ class PrepareGoodsPage extends StatelessWidget {
                         Expanded(
                           child: TextField(
                             onChanged: (value) => debouncer.run(() =>
-                                inventoryCubit.fetchPrepareShipments(
+                                prepareCubit.fetchPrepareShipments(
                                     search: search = value)),
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
@@ -89,23 +90,22 @@ class PrepareGoodsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              BlocConsumer<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchPrepareShipments(),
-                buildWhen: (previous, current) =>
-                    current is FetchPrepareShipments,
+              BlocConsumer<PrepareCubit, ReusableState<List>>(
+                bloc: prepareCubit..fetchPrepareShipments(),
+                buildWhen: (previous, current) => current is FetchShipments,
                 listener: (context, state) {
-                  if (state is DeleteShipmentsLoaded) {
+                  if (state is ActionSuccess<List>) {
                     TopSnackbar.successSnackbar(message: state.message);
                     context.pop();
-                    inventoryCubit.fetchPrepareShipments();
+                    prepareCubit.fetchPrepareShipments();
                   }
 
-                  if (state is DeleteShipmentsError) {
-                    TopSnackbar.dangerSnackbar(message: state.message);
+                  if (state is ActionFailure<List>) {
+                    TopSnackbar.dangerSnackbar(message: state.failure.message);
                   }
                 },
                 builder: (context, state) {
-                  if (state is FetchPrepareShipmentsLoading) {
+                  if (state is FetchShipmentsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -114,8 +114,8 @@ class PrepareGoodsPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchPrepareShipmentsLoaded) {
-                    if (state.batches.isEmpty) {
+                  if (state is FetchShipmentsLoaded) {
+                    if (state.data.isEmpty) {
                       return SliverFillRemaining(
                         hasScrollBody: false,
                         child: Padding(
@@ -137,21 +137,25 @@ class PrepareGoodsPage extends StatelessWidget {
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) =>
                             BatchCardActionBadgeItem(
-                          onTap: () => context.pushNamed(receiptNumbersRoute,
-                              extra: state.batches[index]),
+                          onTap: () => context.pushNamed(
+                            receiptNumbersRoute,
+                            extra: {
+                              'batch': state.data[index],
+                              'routeDetailName': prepareGoodsDetailRoute,
+                            },
+                          ),
                           onDelete: () => showModalBottomSheet(
                             context: context,
                             builder: (context) =>
-                                BlocBuilder<InventoryCubit, InventoryState>(
-                              bloc: inventoryCubit,
+                                BlocBuilder<PrepareCubit, ReusableState<List>>(
                               buildWhen: (previous, current) =>
-                                  current is DeleteShipments,
+                                  current is ActionState,
                               builder: (context, deleteState) {
                                 final onPressed = switch (deleteState) {
-                                  DeleteShipmentsLoading() => null,
-                                  _ => () async => await inventoryCubit
-                                      .deletePreparedShipments(
-                                          shipmentId: state.batches[index].id),
+                                  ActionInProgress() => null,
+                                  _ => () =>
+                                      prepareCubit.deletePreparedShipments(
+                                          shipmentId: state.data[index].id),
                                 };
 
                                 return ActionConfirmationBottomSheet(
@@ -162,11 +166,11 @@ class PrepareGoodsPage extends StatelessWidget {
                               },
                             ),
                           ),
-                          batch: state.batches[index],
+                          batch: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.batches.length,
+                        itemCount: state.data.length,
                       ),
                     );
                   }
