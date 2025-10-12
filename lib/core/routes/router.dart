@@ -201,12 +201,15 @@ final router = GoRouter(
                         extras['transportMode'] as DropdownEntity;
                     final batchName = extras['batchName'] as String;
 
-                    return PrepareGoodsScanPage(
-                      shippedAt: shippedAt,
-                      estimatedAt: estimatedAt,
-                      nextWarehouse: nextWarehouse,
-                      transportMode: transportMode,
-                      batchName: batchName,
+                    return BlocProvider(
+                      create: (context) => ScannerCubit(),
+                      child: PrepareGoodsScanPage(
+                        shippedAt: shippedAt,
+                        estimatedAt: estimatedAt,
+                        nextWarehouse: nextWarehouse,
+                        transportMode: transportMode,
+                        batchName: batchName,
+                      ),
                     );
                   },
                 ),
