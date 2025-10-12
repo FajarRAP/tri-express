@@ -315,7 +315,7 @@ class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total Koli Terscan', style: style),
+              Text('Koli Berhasil Dipindai', style: style),
               const SizedBox(height: 8),
               Text('${scannerState.uhfResults.length}', style: style),
             ],
