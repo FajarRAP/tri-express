@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../../core/fonts/fonts.dart';
 import '../../../../core/themes/colors.dart';
@@ -112,7 +111,7 @@ class BatchCardCheckbox extends StatelessWidget {
                           ),
                         ),
                         Icon(
-                          Icons.keyboard_arrow_down,
+                          Icons.keyboard_arrow_right,
                           color: Colors.grey.shade600,
                         ),
                       ],
