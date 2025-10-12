@@ -47,7 +47,9 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
   @override
   void initState() {
     super.initState();
-    _deliveryCubit = context.read<DeliveryCubit>()..clearBatches();
+    _deliveryCubit = context.read<DeliveryCubit>()
+      ..clearBatches()
+      ..resetState();
     _scannerCubit = context.read<ScannerCubit>();
     initUHFMethodHandler(platform);
   }

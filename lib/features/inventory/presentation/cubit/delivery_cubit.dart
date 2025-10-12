@@ -110,4 +110,6 @@ class DeliveryCubit extends Cubit<ReusableState<List<BatchEntity>>>
           FetchPreviewShipmentsLoaded(data: batches, filteredBatches: batches)),
     );
   }
+
+  void resetState() => emit(Initial());
 }
