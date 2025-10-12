@@ -12,6 +12,8 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/presentation/cubit/delivery_cubit.dart';
 import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'features/inventory/presentation/cubit/prepare_cubit.dart';
+import 'features/inventory/presentation/cubit/receive_cubit.dart';
 import 'firebase_options.dart';
 import 'service_locator.dart';
 
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthCubit>(create: (context) => getIt<AuthCubit>()),
         BlocProvider<InventoryCubit>(
             create: (context) => getIt<InventoryCubit>()),
+        BlocProvider(create: (context) => getIt<ReceiveCubit>()),
+        BlocProvider(create: (context) => getIt<PrepareCubit>()),
         BlocProvider(create: (context) => getIt<DeliveryCubit>()),
       ],
       child: MaterialApp.router(
