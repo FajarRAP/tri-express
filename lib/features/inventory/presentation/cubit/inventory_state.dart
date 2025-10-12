@@ -91,13 +91,53 @@ class ListPaginateError extends ListPaginate {
 
 class FetchDeliveryShipmentsLoading extends FetchDeliveryShipments {}
 
-class FetchDeliveryShipmentsLoaded extends FetchDeliveryShipments {
-  FetchDeliveryShipmentsLoaded({required this.batches});
+class FetchDeliveryShipmentsLoaded extends FetchDeliveryShipments
+    implements ReceiptNumberSearchableState, ListPaginationState {
+  FetchDeliveryShipmentsLoaded({
+    required this.batches,
+    this.goods = const [],
+    this.currentPage = 1,
+    this.isLastPage = false,
+  });
 
   final List<BatchEntity> batches;
+  @override
+  final List<GoodEntity> goods;
+  @override
+  final int currentPage;
+  @override
+  final bool isLastPage;
+
+  FetchDeliveryShipmentsLoaded copyWith({
+    List<BatchEntity>? batches,
+    List<GoodEntity>? goods,
+    int? currentPage,
+    bool? isLastPage,
+  }) {
+    return FetchDeliveryShipmentsLoaded(
+      batches: batches ?? this.batches,
+      goods: goods ?? this.goods,
+      currentPage: currentPage ?? this.currentPage,
+      isLastPage: isLastPage ?? this.isLastPage,
+    );
+  }
 
   @override
-  List<Object?> get props => [batches];
+  List<Object?> get props => [batches, goods, currentPage, isLastPage];
+
+  @override
+  ReceiptNumberSearchableState copyWithGoods(
+      {required List<GoodEntity> goods}) {
+    return copyWith(goods: goods);
+  }
+
+  @override
+  ListPaginationState copyWithPage({int? currentPage, bool? isLastPage}) {
+    return copyWith(
+      currentPage: currentPage ?? this.currentPage,
+      isLastPage: isLastPage ?? this.isLastPage,
+    );
+  }
 }
 
 class FetchDeliveryShipmentsError extends FetchDeliveryShipments {
