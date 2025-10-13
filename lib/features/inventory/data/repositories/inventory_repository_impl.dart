@@ -21,7 +21,7 @@ import '../../domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_on_the_way_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
-import '../data_sources/inventory_remote_data_sources.dart';
+import '../data_sources/inventory_remote_data_source.dart';
 
 class InventoryRepositoryImpl implements InventoryRepository {
   const InventoryRepositoryImpl({required this.inventoryRemoteDataSource});
