@@ -16,6 +16,7 @@ const warning = Color(0xFFD7974D);
 const warningEmphasis = Color(0xFFEDDC3F);
 const whiteSecondary = Color(0xFFEFF1F3);
 const whiteTertiary = Color(0xFFF6F6F6);
+const whiteQuaternary = Color(0xFFF3F3F3);
 const primaryGradientEnd = Color(0xFF8692D9);
 
 const primary50 = Color(0xFFE7E9F9);
