@@ -64,7 +64,7 @@ void main() {
     statusLabel: 'Tiba di Gudang Tujuan',
     status: 3,
     transportMode: 'Laut',
-    totalItem: 0,
+    totalItem: 3,
     customer: tCustomerModel,
     origin: tOrigin,
     destination: tDestination,
