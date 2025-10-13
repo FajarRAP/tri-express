@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/inventory/domain/entities/lost_good_entity.dart';
 import '../../features/inventory/presentation/cubit/shipment_cubit.dart';
 import '../../features/inventory/presentation/widgets/unique_code_action_bottom_sheet.dart';
@@ -20,44 +21,71 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => _onItemTapped(index, context),
-        currentIndex: getIndex(context),
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Menu',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping_outlined),
-            label: 'On The Way',
-          ),
-          BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: primary,
+    return BlocConsumer<AuthCubit, AuthState>(
+      buildWhen: (previous, current) => current is UpdateUser,
+      listener: (context, state) {
+        if (state is UpdateUserError) {
+          TopSnackbar.dangerSnackbar(message: state.message);
+        }
+
+        if (state is UpdateUserLoaded) {
+          TopSnackbar.successSnackbar(message: state.message);
+          context.read<AuthCubit>().fetchCurrentUser();
+        }
+      },
+      builder: (context, state) {
+        final scaffold = Scaffold(
+          body: child,
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) => _onItemTapped(index, context),
+            currentIndex: getIndex(context),
+            items: <BottomNavigationBarItem>[
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                label: 'Menu',
               ),
-              padding: const EdgeInsets.all(10),
-              child: const Icon(
-                Icons.qr_code_scanner_outlined,
-                color: light,
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.local_shipping_outlined),
+                label: 'On The Way',
               ),
-            ),
-            label: '',
+              BottomNavigationBarItem(
+                icon: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: primary,
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: const Icon(
+                    Icons.qr_code_scanner_outlined,
+                    color: light,
+                  ),
+                ),
+                label: '',
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.inventory_2_outlined),
+                label: 'Inventory',
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.settings_outlined),
+                label: 'Settings',
+              ),
+            ],
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.inventory_2_outlined),
-            label: 'Inventory',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        );
+        final scaffoldWithLoading = Stack(
+          children: [
+            scaffold,
+            Container(
+              alignment: Alignment.center,
+              color: gray.withValues(alpha: .5),
+              child: const CircularProgressIndicator.adaptive(),
+            )
+          ],
+        );
+
+        return state is UpdateUserLoading ? scaffoldWithLoading : scaffold;
+      },
     );
   }
 

@@ -4,17 +4,19 @@ import '../../../../core/exceptions/internal_exception.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/use_cases/login_use_case.dart';
+import '../../domain/use_cases/update_user_use_case.dart';
 import '../models/login_response_model.dart';
 import '../models/user_model.dart';
 
-abstract interface class AuthRemoteDataSources {
+abstract interface class AuthRemoteDataSource {
   Future<UserEntity> fetchCurrentUser();
   Future<LoginResponseModel> login(LoginUseCaseParams params);
   Future<String> logout();
+  Future<String> updateUser(UpdateUserUseCaseParams params);
 }
 
-class AuthRemoteDataSourcesImpl implements AuthRemoteDataSources {
-  const AuthRemoteDataSourcesImpl({required this.dio});
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  const AuthRemoteDataSourceImpl({required this.dio});
 
   final Dio dio;
 
@@ -56,6 +58,30 @@ class AuthRemoteDataSourcesImpl implements AuthRemoteDataSources {
       final response = await dio.post('/logout');
 
       return response.data['data'];
+    } on DioException catch (de) {
+      throw handleDioException(de);
+    } catch (e) {
+      throw InternalException(message: '$e');
+    }
+  }
+
+  @override
+  Future<String> updateUser(UpdateUserUseCaseParams params) async {
+    try {
+      final response = await dio.post(
+        '/profile',
+        data: {
+          'name': params.name,
+          'email': params.email,
+          'no_telp': params.phoneNumber,
+          'password': params.password,
+          'avatar': params.avatarPath != null
+              ? await MultipartFile.fromString(params.avatarPath!)
+              : null,
+        },
+      );
+
+      return response.data['message'];
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

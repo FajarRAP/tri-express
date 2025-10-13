@@ -3,21 +3,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/cache_exception.dart';
 import 'package:tri_express/core/utils/constants.dart';
-import 'package:tri_express/features/auth/data/data_sources/auth_local_data_sources.dart';
+import 'package:tri_express/features/auth/data/data_sources/auth_local_data_source.dart';
 
 class MockStorage extends Mock implements FlutterSecureStorage {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late MockStorage mockStorage;
-  late AuthLocalDataSourcesImpl dataSources;
+  late AuthLocalDataSourceImpl dataSources;
 
   const tAccessToken = 'access_token';
   const tRefreshToken = 'refresh_token';
 
   setUp(() {
     mockStorage = MockStorage();
-    dataSources = AuthLocalDataSourcesImpl(storage: mockStorage);
+    dataSources = AuthLocalDataSourceImpl(storage: mockStorage);
   });
 
   group(

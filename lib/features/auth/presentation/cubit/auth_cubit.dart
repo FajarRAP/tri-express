@@ -8,6 +8,7 @@ import '../../domain/use_cases/fetch_current_user_use_case.dart';
 import '../../domain/use_cases/get_access_token_use_case.dart';
 import '../../domain/use_cases/login_use_case.dart';
 import '../../domain/use_cases/logout_use_case.dart';
+import '../../domain/use_cases/update_user_use_case.dart';
 
 part 'auth_state.dart';
 
@@ -18,11 +19,13 @@ class AuthCubit extends Cubit<AuthState> {
     required GetOnboardingStatusUseCase getOnboardingStatusUseCase,
     required LoginUseCase loginUseCase,
     required LogoutUseCase logoutUseCase,
+    required UpdateUserUseCase updateUserUseCase,
   })  : _fetchCurrentUserUseCase = fetchCurrentUserUseCase,
         _getAccessTokenUseCase = getAccessTokenUseCase,
         _getOnboardingStatusUseCase = getOnboardingStatusUseCase,
         _loginUseCase = loginUseCase,
         _logoutUseCase = logoutUseCase,
+        _updateUserUseCase = updateUserUseCase,
         super(AuthInitial());
 
   final FetchCurrentUserUseCase _fetchCurrentUserUseCase;
@@ -30,6 +33,7 @@ class AuthCubit extends Cubit<AuthState> {
   final GetOnboardingStatusUseCase _getOnboardingStatusUseCase;
   final LoginUseCase _loginUseCase;
   final LogoutUseCase _logoutUseCase;
+  final UpdateUserUseCase _updateUserUseCase;
   late UserEntity user;
 
   Future<void> fetchCurrentUser() async {
@@ -90,5 +94,29 @@ class AuthCubit extends Cubit<AuthState> {
         (token) => accessToken = token);
 
     accessToken == null ? emit(Unauthenticated()) : emit(Authenticated());
+  }
+
+  Future<void> updateUser({
+    required String name,
+    required String email,
+    String? phoneNumber,
+    String? password,
+    String? avatarPath,
+  }) async {
+    emit(UpdateUserLoading());
+
+    final params = UpdateUserUseCaseParams(
+      email: email,
+      name: name,
+      phoneNumber: phoneNumber,
+      password: password,
+      avatarPath: avatarPath,
+    );
+    final result = await _updateUserUseCase(params);
+
+    result.fold(
+      (failure) => emit(UpdateUserError(message: failure.message)),
+      (message) => emit(UpdateUserLoaded(message: message)),
+    );
   }
 }

@@ -3,16 +3,16 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
 import '../entities/user_entity.dart';
-import '../repositories/auth_repositories.dart';
+import '../repositories/auth_repository.dart';
 
 class LoginUseCase implements UseCase<UserEntity, LoginUseCaseParams> {
-  const LoginUseCase({required this.authRepositories});
+  const LoginUseCase({required this.authRepository});
 
-  final AuthRepositories authRepositories;
+  final AuthRepository authRepository;
 
   @override
   Future<Either<Failure, UserEntity>> call(LoginUseCaseParams params) async {
-    return await authRepositories.login(params);
+    return await authRepository.login(params);
   }
 }
 

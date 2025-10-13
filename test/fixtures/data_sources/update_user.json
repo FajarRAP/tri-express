@@ -1,0 +1,18 @@
+{
+    "status": "Success",
+    "message": "Profil berhasil diperbarui",
+    "data": {
+        "id": "019999d3-585b-725d-9b77-6f2ac7cfe331",
+        "gudang_id": "019999ce-4a4d-711b-a89a-8c008148b4e9",
+        "name": "Gudang Medan",
+        "email": "medan1@gmail.com",
+        "no_telp": null,
+        "email_verified_at": null,
+        "avatar": "019999d3-585b-725d-9b77-6f2ac7cfe3311001111723.jpg",
+        "status": 1,
+        "kode": null,
+        "created_at": "2025-09-30T08:53:08.000000Z",
+        "updated_at": "2025-10-13T06:21:21.000000Z",
+        "avatar_url": "http://159.65.13.17/storage/users/019999d3-585b-725d-9b77-6f2ac7cfe3311001111723.jpg"
+    }
+}

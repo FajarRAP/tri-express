@@ -7,6 +7,8 @@ final class AuthInitial extends AuthState {}
 
 class Login extends AuthState {}
 
+class UpdateUser extends AuthState {}
+
 class LoginLoading extends Login {}
 
 class LoginLoaded extends Login {
@@ -63,6 +65,20 @@ class FirstTimeUser extends AuthState {}
 
 class CheckingAuthenticationError extends AuthState {
   CheckingAuthenticationError({required this.message});
+
+  final String message;
+}
+
+class UpdateUserLoading extends UpdateUser {}
+
+class UpdateUserLoaded extends UpdateUser {
+  UpdateUserLoaded({required this.message});
+
+  final String message;
+}
+
+class UpdateUserError extends UpdateUser {
+  UpdateUserError({required this.message});
 
   final String message;
 }

@@ -39,7 +39,7 @@ import '../../features/inventory/presentation/pages/send_goods/send_goods_detail
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_scan_page.dart';
-import '../../features/inventory/presentation/pages/setting_page.dart';
+import '../../features/auth/presentation/pages/setting_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 

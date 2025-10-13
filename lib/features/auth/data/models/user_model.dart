@@ -8,7 +8,7 @@ class UserModel extends UserEntity {
     super.avatarUrl,
     required super.email,
     required super.name,
-    required super.phoneNumber,
+    super.phoneNumber,
     required super.roles,
     super.warehouse,
   });

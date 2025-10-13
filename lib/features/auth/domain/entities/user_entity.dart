@@ -7,7 +7,7 @@ class UserEntity {
     this.avatarUrl,
     required this.email,
     required this.name,
-    required this.phoneNumber,
+    this.phoneNumber,
     required this.roles,
     required this.warehouse,
   });
@@ -17,7 +17,7 @@ class UserEntity {
   final String? avatarUrl;
   final String email;
   final String name;
-  final String phoneNumber;
+  final String? phoneNumber;
   final List<String> roles;
   final WarehouseEntity? warehouse;
 }

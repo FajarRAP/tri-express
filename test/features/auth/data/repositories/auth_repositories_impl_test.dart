@@ -4,30 +4,29 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/internal_exception.dart';
 import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/core/failure/failure.dart';
-import 'package:tri_express/features/auth/data/data_sources/auth_local_data_sources.dart';
-import 'package:tri_express/features/auth/data/data_sources/auth_remote_data_sources.dart';
+import 'package:tri_express/features/auth/data/data_sources/auth_local_data_source.dart';
+import 'package:tri_express/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:tri_express/features/auth/data/models/login_response_model.dart';
 import 'package:tri_express/features/auth/data/models/user_model.dart';
-import 'package:tri_express/features/auth/data/repositories/auth_repositories_impl.dart';
+import 'package:tri_express/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:tri_express/features/auth/domain/use_cases/login_use_case.dart';
 
-class MockAuthRemoteDataSources extends Mock
-    implements AuthRemoteDataSourcesImpl {}
+class MockAuthRemoteDataSource extends Mock
+    implements AuthRemoteDataSourceImpl {}
 
-class MockAuthLocalDataSources extends Mock
-    implements AuthLocalDataSourcesImpl {}
+class MockAuthLocalDataSource extends Mock implements AuthLocalDataSourceImpl {}
 
 void main() {
-  late MockAuthRemoteDataSources mockAuthRemoteDataSources;
-  late MockAuthLocalDataSources mockAuthLocalDataSources;
-  late AuthRepositoriesImpl authRepositoriesImpl;
+  late MockAuthRemoteDataSource mockAuthRemoteDataSource;
+  late MockAuthLocalDataSource mockAuthLocalDataSource;
+  late AuthRepositoryImpl authRepositoryImpl;
 
   setUp(() {
-    mockAuthRemoteDataSources = MockAuthRemoteDataSources();
-    mockAuthLocalDataSources = MockAuthLocalDataSources();
-    authRepositoriesImpl = AuthRepositoriesImpl(
-      authLocalDataSources: mockAuthLocalDataSources,
-      authRemoteDataSources: mockAuthRemoteDataSources,
+    mockAuthRemoteDataSource = MockAuthRemoteDataSource();
+    mockAuthLocalDataSource = MockAuthLocalDataSource();
+    authRepositoryImpl = AuthRepositoryImpl(
+      authLocalDataSource: mockAuthLocalDataSource,
+      authRemoteDataSource: mockAuthRemoteDataSource,
     );
   });
 
@@ -46,11 +45,11 @@ void main() {
             phoneNumber: 'phoneNumber',
             roles: [],
           );
-          when(() => mockAuthRemoteDataSources.fetchCurrentUser())
+          when(() => mockAuthRemoteDataSource.fetchCurrentUser())
               .thenAnswer((_) async => user);
 
           // act
-          final result = await authRepositoriesImpl.fetchCurrentUser();
+          final result = await authRepositoryImpl.fetchCurrentUser();
 
           // assert
           expect(result, const Right(user));
@@ -61,11 +60,11 @@ void main() {
         'should return ServerFailure when request status code is not 200',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.fetchCurrentUser())
+          when(() => mockAuthRemoteDataSource.fetchCurrentUser())
               .thenThrow(const ServerException());
 
           // act
-          final result = await authRepositoriesImpl.fetchCurrentUser();
+          final result = await authRepositoryImpl.fetchCurrentUser();
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -80,11 +79,11 @@ void main() {
         'should return Failure when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.fetchCurrentUser())
+          when(() => mockAuthRemoteDataSource.fetchCurrentUser())
               .thenThrow(const InternalException());
 
           // act
-          final result = await authRepositoriesImpl.fetchCurrentUser();
+          final result = await authRepositoryImpl.fetchCurrentUser();
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -120,18 +119,18 @@ void main() {
               user: user,
               accessToken: tAccessToken,
               refreshToken: tRefreshToken);
-          when(() => mockAuthRemoteDataSources.login(params))
+          when(() => mockAuthRemoteDataSource.login(params))
               .thenAnswer((_) async => loginResponse);
-          when(() => mockAuthLocalDataSources.cacheToken(
+          when(() => mockAuthLocalDataSource.cacheToken(
                   loginResponse.accessToken, loginResponse.refreshToken))
               .thenAnswer((_) async {});
 
           // act
-          final result = await authRepositoriesImpl.login(params);
+          final result = await authRepositoryImpl.login(params);
 
           // assert
           expect(result, const Right(user));
-          verify(() => mockAuthLocalDataSources.cacheToken(
+          verify(() => mockAuthLocalDataSource.cacheToken(
               loginResponse.accessToken, loginResponse.refreshToken)).called(1);
         },
       );
@@ -140,11 +139,11 @@ void main() {
         'should return ServerFailure when request status code is not 200',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.login(params))
+          when(() => mockAuthRemoteDataSource.login(params))
               .thenThrow(const ServerException());
 
           // act
-          final result = await authRepositoriesImpl.login(params);
+          final result = await authRepositoryImpl.login(params);
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -159,11 +158,11 @@ void main() {
         'should return Failure when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.login(params))
+          when(() => mockAuthRemoteDataSource.login(params))
               .thenThrow(const InternalException());
 
           // act
-          final result = await authRepositoriesImpl.login(params);
+          final result = await authRepositoryImpl.login(params);
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -183,17 +182,17 @@ void main() {
         'should return String when request status code is 200',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.logout())
+          when(() => mockAuthRemoteDataSource.logout())
               .thenAnswer((_) async => 'Logout successful');
-          when(() => mockAuthLocalDataSources.clearToken())
+          when(() => mockAuthLocalDataSource.clearToken())
               .thenAnswer((_) async {});
 
           // act
-          final result = await authRepositoriesImpl.logout();
+          final result = await authRepositoryImpl.logout();
 
           // assert
           expect(result, const Right('Logout successful'));
-          verify(() => mockAuthLocalDataSources.clearToken()).called(1);
+          verify(() => mockAuthLocalDataSource.clearToken()).called(1);
         },
       );
 
@@ -201,11 +200,11 @@ void main() {
         'should return ServerFailure when request status code is not 200',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.logout())
+          when(() => mockAuthRemoteDataSource.logout())
               .thenThrow(const ServerException());
 
           // act
-          final result = await authRepositoriesImpl.logout();
+          final result = await authRepositoryImpl.logout();
 
           // assert
           expect(result.isLeft(), isTrue);
@@ -220,11 +219,11 @@ void main() {
         'should return Failure when unexpected error occurs',
         () async {
           // arrange
-          when(() => mockAuthRemoteDataSources.logout())
+          when(() => mockAuthRemoteDataSource.logout())
               .thenThrow(const InternalException());
 
           // act
-          final result = await authRepositoriesImpl.logout();
+          final result = await authRepositoryImpl.logout();
 
           // assert
           expect(result.isLeft(), isTrue);

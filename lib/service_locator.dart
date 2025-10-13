@@ -3,14 +3,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
 import 'core/utils/dio_interceptor.dart';
-import 'features/auth/data/data_sources/auth_local_data_sources.dart';
-import 'features/auth/data/data_sources/auth_remote_data_sources.dart';
-import 'features/auth/data/repositories/auth_repositories_impl.dart';
-import 'features/auth/domain/repositories/auth_repositories.dart';
+import 'features/auth/data/data_sources/auth_local_data_source.dart';
+import 'features/auth/data/data_sources/auth_remote_data_source.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/domain/use_cases/fetch_current_user_use_case.dart';
 import 'features/auth/domain/use_cases/get_access_token_use_case.dart';
 import 'features/auth/domain/use_cases/login_use_case.dart';
 import 'features/auth/domain/use_cases/logout_use_case.dart';
+import 'features/auth/domain/use_cases/update_user_use_case.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/data/data_sources/core_local_data_source.dart';
 import 'features/core/data/data_sources/core_remote_data_source.dart';
@@ -105,22 +106,24 @@ void setupServiceLocator() {
 
   // Auth
   getIt
-    ..registerLazySingleton<AuthLocalDataSources>(
-        () => AuthLocalDataSourcesImpl(storage: getIt()))
-    ..registerLazySingleton<AuthRemoteDataSources>(
-        () => AuthRemoteDataSourcesImpl(dio: getIt()))
-    ..registerLazySingleton<AuthRepositories>(() => AuthRepositoriesImpl(
-        authLocalDataSources: getIt(), authRemoteDataSources: getIt()))
-    ..registerSingleton(FetchCurrentUserUseCase(authRepositories: getIt()))
-    ..registerSingleton(GetAccessTokenUseCase(authRepositories: getIt()))
-    ..registerSingleton(LoginUseCase(authRepositories: getIt()))
-    ..registerSingleton(LogoutUseCase(authRepositories: getIt()))
+    ..registerLazySingleton<AuthLocalDataSource>(
+        () => AuthLocalDataSourceImpl(storage: getIt()))
+    ..registerLazySingleton<AuthRemoteDataSource>(
+        () => AuthRemoteDataSourceImpl(dio: getIt()))
+    ..registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
+        authLocalDataSource: getIt(), authRemoteDataSource: getIt()))
+    ..registerSingleton(FetchCurrentUserUseCase(authRepository: getIt()))
+    ..registerSingleton(GetAccessTokenUseCase(authRepository: getIt()))
+    ..registerSingleton(LoginUseCase(authRepository: getIt()))
+    ..registerSingleton(LogoutUseCase(authRepository: getIt()))
+    ..registerSingleton(UpdateUserUseCase(authRepository: getIt()))
     ..registerLazySingleton<AuthCubit>(() => AuthCubit(
         fetchCurrentUserUseCase: getIt(),
         getAccessTokenUseCase: getIt(),
         getOnboardingStatusUseCase: getIt(),
         loginUseCase: getIt(),
-        logoutUseCase: getIt()));
+        logoutUseCase: getIt(),
+        updateUserUseCase: getIt()));
 
   // Inventory
   getIt
