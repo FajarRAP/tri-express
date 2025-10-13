@@ -3,18 +3,18 @@ import 'package:fpdart/src/either.dart';
 import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
 import '../../../core/domain/entities/dropdown_entity.dart';
-import '../repositories/inventory_repositories.dart';
+import '../repositories/inventory_repository.dart';
 
 class CreatePrepareShipmentsUseCase
     implements UseCase<String, CreatePrepareShipmentsUseCaseParams> {
-  const CreatePrepareShipmentsUseCase({required this.inventoryRepositories});
+  const CreatePrepareShipmentsUseCase({required this.inventoryRepository});
 
-  final InventoryRepositories inventoryRepositories;
+  final InventoryRepository inventoryRepository;
 
   @override
   Future<Either<Failure, String>> call(
       CreatePrepareShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.createPrepareShipments(params);
+    return await inventoryRepository.createPrepareShipments(params);
   }
 }
 

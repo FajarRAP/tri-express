@@ -4,20 +4,20 @@ import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
 import '../../../core/domain/entities/dropdown_entity.dart';
 import '../entities/batch_entity.dart';
-import '../repositories/inventory_repositories.dart';
+import '../repositories/inventory_repository.dart';
 
 class FetchPreviewDeliveryShipmentsUseCase
     implements
         UseCase<List<BatchEntity>, FetchPreviewDeliveryShipmentsUseCaseParams> {
   const FetchPreviewDeliveryShipmentsUseCase(
-      {required this.inventoryRepositories});
+      {required this.inventoryRepository});
 
-  final InventoryRepositories inventoryRepositories;
+  final InventoryRepository inventoryRepository;
 
   @override
   Future<Either<Failure, List<BatchEntity>>> call(
       FetchPreviewDeliveryShipmentsUseCaseParams params) async {
-    return await inventoryRepositories.fetchPreviewDeliveryShipments(params);
+    return await inventoryRepository.fetchPreviewDeliveryShipments(params);
   }
 }
 

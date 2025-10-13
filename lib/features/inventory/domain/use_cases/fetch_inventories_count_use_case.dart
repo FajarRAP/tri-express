@@ -2,15 +2,15 @@ import 'package:fpdart/src/either.dart';
 
 import '../../../../core/failure/failure.dart';
 import '../../../../core/use_case/use_case.dart';
-import '../repositories/inventory_repositories.dart';
+import '../repositories/inventory_repository.dart';
 
 class FetchInventoriesCountUseCase implements UseCase<int, NoParams> {
-  const FetchInventoriesCountUseCase({required this.inventoryRepositories});
+  const FetchInventoriesCountUseCase({required this.inventoryRepository});
 
-  final InventoryRepositories inventoryRepositories;
+  final InventoryRepository inventoryRepository;
 
   @override
   Future<Either<Failure, int>> call(NoParams params) async {
-    return await inventoryRepositories.fetchInventoriesCount();
+    return await inventoryRepository.fetchInventoriesCount();
   }
 }

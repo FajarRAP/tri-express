@@ -8,7 +8,7 @@ import '../../domain/entities/good_entity.dart';
 import '../../domain/entities/lost_good_entity.dart';
 import '../../domain/entities/picked_good_entity.dart';
 import '../../domain/entities/timeline_summary_entity.dart';
-import '../../domain/repositories/inventory_repositories.dart';
+import '../../domain/repositories/inventory_repository.dart';
 import '../../domain/use_cases/create_delivery_shipments_use_case.dart';
 import '../../domain/use_cases/create_picked_up_goods_use_case.dart';
 import '../../domain/use_cases/create_prepare_shipments_use_case.dart';
@@ -23,17 +23,17 @@ import '../../domain/use_cases/fetch_prepare_shipments_use_case.dart';
 import '../../domain/use_cases/fetch_receive_shipments_use_case.dart';
 import '../data_sources/inventory_remote_data_sources.dart';
 
-class InventoryRepositoriesImpl implements InventoryRepositories {
-  const InventoryRepositoriesImpl({required this.inventoryRemoteDataSources});
+class InventoryRepositoryImpl implements InventoryRepository {
+  const InventoryRepositoryImpl({required this.inventoryRemoteDataSource});
 
-  final InventoryRemoteDataSources inventoryRemoteDataSources;
+  final InventoryRemoteDataSource inventoryRemoteDataSource;
 
   @override
   Future<Either<Failure, String>> createDeliveryShipments(
       CreateDeliveryShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.createDeliveryShipments(params);
+          await inventoryRemoteDataSource.createDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -54,7 +54,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       CreatePickedUpGoodsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.createPickedUpGoods(params);
+          await inventoryRemoteDataSource.createPickedUpGoods(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -75,7 +75,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       CreatePrepareShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.createPrepareShipments(params);
+          await inventoryRemoteDataSource.createPrepareShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -96,7 +96,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       CreateReceiveShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.createReceiveShipments(params);
+          await inventoryRemoteDataSource.createReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -117,7 +117,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       String shipmentId) async {
     try {
       final result =
-          await inventoryRemoteDataSources.deletePreparedShipments(shipmentId);
+          await inventoryRemoteDataSource.deletePreparedShipments(shipmentId);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -138,7 +138,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       FetchDeliveryShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchDeliveryShipments(params);
+          await inventoryRemoteDataSource.fetchDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -159,7 +159,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       String receiptNumber) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchGoodTimeline(receiptNumber);
+          await inventoryRemoteDataSource.fetchGoodTimeline(receiptNumber);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -179,7 +179,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   Future<Either<Failure, List<BatchEntity>>> fetchInventories(
       FetchInventoriesUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchInventories(params);
+      final result = await inventoryRemoteDataSource.fetchInventories(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -198,7 +198,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   @override
   Future<Either<Failure, int>> fetchInventoriesCount() async {
     try {
-      final result = await inventoryRemoteDataSources.fetchInventoriesCount();
+      final result = await inventoryRemoteDataSource.fetchInventoriesCount();
 
       return Right(result);
     } on ServerException catch (se) {
@@ -218,7 +218,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   Future<Either<Failure, LostGoodEntity>> fetchLostGood(
       String uniqueCode) async {
     try {
-      final result = await inventoryRemoteDataSources.fetchLostGood(uniqueCode);
+      final result = await inventoryRemoteDataSource.fetchLostGood(uniqueCode);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -239,7 +239,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       FetchOnTheWayShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchOnTheWayShipments(params);
+          await inventoryRemoteDataSource.fetchOnTheWayShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -259,8 +259,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   Future<Either<Failure, List<PickedGoodEntity>>> fetchPickedUpGoods(
       FetchPickedUpGoodsUseCaseParams params) async {
     try {
-      final result =
-          await inventoryRemoteDataSources.fetchPickedUpGoods(params);
+      final result = await inventoryRemoteDataSource.fetchPickedUpGoods(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -281,7 +280,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       FetchPrepareShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchPrepareShipments(params);
+          await inventoryRemoteDataSource.fetchPrepareShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -301,8 +300,8 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   Future<Either<Failure, List<BatchEntity>>> fetchPreviewDeliveryShipments(
       FetchPreviewDeliveryShipmentsUseCaseParams params) async {
     try {
-      final result = await inventoryRemoteDataSources
-          .fetchPreviewDeliveryShipments(params);
+      final result =
+          await inventoryRemoteDataSource.fetchPreviewDeliveryShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -323,7 +322,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       List<String> uniqueCodes) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchPreviewPickUpGoods(uniqueCodes);
+          await inventoryRemoteDataSource.fetchPreviewPickUpGoods(uniqueCodes);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -343,7 +342,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
   Future<Either<Failure, List<GoodEntity>>> fetchPreviewPrepareShipments(
       List<String> uniqueCodes) async {
     try {
-      final result = await inventoryRemoteDataSources
+      final result = await inventoryRemoteDataSource
           .fetchPreviewPrepareShipments(uniqueCodes);
 
       return Right(result);
@@ -365,7 +364,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       FetchPreviewReceiveShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchPreviewReceiveShipments(params);
+          await inventoryRemoteDataSource.fetchPreviewReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {
@@ -386,7 +385,7 @@ class InventoryRepositoriesImpl implements InventoryRepositories {
       FetchReceiveShipmentsUseCaseParams params) async {
     try {
       final result =
-          await inventoryRemoteDataSources.fetchReceiveShipments(params);
+          await inventoryRemoteDataSource.fetchReceiveShipments(params);
 
       return Right(result);
     } on ServerException catch (se) {

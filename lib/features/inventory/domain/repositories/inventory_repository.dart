@@ -19,7 +19,7 @@ import '../use_cases/fetch_preview_delivery_shipments_use_case.dart';
 import '../use_cases/fetch_preview_receive_shipments_use_case.dart';
 import '../use_cases/fetch_receive_shipments_use_case.dart';
 
-abstract class InventoryRepositories {
+abstract class InventoryRepository {
   Future<Either<Failure, String>> createDeliveryShipments(
       CreateDeliveryShipmentsUseCaseParams params);
   Future<Either<Failure, String>> createPickedUpGoods(

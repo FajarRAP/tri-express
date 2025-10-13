@@ -28,9 +28,9 @@ import 'features/core/domain/use_cases/get_onboarding_status_use_case.dart';
 import 'features/core/domain/use_cases/read_all_notifications_use_case.dart';
 import 'features/core/domain/use_cases/read_notification_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
-import 'features/inventory/data/data_sources/inventory_remote_data_sources.dart';
-import 'features/inventory/data/repositories/inventory_repositories_impl.dart';
-import 'features/inventory/domain/repositories/inventory_repositories.dart';
+import 'features/inventory/data/data_sources/inventory_remote_data_source.dart';
+import 'features/inventory/data/repositories/inventory_repository_impl.dart';
+import 'features/inventory/domain/repositories/inventory_repository.dart';
 import 'features/inventory/domain/use_cases/create_delivery_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/create_picked_up_goods_use_case.dart';
 import 'features/inventory/domain/use_cases/create_prepare_shipments_use_case.dart';
@@ -127,44 +127,42 @@ void setupServiceLocator() {
 
   // Inventory
   getIt
-    ..registerLazySingleton<InventoryRemoteDataSources>(
-        () => InventoryRemoteDataSourcesImpl(dio: getIt()))
-    ..registerLazySingleton<InventoryRepositories>(
-        () => InventoryRepositoriesImpl(inventoryRemoteDataSources: getIt()))
+    ..registerLazySingleton<InventoryRemoteDataSource>(
+        () => InventoryRemoteDataSourceImpl(dio: getIt()))
+    ..registerLazySingleton<InventoryRepository>(
+        () => InventoryRepositoryImpl(inventoryRemoteDataSource: getIt()))
     ..registerSingleton(
-        CreateDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+        CreateDeliveryShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        CreatePickedUpGoodsUseCase(inventoryRepositories: getIt()))
+        CreatePickedUpGoodsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        CreatePrepareShipmentsUseCase(inventoryRepositories: getIt()))
+        CreatePrepareShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        CreateReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+        CreateReceiveShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        DeletePreparedShipmentsUseCase(inventoryRepositories: getIt()))
+        DeletePreparedShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchDeliveryShipmentsUseCase(inventoryRepository: getIt()))
+    ..registerSingleton(FetchGoodTimelineUseCase(inventoryRepository: getIt()))
+    ..registerSingleton(FetchInventoriesUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchGoodTimelineUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(FetchInventoriesUseCase(inventoryRepositories: getIt()))
+        FetchInventoriesCountUseCase(inventoryRepository: getIt()))
+    ..registerSingleton(FetchLostGoodUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchInventoriesCountUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(FetchLostGoodUseCase(inventoryRepositories: getIt()))
+        FetchOnTheWayShipmentsUseCase(inventoryRepository: getIt()))
+    ..registerSingleton(FetchPickedUpGoodsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchOnTheWayShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchPrepareShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchPickedUpGoodsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewDeliveryShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchPrepareShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewPickUpGoodsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchPreviewDeliveryShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewPrepareShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchPreviewPickUpGoodsUseCase(inventoryRepositories: getIt()))
+        FetchPreviewReceiveShipmentsUseCase(inventoryRepository: getIt()))
     ..registerSingleton(
-        FetchPreviewPrepareShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(
-        FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerSingleton(
-        FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
+        FetchReceiveShipmentsUseCase(inventoryRepository: getIt()))
     ..registerLazySingleton(() => ReceiveCubit(
         createReceiveShipmentsUseCase: getIt(),
         fetchReceiveShipmentsUseCase: getIt(),

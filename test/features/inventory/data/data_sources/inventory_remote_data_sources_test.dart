@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tri_express/core/exceptions/internal_exception.dart';
 import 'package:tri_express/core/exceptions/server_exception.dart';
 import 'package:tri_express/features/core/domain/entities/dropdown_entity.dart';
-import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_sources.dart';
+import 'package:tri_express/features/inventory/data/data_sources/inventory_remote_data_source.dart';
 import 'package:tri_express/features/inventory/data/models/batch_model.dart';
 import 'package:tri_express/features/inventory/data/models/good_model.dart';
 import 'package:tri_express/features/inventory/data/models/lost_good_model.dart';
@@ -36,11 +36,11 @@ class MockDio extends Mock implements Dio {}
 
 void main() {
   late MockDio mockDio;
-  late InventoryRemoteDataSourcesImpl dataSource;
+  late InventoryRemoteDataSourceImpl dataSource;
 
   setUp(() {
     mockDio = MockDio();
-    dataSource = InventoryRemoteDataSourcesImpl(dio: mockDio);
+    dataSource = InventoryRemoteDataSourceImpl(dio: mockDio);
   });
 
   group('create delivery shipments remote data sources test', () {

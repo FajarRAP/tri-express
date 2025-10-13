@@ -25,7 +25,7 @@ import '../models/lost_good_model.dart';
 import '../models/picked_good_model.dart';
 import '../models/timeline_summary_model.dart';
 
-abstract class InventoryRemoteDataSources {
+abstract class InventoryRemoteDataSource {
   Future<String> createDeliveryShipments(
       CreateDeliveryShipmentsUseCaseParams params);
   Future<String> createPickedUpGoods(CreatePickedUpGoodsUseCaseParams params);
@@ -58,8 +58,8 @@ abstract class InventoryRemoteDataSources {
   Future<LostGoodEntity> fetchLostGood(String uniqueCode);
 }
 
-class InventoryRemoteDataSourcesImpl implements InventoryRemoteDataSources {
-  const InventoryRemoteDataSourcesImpl({required this.dio});
+class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
+  const InventoryRemoteDataSourceImpl({required this.dio});
 
   final Dio dio;
 
