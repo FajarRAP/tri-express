@@ -292,7 +292,10 @@ final router = GoRouter(
                   parentNavigatorKey: _rootNavigatorKey,
                   path: 'scan',
                   name: pickUpGoodsScanRoute,
-                  builder: (context, state) => const PickUpGoodsScanPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => ScannerCubit(),
+                    child: const PickUpGoodsScanPage(),
+                  ),
                 ),
                 GoRoute(
                   parentNavigatorKey: _rootNavigatorKey,
