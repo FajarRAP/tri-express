@@ -22,8 +22,8 @@ class PickedGoodModel extends PickedGoodEntity {
   });
 
   factory PickedGoodModel.fromJson(Map<String, dynamic> json) {
-    final units = List.from(json['units']);
-    final allUnits = List.from(json['units_all']);
+    final units = List.from(json['units'] ?? []);
+    final allUnits = List.from(json['units_all'] ?? []);
 
     return PickedGoodModel(
       id: '${json['receipt']['id']}',
