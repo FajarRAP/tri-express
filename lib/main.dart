@@ -11,7 +11,7 @@ import 'core/utils/top_snackbar.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
 import 'features/inventory/presentation/cubit/delivery_cubit.dart';
-import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'features/inventory/presentation/cubit/pick_up_cubit.dart';
 import 'features/inventory/presentation/cubit/prepare_cubit.dart';
 import 'features/inventory/presentation/cubit/receive_cubit.dart';
 import 'features/inventory/presentation/cubit/shipment_cubit.dart';
@@ -39,13 +39,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CoreCubit>(create: (context) => getIt<CoreCubit>()),
-        BlocProvider<AuthCubit>(create: (context) => getIt<AuthCubit>()),
-        BlocProvider<InventoryCubit>(
-            create: (context) => getIt<InventoryCubit>()),
+        BlocProvider(create: (context) => getIt<CoreCubit>()),
+        BlocProvider(create: (context) => getIt<AuthCubit>()),
         BlocProvider(create: (context) => getIt<ReceiveCubit>()),
         BlocProvider(create: (context) => getIt<PrepareCubit>()),
         BlocProvider(create: (context) => getIt<DeliveryCubit>()),
+        BlocProvider(create: (context) => getIt<PickUpCubit>()),
         BlocProvider(create: (context) => getIt<ShipmentCubit>()),
       ],
       child: MaterialApp.router(
