@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/inventory/presentation/cubit/inventory_cubit.dart';
+import '../../features/inventory/domain/entities/lost_good_entity.dart';
+import '../../features/inventory/presentation/cubit/shipment_cubit.dart';
 import '../../features/inventory/presentation/widgets/unique_code_action_bottom_sheet.dart';
 import '../routes/router.dart';
 import '../themes/colors.dart';
+import '../utils/states.dart';
 import '../utils/top_snackbar.dart';
 
 class ScaffoldWithBottomNavbar extends StatelessWidget {
@@ -94,27 +96,23 @@ class _UniqueCodeActionBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<InventoryCubit, InventoryState>(
-      buildWhen: (previous, current) => current is FetchLostGood,
+    return BlocConsumer<ShipmentCubit, ReusableState>(
       listener: (context, state) {
-        if (state is FetchLostGoodLoaded) {
-          context.pushNamed(lostGoodRoute, extra: state.lostGood);
+        if (state is Loaded<LostGoodEntity>) {
+          context.pushNamed(lostGoodRoute, extra: state.data);
         }
 
-        if (state is FetchLostGoodError) {
-          TopSnackbar.dangerSnackbar(message: state.message);
+        if (state is Error<LostGoodEntity>) {
+          TopSnackbar.dangerSnackbar(message: state.failure.message);
         }
       },
       builder: (context, state) {
         final onResult = switch (state) {
-          FetchLostGoodLoading() => null,
-          _ => (String value) =>
-              context.read<InventoryCubit>().fetchLostGoods(uniqueCode: value)
+          Loading<LostGoodEntity>() => null,
+          _ => context.read<ShipmentCubit>().fetchLostGoods
         };
 
-        return UniqueCodeActionBottomSheet(
-          onResult: onResult,
-        );
+        return UniqueCodeActionBottomSheet(onResult: onResult);
       },
     );
   }
