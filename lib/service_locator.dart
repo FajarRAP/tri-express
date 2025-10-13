@@ -49,7 +49,7 @@ import 'features/inventory/domain/use_cases/fetch_preview_prepare_shipments_use_
 import 'features/inventory/domain/use_cases/fetch_preview_receive_shipments_use_case.dart';
 import 'features/inventory/domain/use_cases/fetch_receive_shipments_use_case.dart';
 import 'features/inventory/presentation/cubit/delivery_cubit.dart';
-import 'features/inventory/presentation/cubit/inventory_cubit.dart';
+import 'features/inventory/presentation/cubit/pick_up_cubit.dart';
 import 'features/inventory/presentation/cubit/prepare_cubit.dart';
 import 'features/inventory/presentation/cubit/receive_cubit.dart';
 import 'features/inventory/presentation/cubit/shipment_cubit.dart';
@@ -162,11 +162,6 @@ void setupServiceLocator() {
         FetchPreviewReceiveShipmentsUseCase(inventoryRepositories: getIt()))
     ..registerSingleton(
         FetchReceiveShipmentsUseCase(inventoryRepositories: getIt()))
-    ..registerLazySingleton<InventoryCubit>(() => InventoryCubit(
-        createPickedUpGoodsUseCase: getIt(),
-        fetchLostGoodUseCase: getIt(),
-        fetchPickedUpGoodsUseCase: getIt(),
-        fetchPreviewPickUpGoodsUseCase: getIt()))
     ..registerLazySingleton(() => ReceiveCubit(
         createReceiveShipmentsUseCase: getIt(),
         fetchReceiveShipmentsUseCase: getIt(),
@@ -180,11 +175,16 @@ void setupServiceLocator() {
         createDeliveryShipmentsUseCase: getIt(),
         fetchDeliveryShipmentsUseCase: getIt(),
         fetchPreviewDeliveryShipmentsUseCase: getIt()))
+    ..registerLazySingleton(() => PickUpCubit(
+        fetchPickedUpGoodsUseCase: getIt(),
+        fetchPreviewPickUpGoodsUseCase: getIt(),
+        createPickedUpGoodsUseCase: getIt()))
     ..registerLazySingleton(() => ShipmentCubit(
         fetchOnTheWayShipmentsUseCase: getIt(),
         fetchInventoriesUseCase: getIt(),
         fetchInventoriesCountUseCase: getIt(),
-        fetchGoodTimelineUseCase: getIt()));
+        fetchGoodTimelineUseCase: getIt(),
+        fetchLostGoodUseCase: getIt()));
 
   getIt<Dio>()
       .interceptors
