@@ -39,7 +39,7 @@ class SendGoodsScanPage extends StatefulWidget {
 }
 
 class _SendGoodsScanPageState extends State<SendGoodsScanPage>
-    with UHFMethodHandlerMixinV2 {
+    with UHFMethodHandlerMixin {
   late final DeliveryCubit _deliveryCubit;
   late final ScannerCubit _scannerCubit;
   final _selectedBatches = <BatchEntity>{};

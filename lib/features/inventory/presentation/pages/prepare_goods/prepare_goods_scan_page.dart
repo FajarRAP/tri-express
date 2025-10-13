@@ -15,7 +15,6 @@ import '../../../../../core/widgets/floating_action_button_bar.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../core/domain/entities/dropdown_entity.dart';
 import '../../../domain/entities/good_entity.dart';
-// import '../../cubit/inventory_cubit.dart';
 import '../../cubit/prepare_cubit.dart';
 import '../../cubit/scanner_cubit.dart';
 import '../../widgets/good_card_checkbox.dart';
@@ -44,7 +43,7 @@ class PrepareGoodsScanPage extends StatefulWidget {
 }
 
 class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
-    with UHFMethodHandlerMixinV2 {
+    with UHFMethodHandlerMixin {
   late final PrepareCubit _prepareCubit;
   late final ScannerCubit _scannerCubit;
   final _selectedCodes = <String, Set<String>>{};
@@ -305,6 +304,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
 
             if (state is FetchPreviewShipmentsLoaded) {
               final goods = state.filteredGoods;
+
               if (goods.isEmpty) {
                 return SliverFillRemaining(
                   hasScrollBody: false,

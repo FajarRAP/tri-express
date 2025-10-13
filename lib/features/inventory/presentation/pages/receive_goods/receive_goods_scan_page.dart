@@ -37,7 +37,7 @@ class ReceiveGoodsScanPage extends StatefulWidget {
 }
 
 class _ReceiveGoodsScanPageState extends State<ReceiveGoodsScanPage>
-    with UHFMethodHandlerMixinV2 {
+    with UHFMethodHandlerMixin {
   late final AuthCubit _authCubit;
   late final ReceiveCubit _receiveCubit;
   late final ScannerCubit _scannerCubit;
