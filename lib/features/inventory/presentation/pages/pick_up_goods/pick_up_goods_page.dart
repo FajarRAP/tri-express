@@ -7,9 +7,11 @@ import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/debouncer.dart';
+import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/pick_up_cubit.dart';
 import '../../widgets/good_card_item.dart';
 
 class PickUpGoodsPage extends StatelessWidget {
@@ -17,22 +19,18 @@ class PickUpGoodsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inventoryCubit = context.read<InventoryCubit>();
+    final pickUpCubit = context.read<PickUpCubit>();
     final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
     String? search;
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollState) {
-          if (scrollState is ScrollEndNotification &&
-              inventoryCubit.state is! ListPaginateLast) {
-            inventoryCubit.fetchPickedGoodsPaginate(search: search);
-          }
-
-          return false;
-        },
+        onNotification: (scrollState) => paginateWhenScrollEnd(
+          scrollState,
+          paginate: () => pickUpCubit.fetchPickedGoodsPaginate(search: search),
+        ),
         child: RefreshIndicator(
-          onRefresh: inventoryCubit.fetchPickedGoods,
+          onRefresh: pickUpCubit.fetchPickedGoods,
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -50,7 +48,7 @@ class PickUpGoodsPage extends StatelessWidget {
                         Expanded(
                           child: TextField(
                             onChanged: (value) => debouncer.run(() =>
-                                inventoryCubit.fetchPickedGoods(
+                                pickUpCubit.fetchPickedGoods(
                                     search: search = value)),
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
@@ -72,11 +70,11 @@ class PickUpGoodsPage extends StatelessWidget {
                 snap: true,
                 title: const Text('Ambil di Gudang'),
               ),
-              BlocBuilder<InventoryCubit, InventoryState>(
-                bloc: inventoryCubit..fetchPickedGoods(),
-                buildWhen: (previous, current) => current is FetchPickedGoods,
+              BlocBuilder<PickUpCubit, ReusableState>(
+                bloc: pickUpCubit..fetchPickedGoods(),
+                buildWhen: (previous, current) => current is FetchGoods,
                 builder: (context, state) {
-                  if (state is FetchPickedGoodsLoading) {
+                  if (state is FetchGoodsLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -85,8 +83,8 @@ class PickUpGoodsPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchPickedGoodsLoaded) {
-                    if (state.pickedGoods.isEmpty) {
+                  if (state is FetchGoodsLoaded) {
+                    if (state.data.isEmpty) {
                       return SliverFillRemaining(
                         hasScrollBody: false,
                         child: Padding(
@@ -110,13 +108,31 @@ class PickUpGoodsPage extends StatelessWidget {
                         itemBuilder: (context, index) => GoodCardItem(
                           onTap: () => context.pushNamed(
                             pickUpGoodsDetailRoute,
-                            extra: state.pickedGoods[index],
+                            extra: state.data[index],
                           ),
-                          pickedGood: state.pickedGoods[index],
+                          pickedGood: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
-                        itemCount: state.pickedGoods.length,
+                        itemCount: state.data.length,
+                      ),
+                    );
+                  }
+
+                  if (state is FetchGoodsError) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: Center(
+                          child: Text(
+                            state.failure.message,
+                            style: label[medium].copyWith(
+                              color: primaryGradientEnd,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     );
                   }

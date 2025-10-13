@@ -9,10 +9,11 @@ import '../../../../../core/fonts/fonts.dart';
 import '../../../../../core/routes/router.dart';
 import '../../../../../core/themes/colors.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../core/utils/states.dart';
 import '../../../../../core/utils/top_snackbar.dart';
 import '../../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../../core/widgets/image_picker_bottom_sheet.dart';
-import '../../cubit/inventory_cubit.dart';
+import '../../cubit/pick_up_cubit.dart';
 
 class PickUpGoodsConfirmationPage extends StatelessWidget {
   const PickUpGoodsConfirmationPage({
@@ -40,7 +41,7 @@ class _Tari extends StatefulWidget {
 }
 
 class _TariState extends State<_Tari> {
-  late final InventoryCubit _inventoryCubit;
+  late final PickUpCubit _pickUpCubit;
   late final TextEditingController _dateController;
   late final TextEditingController _noteController;
   XFile? _pickedImage;
@@ -49,7 +50,7 @@ class _TariState extends State<_Tari> {
   @override
   void initState() {
     super.initState();
-    _inventoryCubit = context.read<InventoryCubit>();
+    _pickUpCubit = context.read<PickUpCubit>();
     _dateController = TextEditingController(text: DateTime.now().toDDMMMYYY);
     _noteController = TextEditingController();
   }
@@ -151,22 +152,20 @@ class _TariState extends State<_Tari> {
                 readOnly: true,
               ),
               const SizedBox(height: 12),
-              BlocConsumer<InventoryCubit, InventoryState>(
-                buildWhen: (previous, current) => current is CreateShipments,
-                listenWhen: (previous, current) => current is CreateShipments,
+              BlocConsumer<PickUpCubit, ReusableState>(
                 listener: (context, state) {
-                  if (state is CreateShipmentsLoaded) {
+                  if (state is ActionSuccess) {
                     TopSnackbar.successSnackbar(message: state.message);
                     context.goNamed(pickUpGoodsRoute);
                   }
 
-                  if (state is CreateShipmentsError) {
-                    TopSnackbar.dangerSnackbar(message: state.message);
+                  if (state is ActionFailure) {
+                    TopSnackbar.dangerSnackbar(message: state.failure.message);
                   }
                 },
                 builder: (context, state) {
                   final onPressed = switch (state) {
-                    CreateShipmentsLoading() => null,
+                    ActionInProgress() => null,
                     _ => _noteController.text.isEmpty ||
                             _pickedImage == null ||
                             _pickedUpAt == null
@@ -177,7 +176,7 @@ class _TariState extends State<_Tari> {
                                   message: 'Bukti foto diperlukan');
                             }
 
-                            _inventoryCubit.createPickedUpGoods(
+                            _pickUpCubit.createPickedUpGoods(
                               selectedCodes: widget.selectedCodes,
                               note: _noteController.text,
                               pickedImagePath: _pickedImage!.path,
