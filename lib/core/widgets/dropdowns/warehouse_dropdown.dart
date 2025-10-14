@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../features/core/domain/entities/dropdown_entity.dart';
 import '../../../features/core/presentation/cubit/core_cubit.dart';
-import '../dropdown_modal.dart';
 import '../dropdown_modal_item.dart';
+import '../dropdown_search_modal.dart';
 
 class WarehouseDropdown extends StatefulWidget {
   const WarehouseDropdown({
@@ -31,7 +31,8 @@ class _WarehouseDropdownState extends State<WarehouseDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownModal(
+    return DropdownSearchModal(
+      search: _coreCubit.searchDropdown,
       title: 'Gudang ${widget.titleSuffix}'.trim(),
       child: Expanded(
         child: BlocBuilder<CoreCubit, CoreState>(
@@ -45,16 +46,22 @@ class _WarehouseDropdownState extends State<WarehouseDropdown> {
             }
 
             if (state is FetchDropdownLoaded) {
+              if (state.filteredItems.isEmpty) {
+                return const Center(
+                  child: Text('Data tidak ditemukan'),
+                );
+              }
+
               return ListView.separated(
                 itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => widget.onTap(state.items[index]),
+                  onTap: () => widget.onTap(state.filteredItems[index]),
                   child: DropdownModalItem(
-                    child: Text(state.items[index].value),
+                    child: Text(state.filteredItems[index].value),
                   ),
                 ),
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
-                itemCount: state.items.length,
+                itemCount: state.filteredItems.length,
                 padding: const EdgeInsets.symmetric(vertical: 6),
               );
             }
