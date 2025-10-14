@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../fonts/fonts.dart';
+import '../themes/colors.dart';
 import '../utils/debouncer.dart';
 
 class DropdownSearchModal extends StatefulWidget {
@@ -40,19 +42,11 @@ class _DropdownSearchModalState extends State<DropdownSearchModal> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const SizedBox(height: 32),
-        Text(
-          'Pilih ${widget.title}',
-          style: textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        Text('Pilih ${widget.title}',
+            style: paragraphLarge[bold].copyWith(color: black)),
         const Divider(),
         const SizedBox(height: 12),
         Padding(
