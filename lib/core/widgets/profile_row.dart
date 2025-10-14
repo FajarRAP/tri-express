@@ -20,6 +20,9 @@ class ProfileRow extends StatelessWidget {
           radius: 24,
           foregroundImage:
               user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
+          child: Text(
+            user.name.length > 1 ? user.name.substring(0, 2) : user.name,
+          ),
         ),
         const SizedBox(width: 12),
         Column(
