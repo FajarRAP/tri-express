@@ -1,8 +1,11 @@
 part of 'core_cubit.dart';
 
 @immutable
-sealed class CoreState {
+sealed class CoreState extends Equatable {
   const CoreState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class CoreInitial extends CoreState {}
@@ -62,9 +65,26 @@ class FetchBannersError extends FetchBanners {
 class FetchDropdownLoading extends FetchDropdown {}
 
 class FetchDropdownLoaded extends FetchDropdown {
-  const FetchDropdownLoaded({required this.items});
+  const FetchDropdownLoaded({
+    required this.items,
+    this.filteredItems = const [],
+  });
+
+  FetchDropdownLoaded copyWith({
+    List<DropdownEntity>? items,
+    List<DropdownEntity>? filteredItems,
+  }) {
+    return FetchDropdownLoaded(
+      items: items ?? this.items,
+      filteredItems: filteredItems ?? this.filteredItems,
+    );
+  }
 
   final List<DropdownEntity> items;
+  final List<DropdownEntity> filteredItems;
+
+  @override
+  List<Object?> get props => [items, filteredItems];
 }
 
 class FetchDropdownError extends FetchDropdown {

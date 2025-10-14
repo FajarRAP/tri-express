@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../core/use_case/use_case.dart';
@@ -78,7 +79,7 @@ class CoreCubit extends Cubit<CoreState> {
 
     result.fold(
       (failure) => emit(FetchDropdownError(message: failure.message)),
-      (items) => emit(FetchDropdownLoaded(items: items)),
+      (items) => emit(FetchDropdownLoaded(items: items, filteredItems: items)),
     );
   }
 
@@ -112,7 +113,7 @@ class CoreCubit extends Cubit<CoreState> {
 
     result.fold(
       (failure) => emit(FetchDropdownError(message: failure.message)),
-      (items) => emit(FetchDropdownLoaded(items: items)),
+      (items) => emit(FetchDropdownLoaded(items: items, filteredItems: items)),
     );
   }
 
@@ -123,7 +124,7 @@ class CoreCubit extends Cubit<CoreState> {
 
     result.fold(
       (failure) => emit(FetchDropdownError(message: failure.message)),
-      (items) => emit(FetchDropdownLoaded(items: items)),
+      (items) => emit(FetchDropdownLoaded(items: items, filteredItems: items)),
     );
   }
 
@@ -147,5 +148,20 @@ class CoreCubit extends Cubit<CoreState> {
       (failure) => emit(ReadNotificationError(message: failure.message)),
       (message) => emit(ReadNotificationLoaded(message: message)),
     );
+  }
+
+  void searchDropdown([String keyword = '']) {
+    final currentState = state;
+    if (currentState is! FetchDropdownLoaded) return;
+
+    if (keyword.isEmpty)
+      return emit(currentState.copyWith(filteredItems: currentState.items));
+
+    final lowerKeyword = keyword.toLowerCase();
+    final results = currentState.items
+        .where((e) => e.value.toLowerCase().contains(lowerKeyword))
+        .toList();
+
+    emit(currentState.copyWith(filteredItems: results));
   }
 }
