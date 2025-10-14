@@ -23,6 +23,7 @@ const getTagInfoMethod = 'getTagInfo';
 const startInventoryMethod = 'startInventory';
 const stopInventoryMethod = 'stopInventory';
 const failedInventoryMethod = 'failedInventory';
+const forceStopInventoryMethod = 'forceStopInventory';
 
 const kSpaceBarHeight = 88.0;
 
