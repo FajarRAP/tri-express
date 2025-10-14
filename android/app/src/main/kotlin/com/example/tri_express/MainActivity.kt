@@ -47,6 +47,7 @@ class MainActivity : FlutterActivity() {
             call, result ->
             when(call.method) {
                 "handleInventoryButton" -> result.success(handleInventoryButton(isFromKeyEvent = false))
+                "forceStopInventory" -> result.success(forceStopInventory())
                 "inScannablePage" -> {
                     isInScannablePage = true
                     result.success(true)
@@ -121,5 +122,13 @@ class MainActivity : FlutterActivity() {
         val successMap = mapOf("status_code" to 1, "message" to "Mulai")
         methodChannel.invokeMethod("startInventory", successMap)
         return 1
+    }
+
+    private fun forceStopInventory(): Boolean {
+        if(!isInventoryRunning) return false
+
+        UHFEngine.getEngine().stopInventory()
+        isInventoryRunning = false
+        return true
     }
 }
