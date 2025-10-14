@@ -52,19 +52,19 @@ class FloatingActionButtonBar extends StatelessWidget {
               ? const Icon(Icons.stop)
               : const Icon(Icons.play_arrow),
         ),
-        FloatingActionButton.small(
-          onPressed: onSync,
-          backgroundColor: light,
-          elevation: 1,
-          foregroundColor: primary,
-          heroTag: 'sync',
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: primary),
-          ),
-          tooltip: 'Sinkronkan',
-          child: const Icon(Icons.send),
-        ),
+        // FloatingActionButton.small(
+        //   onPressed: onSync,
+        //   backgroundColor: light,
+        //   elevation: 1,
+        //   foregroundColor: primary,
+        //   heroTag: 'sync',
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(8),
+        //     side: const BorderSide(color: primary),
+        //   ),
+        //   tooltip: 'Sinkronkan',
+        //   child: const Icon(Icons.send),
+        // ),
         FloatingActionButton.small(
           onPressed: onSave,
           backgroundColor: light,
