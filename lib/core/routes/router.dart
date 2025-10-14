@@ -83,19 +83,26 @@ const notificationRoute = 'notification';
 class _GoRouterObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    final isScan = route.settings.name == 'scan';
+    final isScan = route.settings.name?.contains('scan') ?? false;
     final method = isScan ? inScannablePageMethod : notInScannablePageMethod;
 
-    platform.invokeMethod(method);
+    platform
+      ..invokeMethod(method)
+      ..invokeMethod(forceStopInventoryMethod);
+
     log('didPush: ${route.settings.name}');
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    final isPrevScan = previousRoute?.settings.name == 'scan';
+    final isPrevScan = previousRoute?.settings.name?.contains('scan') ?? false;
     final method =
         isPrevScan ? inScannablePageMethod : notInScannablePageMethod;
-    platform.invokeMethod(method);
+
+    platform
+      ..invokeMethod(method)
+      ..invokeMethod(forceStopInventoryMethod);
+
     log('didPop: ${route.settings.name}');
   }
 
