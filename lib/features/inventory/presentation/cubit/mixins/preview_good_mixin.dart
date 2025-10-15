@@ -14,15 +14,20 @@ mixin PreviewGoodMixin<S> on Cubit<S> {
     }
 
     final lowerKeyword = keyword.toLowerCase();
-    final results = allGoods.where(
-      (good) {
-        final goodNameMatch = good.name.toLowerCase().contains(lowerKeyword);
-        final trackingNumberMatch =
-            good.receiptNumber.toLowerCase().contains(lowerKeyword);
+    final results = allGoods.where((good) {
+      final goodNameMatch = good.name.toLowerCase().contains(lowerKeyword);
+      final customerNameMatch =
+          good.customer.name.toLowerCase().contains(lowerKeyword);
+      final invoiceNumberMatch =
+          good.invoiceNumber.toLowerCase().contains(lowerKeyword);
+      final trackingNumberMatch =
+          good.receiptNumber.toLowerCase().contains(lowerKeyword);
 
-        return goodNameMatch || trackingNumberMatch;
-      },
-    ).toList();
+      return goodNameMatch ||
+          customerNameMatch ||
+          invoiceNumberMatch ||
+          trackingNumberMatch;
+    }).toList();
 
     final newState = currentState.copyWithFiltered(filteredGoods: results);
     emit(newState as S);
