@@ -45,7 +45,8 @@ class HomePage extends StatelessWidget {
               body: RefreshIndicator(
                 onRefresh: () async => coreCubit
                   ..fetchSummary()
-                  ..fetchBanners(),
+                  ..fetchBanners()
+                  ..fetchNotifications(),
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: <Widget>[
