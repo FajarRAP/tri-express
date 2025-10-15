@@ -21,6 +21,9 @@ class InventoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const maxLength = 4;
+    final length = lostGood.uniqueCodes.length;
+
     return GestureDetector(
       onTap: () => context.pushNamed(
         inventoryDetailRoute,
@@ -143,9 +146,12 @@ class InventoryItem extends StatelessWidget {
                 runAlignment: WrapAlignment.start,
                 spacing: 10,
                 runSpacing: 10,
-                children: lostGood.uniqueCodes
-                    .map((e) => _UniqueCodeBadge(uniqueCode: e))
-                    .toList(),
+                children: List.generate(
+                  length < maxLength ? length : maxLength,
+                  (index) => _UniqueCodeBadge(
+                    uniqueCode: lostGood.uniqueCodes[index],
+                  ),
+                ),
               ),
             )
           ],
