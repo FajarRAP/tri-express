@@ -73,6 +73,34 @@ class GoodCardCheckbox extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
+                        'Customer',
+                        style: label[regular].copyWith(color: gray),
+                      ),
+                      Text(
+                        good.customer.name,
+                        style: label[regular].copyWith(color: black),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Nomor Invoice',
+                        style: label[regular].copyWith(color: gray),
+                      ),
+                      Text(
+                        good.invoiceNumber,
+                        style: label[regular].copyWith(color: black),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
                         'Nomor Resi',
                         style: label[regular].copyWith(color: gray),
                       ),
