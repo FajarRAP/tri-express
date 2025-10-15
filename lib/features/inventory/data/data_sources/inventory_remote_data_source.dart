@@ -37,7 +37,7 @@ abstract class InventoryRemoteDataSource {
   Future<List<BatchEntity>> fetchDeliveryShipments(
       FetchDeliveryShipmentsUseCaseParams params);
   Future<TimelineSummaryEntity> fetchGoodTimeline(String receiptNumber);
-  Future<List<BatchEntity>> fetchInventories(
+  Future<List<LostGoodEntity>> fetchInventories(
       FetchInventoriesUseCaseParams params);
   Future<int> fetchInventoriesCount();
   Future<List<BatchEntity>> fetchOnTheWayShipments(
@@ -209,7 +209,7 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
   }
 
   @override
-  Future<List<BatchEntity>> fetchInventories(
+  Future<List<LostGoodEntity>> fetchInventories(
       FetchInventoriesUseCaseParams params) async {
     try {
       final response = await dio.get(
@@ -223,7 +223,9 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
       final contents =
           List<Map<String, dynamic>>.from(response.data['data']['data']);
 
-      return contents.map((e) => BatchModel.fromJson(e).toEntity()).toList();
+      return contents
+          .map((e) => LostGoodModel.fromJsonInventory(e).toEntity())
+          .toList();
     } on DioException catch (de) {
       throw handleDioException(de);
     } catch (e) {

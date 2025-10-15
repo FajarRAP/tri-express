@@ -70,7 +70,7 @@ class ShipmentCubit extends Cubit<ReusableState> {
   }
 
   Future<void> fetchInventories({String? search}) async {
-    emit(FetchShipmentsLoading());
+    emit(FetchInventoriesLoading());
 
     final params = FetchInventoriesUseCaseParams(
       page: 1,
@@ -82,15 +82,15 @@ class ShipmentCubit extends Cubit<ReusableState> {
     ).wait;
 
     inventories.fold(
-      (failure) => emit(FetchShipmentsError(failure)),
-      (batches) => emit(FetchShipmentsLoaded(
-          data: batches, totalAllUnits: count.getOrElse((_) => 0))),
+      (failure) => emit(FetchInventoriesError(failure)),
+      (goods) => emit(FetchInventoriesLoaded(
+          data: goods, totalAllUnits: count.getOrElse((_) => 0))),
     );
   }
 
   Future<void> fetchInventoriesPaginate({String? search}) async {
     final currentState = state;
-    if (currentState is! FetchShipmentsLoaded) return;
+    if (currentState is! FetchInventoriesLoaded) return;
     if (currentState.hasReachedMax) return;
 
     final params = FetchInventoriesUseCaseParams(
@@ -100,7 +100,7 @@ class ShipmentCubit extends Cubit<ReusableState> {
     final result = await _fetchInventoriesUseCase(params);
 
     result.fold(
-      (failure) => emit(FetchShipmentsError(failure)),
+      (failure) => emit(FetchInventoriesError(failure)),
       (batches) => batches.isEmpty
           ? emit(currentState.copyWith(hasReachedMax: true))
           : emit(currentState.copyWith(

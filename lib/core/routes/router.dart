@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/setting_page.dart';
 import '../../features/core/domain/entities/dropdown_entity.dart';
 import '../../features/core/presentation/pages/home_page.dart';
 import '../../features/core/presentation/pages/mobile_scanner_simple_page.dart';
@@ -19,7 +20,6 @@ import '../../features/inventory/presentation/cubit/receipt_number_cubit.dart';
 import '../../features/inventory/presentation/cubit/scanner_cubit.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_detail_page.dart';
 import '../../features/inventory/presentation/pages/inventory/inventory_page.dart';
-import '../../features/inventory/presentation/pages/lost_good_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way/on_the_way_detail_page.dart';
 import '../../features/inventory/presentation/pages/on_the_way/on_the_way_page.dart';
 import '../../features/inventory/presentation/pages/pick_up_goods/pick_up_goods_confirmation_page.dart';
@@ -39,7 +39,6 @@ import '../../features/inventory/presentation/pages/send_goods/send_goods_detail
 import '../../features/inventory/presentation/pages/send_goods/send_goods_filter_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_page.dart';
 import '../../features/inventory/presentation/pages/send_goods/send_goods_scan_page.dart';
-import '../../features/auth/presentation/pages/setting_page.dart';
 import '../utils/constants.dart';
 import '../widgets/scaffold_with_bottom_navbar.dart';
 
@@ -355,16 +354,8 @@ final router = GoRouter(
               parentNavigatorKey: _rootNavigatorKey,
               path: 'detail',
               name: inventoryDetailRoute,
-              builder: (context, state) {
-                final extras = state.extra as Map<String, dynamic>;
-                final good = extras['good'] as GoodEntity;
-                final batch = extras['batch'] as BatchEntity;
-
-                return InventoryDetailPage(
-                  batch: batch,
-                  good: good,
-                );
-              },
+              builder: (context, state) =>
+                  InventoryDetailPage(lostGood: state.extra as LostGoodEntity),
             ),
           ],
         ),
@@ -431,7 +422,7 @@ final router = GoRouter(
       path: '/lost-good',
       name: lostGoodRoute,
       builder: (context, state) =>
-          LostGoodPage(lostGood: state.extra as LostGoodEntity),
+          InventoryDetailPage(lostGood: state.extra as LostGoodEntity),
     ),
   ],
 );

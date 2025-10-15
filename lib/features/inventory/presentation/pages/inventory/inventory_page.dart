@@ -12,7 +12,7 @@ import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../cubit/shipment_cubit.dart';
-import '../../widgets/batch_card_item.dart';
+import '../../widgets/inventory_item.dart';
 
 class InventoryPage extends StatelessWidget {
   const InventoryPage({super.key});
@@ -58,11 +58,12 @@ class InventoryPage extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 BlocBuilder<ShipmentCubit, ReusableState>(
                                   buildWhen: (previous, current) =>
-                                      current is FetchShipments,
+                                      current is FetchInventories,
                                   builder: (context, state) {
-                                    final count = state is FetchShipmentsLoaded
-                                        ? state.totalAllUnits
-                                        : 0;
+                                    final count =
+                                        state is FetchInventoriesLoaded
+                                            ? state.totalAllUnits
+                                            : 0;
 
                                     return Text(
                                       '$count',
@@ -109,9 +110,9 @@ class InventoryPage extends StatelessWidget {
               ),
               BlocBuilder<ShipmentCubit, ReusableState>(
                 bloc: shipmentCubit..fetchInventories(),
-                buildWhen: (previous, current) => current is FetchShipments,
+                buildWhen: (previous, current) => current is FetchInventories,
                 builder: (context, state) {
-                  if (state is FetchShipmentsLoading) {
+                  if (state is FetchInventoriesLoading) {
                     return const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -120,19 +121,12 @@ class InventoryPage extends StatelessWidget {
                     );
                   }
 
-                  if (state is FetchShipmentsLoaded) {
+                  if (state is FetchInventoriesLoaded) {
                     return SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
-                        itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => context.pushNamed(
-                            receiptNumbersRoute,
-                            extra: {
-                              'batch': state.data[index],
-                              'routeDetailName': inventoryDetailRoute,
-                            },
-                          ),
-                          batch: state.data[index],
+                        itemBuilder: (context, index) => InventoryItem(
+                          lostGood: state.data[index],
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),

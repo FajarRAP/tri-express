@@ -176,7 +176,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<Either<Failure, List<BatchEntity>>> fetchInventories(
+  Future<Either<Failure, List<LostGoodEntity>>> fetchInventories(
       FetchInventoriesUseCaseParams params) async {
     try {
       final result = await inventoryRemoteDataSource.fetchInventories(params);

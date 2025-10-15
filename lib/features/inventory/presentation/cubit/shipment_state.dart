@@ -16,10 +16,7 @@ class FetchShipmentsLoaded extends Loaded<List<BatchEntity>>
     super.currentPage = 1,
     super.hasReachedMax = false,
     super.isPaginating = false,
-    this.totalAllUnits = 0,
   });
-
-  final int totalAllUnits;
 
   @override
   FetchShipmentsLoaded copyWith({
@@ -34,15 +31,58 @@ class FetchShipmentsLoaded extends Loaded<List<BatchEntity>>
       currentPage: currentPage ?? this.currentPage,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isPaginating: isPaginating ?? this.isPaginating,
-      totalAllUnits: totalAllUnits ?? this.totalAllUnits,
     );
   }
 
   @override
-  List<Object> get props => [data, currentPage, hasReachedMax, isPaginating, totalAllUnits];
+  List<Object> get props => [data, currentPage, hasReachedMax, isPaginating];
 }
 
 class FetchShipmentsError extends Error<List<BatchEntity>>
     implements FetchShipments {
   const FetchShipmentsError(super.failure);
+}
+
+class FetchInventories extends ShipmentState<List<LostGoodEntity>> {}
+
+class FetchInventoriesLoading extends Loading<List<LostGoodEntity>>
+    implements FetchInventories {}
+
+class FetchInventoriesLoaded extends Loaded<List<LostGoodEntity>>
+    implements FetchInventories {
+  const FetchInventoriesLoaded({
+    required super.data,
+    super.currentPage = 1,
+    super.hasReachedMax = false,
+    super.isPaginating = false,
+    this.totalAllUnits = 0,
+  });
+
+  final int totalAllUnits;
+
+  @override
+  FetchInventoriesLoaded copyWith({
+    List<LostGoodEntity>? data,
+    int? currentPage,
+    bool? hasReachedMax,
+    bool? isPaginating,
+    int? totalAllUnits,
+  }) {
+    return FetchInventoriesLoaded(
+      data: data ?? this.data,
+      currentPage: currentPage ?? this.currentPage,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      isPaginating: isPaginating ?? this.isPaginating,
+      totalAllUnits: totalAllUnits ?? this.totalAllUnits,
+    );
+  }
+
+  @override
+  List<Object?> get props =>
+      [data, currentPage, hasReachedMax, isPaginating, totalAllUnits];
+}
+
+class FetchInventoriesError extends Error<List<LostGoodEntity>>
+    implements FetchInventories {
+  const FetchInventoriesError(super.failure);
 }

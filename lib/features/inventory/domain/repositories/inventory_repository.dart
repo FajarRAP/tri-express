@@ -33,7 +33,7 @@ abstract class InventoryRepository {
       FetchDeliveryShipmentsUseCaseParams params);
   Future<Either<Failure, TimelineSummaryEntity>> fetchGoodTimeline(
       String receiptNumber);
-  Future<Either<Failure, List<BatchEntity>>> fetchInventories(
+  Future<Either<Failure, List<LostGoodEntity>>> fetchInventories(
       FetchInventoriesUseCaseParams params);
   Future<Either<Failure, int>> fetchInventoriesCount();
   Future<Either<Failure, LostGoodEntity>> fetchLostGood(String uniqueCode);

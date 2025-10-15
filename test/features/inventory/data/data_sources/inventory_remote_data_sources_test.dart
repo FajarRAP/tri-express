@@ -367,7 +367,7 @@ void main() {
         final result = await dataSource.fetchInventories(params);
 
         // assert
-        expect(result, isA<List<BatchEntity>>());
+        expect(result, isA<List<GoodEntity>>());
       },
     );
   });
