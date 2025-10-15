@@ -20,6 +20,8 @@ class SendGoodsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uniqueCodesSet = good.uniqueCodes.toSet();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Barang'),
@@ -94,30 +96,8 @@ class SendGoodsDetailPage extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: gray),
                 ),
                 ListView.separated(
-                  itemBuilder: (context, index) {
-                    final firstIndex = index * 2;
-                    final secondIndex = firstIndex + 1;
-                    final isOdd = secondIndex < good.uniqueCodes.length;
-
-                    return Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            good.uniqueCodes[firstIndex],
-                            style: label[medium].copyWith(color: black),
-                          ),
-                        ),
-                        Expanded(
-                          child: isOdd
-                              ? Text(
-                                  good.uniqueCodes[secondIndex],
-                                  style: label[medium].copyWith(color: black),
-                                )
-                              : const SizedBox(),
-                        ),
-                      ],
-                    );
-                  },
+                  itemBuilder: (context, index) =>
+                      buildUniqueCodes(index, uniqueCodesSet, good),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
                   itemCount: (good.uniqueCodes.length / 2).ceil(),

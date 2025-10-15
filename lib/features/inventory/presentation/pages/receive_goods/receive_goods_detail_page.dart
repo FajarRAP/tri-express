@@ -120,38 +120,8 @@ class ReceiveGoodsDetailPage extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: gray),
                 ),
                 ListView.separated(
-                  itemBuilder: (context, index) {
-                    final firstIndex = index * 2;
-                    final secondIndex = firstIndex + 1;
-
-                    final firstWidget = Text(
-                      good.allUniqueCodes[firstIndex],
-                      style: label[medium].copyWith(
-                          color: uniqueCodesSet
-                                  .contains(good.allUniqueCodes[firstIndex])
-                              ? black
-                              : gray),
-                    );
-                    
-                    Widget secondWidget = const SizedBox();
-                    if (secondIndex < good.allUniqueCodes.length) {
-                      secondWidget = Text(
-                        good.allUniqueCodes[secondIndex],
-                        style: label[medium].copyWith(
-                            color: uniqueCodesSet
-                                    .contains(good.allUniqueCodes[secondIndex])
-                                ? black
-                                : gray),
-                      );
-                    }
-
-                    return Row(
-                      children: <Widget>[
-                        Expanded(child: firstWidget),
-                        Expanded(child: secondWidget),
-                      ],
-                    );
-                  },
+                  itemBuilder: (context, index) =>
+                      buildUniqueCodes(index, uniqueCodesSet, good),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
                   itemCount: (good.allUniqueCodes.length / 2).ceil(),
