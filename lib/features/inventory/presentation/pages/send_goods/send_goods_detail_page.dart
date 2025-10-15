@@ -100,7 +100,7 @@ class SendGoodsDetailPage extends StatelessWidget {
                       buildUniqueCodes(index, uniqueCodesSet, good),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 8),
-                  itemCount: (good.uniqueCodes.length / 2).ceil(),
+                  itemCount: (good.allUniqueCodes.length / 2).ceil(),
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                 ),
