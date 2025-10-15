@@ -68,6 +68,7 @@ class _ReceiveGoodsFilterPageState extends State<ReceiveGoodsFilterPage> {
                   },
                   titleSuffix: 'Asal',
                 ),
+                isScrollControlled: true,
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(

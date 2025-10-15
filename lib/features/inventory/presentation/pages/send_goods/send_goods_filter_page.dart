@@ -78,6 +78,7 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                   },
                   titleSuffix: 'Tujuan',
                 ),
+                isScrollControlled: true,
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
@@ -90,7 +91,6 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
             const SizedBox(height: 16),
             TextFormField(
               onTap: () => showModalBottomSheet(
-                context: context,
                 builder: (context) => DriverDropdown(
                   onTap: (driver) {
                     _driverController.text = driver.value;
@@ -98,6 +98,8 @@ class _SendGoodsFilterPageState extends State<SendGoodsFilterPage> {
                     context.pop();
                   },
                 ),
+                context: context,
+                isScrollControlled: true,
               ),
               controller: _driverController,
               decoration: const InputDecoration(

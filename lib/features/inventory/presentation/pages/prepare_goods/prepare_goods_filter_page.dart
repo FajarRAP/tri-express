@@ -71,7 +71,6 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
             const SizedBox(height: 24),
             TextFormField(
               onTap: () => showModalBottomSheet(
-                context: context,
                 builder: (context) => WarehouseDropdown(
                   onTap: (warehouse) {
                     if (warehouse.id == _authCubit.user.warehouse?.id) {
@@ -86,6 +85,8 @@ class _PrepareGoodsFilterPageState extends State<PrepareGoodsFilterPage> {
                   },
                   titleSuffix: 'Tujuan',
                 ),
+                context: context,
+                isScrollControlled: true,
               ),
               controller: _warehouseController,
               decoration: const InputDecoration(
