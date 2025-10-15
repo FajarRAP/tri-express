@@ -31,7 +31,7 @@ class GoodModel extends GoodEntity {
       statusLabel: json['status_label'],
       transportMode: json['receipt_item']['jalur_label'],
       status: json['status'],
-      totalItem: json['count'] ?? units.length,
+      totalItem: json['count'] ?? allUnits.length,
       customer: CustomerModel.fromJson(json['receipt']['customer']).toEntity(),
       origin: WarehouseModel.fromJson(json['receipt']['warehouse']).toEntity(),
       destination:
