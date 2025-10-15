@@ -10,6 +10,7 @@ import '../../../../../core/utils/debouncer.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/decorated_icon_button.dart';
+import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../cubit/shipment_cubit.dart';
 import '../../widgets/inventory_item.dart';
@@ -35,6 +36,10 @@ class InventoryPage extends StatelessWidget {
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                actions: const <Widget>[
+                  NotificationIconButton(),
+                  SizedBox(width: 16),
+                ],
                 expandedHeight: kToolbarHeight + kSpaceBarHeight + 128,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
@@ -104,6 +109,11 @@ class InventoryPage extends StatelessWidget {
                   ),
                 ),
                 floating: true,
+                leading: IconButton(
+                  onPressed: () => context.goNamed(menuRoute),
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: 'Back',
+                ),
                 pinned: true,
                 snap: true,
                 title: const Text('Inventory Gudang'),
