@@ -421,8 +421,13 @@ final router = GoRouter(
     GoRoute(
       path: '/lost-good',
       name: lostGoodRoute,
-      builder: (context, state) =>
-          InventoryDetailPage(lostGood: state.extra as LostGoodEntity),
+      builder: (context, state) {
+        final lostGood = state.extra as LostGoodEntity;
+        final newLostGood =
+            lostGood.copyWith(uniqueCodes: lostGood.allUniqueCodes);
+
+        return InventoryDetailPage(lostGood: newLostGood);
+      },
     ),
   ],
 );
