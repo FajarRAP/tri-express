@@ -2,7 +2,7 @@ name: tri_express
 description: "Tri Express App"
 publish_to: "none"
 
-version: 1.0.0+4
+version: 1.0.0+5
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
