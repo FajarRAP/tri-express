@@ -11,10 +11,8 @@ import '../../../../../core/utils/states.dart';
 import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../../../auth/presentation/cubit/auth_cubit.dart';
-// import '../../cubit/inventory_cubit.dart';
 import '../../cubit/shipment_cubit.dart';
 import '../../widgets/batch_card_item.dart';
-import '../../widgets/shipment_receipt_numbers_bottom_sheet.dart';
 
 class OnTheWayPage extends StatelessWidget {
   const OnTheWayPage({super.key});
@@ -23,7 +21,6 @@ class OnTheWayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
     final shipmentCubit = context.read<ShipmentCubit>();
-    // final inventoryCubit = context.read<InventoryCubit>();
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
@@ -128,19 +125,18 @@ class OnTheWayPage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       sliver: SliverList.separated(
                         itemBuilder: (context, index) => BatchCardItem(
-                          onTap: () => showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                ShipmentReceiptNumbersBottomSheet(
-                              onSelected: (selectedGood) => context
-                                  .pushNamed(onTheWayDetailRoute, extra: {
-                                'batch': state.data[index],
-                                'good': selectedGood.first,
-                              }),
-                              batch: state.data[index],
-                            ),
+                          onTap: () => context.pushNamed(
+                            receiptNumbersRoute,
+                            extra: {
+                              'batch': state.data[index],
+                              'routeDetailName': onTheWayDetailRoute,
+                            },
                           ),
                           batch: state.data[index],
+                          quantity: Text(
+                            '${state.data[index].totalAllUnits - state.data[index].receivedUnits} Koli',
+                            style: label[bold].copyWith(color: black),
+                          ),
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
