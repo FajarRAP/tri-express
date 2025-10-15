@@ -34,6 +34,7 @@ final theme = ThemeData(
   ),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: light,
+    constraints: BoxConstraints(maxHeight: 600),
     dragHandleColor: Color(0xFFE0E0E0),
     dragHandleSize: Size(48, 5),
     shape: RoundedRectangleBorder(
