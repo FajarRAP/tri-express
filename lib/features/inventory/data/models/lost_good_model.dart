@@ -51,6 +51,33 @@ class LostGoodModel extends LostGoodEntity {
     );
   }
 
+  factory LostGoodModel.fromJsonInventory(Map<String, dynamic> json) {
+    final units = List<Map<String, dynamic>>.from(json['units'] ?? []);
+    final allUnits = List<Map<String, dynamic>>.from(json['units_all'] ?? []);
+    final receiptItem = Map<String, dynamic>.from(json['receipt_item']);
+    final receipt = Map<String, dynamic>.from(receiptItem['receipt']);
+
+    return LostGoodModel(
+      id: '${receiptItem['id']}',
+      receiptNumber: json['batch_tracking_number'],
+      invoiceNumber: receipt['invoice_code'],
+      name: receiptItem['item_name'],
+      statusLabel: json['status_label'],
+      transportMode: receiptItem['jalur_label'],
+      status: json['status'],
+      totalItem: json['count'] ?? allUnits.length,
+      customer: CustomerModel.fromJson(receipt['customer']).toEntity(),
+      origin: WarehouseModel.fromJson(receipt['warehouse']).toEntity(),
+      destination:
+          WarehouseModel.fromJson(receipt['destination_warehouse']).toEntity(),
+      allUniqueCodes: allUnits.map((e) => '${e['unique_code']}').toList(),
+      uniqueCodes: units.map((e) => '${e['unique_code']}').toList(),
+      currentWarehouse:
+          WarehouseModel.fromJson(json['current_warehouse']).toEntity(),
+      issuedAt: DateTime.parse(receipt['receipt_date']),
+    );
+  }
+
   LostGoodEntity toEntity() {
     return LostGoodEntity(
       id: id,
