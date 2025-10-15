@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
+import '../../features/inventory/domain/entities/good_entity.dart';
 import '../exceptions/server_exception.dart';
+import '../fonts/fonts.dart';
+import '../themes/colors.dart';
 import '../widgets/badges/secondary_badge.dart';
 import '../widgets/badges/success_badge.dart';
 import '../widgets/badges/warning_badge.dart';
@@ -44,6 +47,40 @@ Widget determineBadge(int status, String label) {
     default:
       return SecondaryBadge(label: label);
   }
+}
+
+Widget buildUniqueCodes(
+    int index, Set<String> uniqueCodesSet, GoodEntity good) {
+  final firstIndex = index * 2;
+  final secondIndex = firstIndex + 1;
+
+  final firstWidget = Text(
+    good.allUniqueCodes[firstIndex],
+    style: label[medium].copyWith(
+      color: uniqueCodesSet.contains(good.allUniqueCodes[firstIndex])
+          ? black
+          : gray,
+    ),
+  );
+
+  Widget secondWidget = const SizedBox();
+  if (secondIndex < good.allUniqueCodes.length) {
+    secondWidget = Text(
+      good.allUniqueCodes[secondIndex],
+      style: label[medium].copyWith(
+        color: uniqueCodesSet.contains(good.allUniqueCodes[secondIndex])
+            ? black
+            : gray,
+      ),
+    );
+  }
+
+  return Row(
+    children: <Widget>[
+      Expanded(child: firstWidget),
+      Expanded(child: secondWidget),
+    ],
+  );
 }
 
 extension DateTimeExtension on DateTime {
