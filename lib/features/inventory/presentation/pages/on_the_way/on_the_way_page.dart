@@ -85,6 +85,11 @@ class OnTheWayPage extends StatelessWidget {
                   ),
                 ),
                 floating: true,
+                leading: IconButton(
+                  onPressed: () => context.goNamed(menuRoute),
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: 'Back',
+                ),
                 pinned: true,
                 snap: true,
                 title: const Text('On The Way'),
