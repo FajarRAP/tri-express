@@ -16,24 +16,47 @@ import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../cubit/prepare_cubit.dart';
 import '../../widgets/batch_card_action_badge_item.dart';
 
-class PrepareGoodsPage extends StatelessWidget {
+class PrepareGoodsPage extends StatefulWidget {
   const PrepareGoodsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final prepareCubit = context.read<PrepareCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
-    String? search;
+  State<PrepareGoodsPage> createState() => _PrepareGoodsPageState();
+}
 
+class _PrepareGoodsPageState extends State<PrepareGoodsPage> {
+  late final PrepareCubit _prepareCubit;
+  late final Debouncer _debouncer;
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _prepareCubit = context.read<PrepareCubit>()..fetchPrepareShipments();
+    _debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debouncer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollState) => paginateWhenScrollEnd(
           scrollState,
-          paginate: () =>
-              prepareCubit.fetchPrepareShipmentsPaginate(search: search),
+          paginate: () => _prepareCubit.fetchPrepareShipmentsPaginate(
+              search: _searchController.text),
         ),
         child: RefreshIndicator(
-          onRefresh: prepareCubit.fetchPrepareShipments,
+          onRefresh: () async {
+            _searchController.clear();
+            await _prepareCubit.fetchPrepareShipments();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -50,9 +73,10 @@ class PrepareGoodsPage extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: TextField(
-                            onChanged: (value) => debouncer.run(() =>
-                                prepareCubit.fetchPrepareShipments(
-                                    search: search = value)),
+                            onChanged: (value) => _debouncer.run(() =>
+                                _prepareCubit.fetchPrepareShipments(
+                                    search: _searchController.text)),
+                            controller: _searchController,
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
@@ -91,13 +115,12 @@ class PrepareGoodsPage extends StatelessWidget {
                 ),
               ),
               BlocConsumer<PrepareCubit, ReusableState<List>>(
-                bloc: prepareCubit..fetchPrepareShipments(),
                 buildWhen: (previous, current) => current is FetchShipments,
                 listener: (context, state) {
                   if (state is ActionSuccess<List>) {
                     TopSnackbar.successSnackbar(message: state.message);
                     context.pop();
-                    prepareCubit.fetchPrepareShipments();
+                    _prepareCubit.fetchPrepareShipments();
                   }
 
                   if (state is ActionFailure<List>) {
@@ -154,7 +177,7 @@ class PrepareGoodsPage extends StatelessWidget {
                                 final onPressed = switch (deleteState) {
                                   ActionInProgress() => null,
                                   _ => () =>
-                                      prepareCubit.deletePreparedShipments(
+                                      _prepareCubit.deletePreparedShipments(
                                           shipmentId: state.data[index].id),
                                 };
 

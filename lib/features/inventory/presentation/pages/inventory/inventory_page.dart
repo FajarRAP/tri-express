@@ -15,24 +15,40 @@ import '../../../../../core/widgets/primary_gradient_card.dart';
 import '../../cubit/shipment_cubit.dart';
 import '../../widgets/inventory_item.dart';
 
-class InventoryPage extends StatelessWidget {
+class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final shipmentCubit = context.read<ShipmentCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
-    String? search;
+  State<InventoryPage> createState() => _InventoryPageState();
+}
 
+class _InventoryPageState extends State<InventoryPage> {
+  late final ShipmentCubit _shipmentCubit;
+  late final Debouncer _debouncer;
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _shipmentCubit = context.read<ShipmentCubit>()..fetchInventories();
+    _debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    _searchController = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollState) => paginateWhenScrollEnd(
           scrollState,
-          paginate: () =>
-              shipmentCubit.fetchInventoriesPaginate(search: search),
+          paginate: () => _shipmentCubit.fetchInventoriesPaginate(
+              search: _searchController.text),
         ),
         child: RefreshIndicator(
-          onRefresh: shipmentCubit.fetchInventories,
+          onRefresh: () async {
+            _searchController.clear();
+            await _shipmentCubit.fetchInventories();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -87,9 +103,10 @@ class InventoryPage extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               child: TextField(
-                                onChanged: (value) => debouncer.run(() =>
-                                    shipmentCubit.fetchInventories(
-                                        search: search = value)),
+                                onChanged: (value) => _debouncer.run(() =>
+                                    _shipmentCubit.fetchInventories(
+                                        search: value)),
+                                controller: _searchController,
                                 decoration: const InputDecoration(
                                   hintText: 'Cari resi atau invoice',
                                   prefixIcon: Icon(Icons.search_outlined),
@@ -119,7 +136,7 @@ class InventoryPage extends StatelessWidget {
                 title: const Text('Inventory Gudang'),
               ),
               BlocBuilder<ShipmentCubit, ReusableState>(
-                bloc: shipmentCubit..fetchInventories(),
+                bloc: _shipmentCubit,
                 buildWhen: (previous, current) => current is FetchInventories,
                 builder: (context, state) {
                   if (state is FetchInventoriesLoading) {

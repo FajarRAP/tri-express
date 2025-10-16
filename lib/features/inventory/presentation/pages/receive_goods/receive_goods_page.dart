@@ -15,24 +15,47 @@ import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/receive_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 
-class ReceiveGoodsPage extends StatelessWidget {
+class ReceiveGoodsPage extends StatefulWidget {
   const ReceiveGoodsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final receiveCubit = context.read<ReceiveCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
-    String? search;
+  State<ReceiveGoodsPage> createState() => _ReceiveGoodsPageState();
+}
 
+class _ReceiveGoodsPageState extends State<ReceiveGoodsPage> {
+  late final ReceiveCubit _receiveCubit;
+  late final Debouncer _debouncer;
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _receiveCubit = context.read<ReceiveCubit>()..fetchReceiveShipments();
+    _debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debouncer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) => paginateWhenScrollEnd(
           notification,
-          paginate: () =>
-              receiveCubit.fetchReceiveShipmentsPaginate(search: search),
+          paginate: () => _receiveCubit.fetchReceiveShipmentsPaginate(
+              search: _searchController.text),
         ),
         child: RefreshIndicator(
-          onRefresh: receiveCubit.fetchReceiveShipments,
+          onRefresh: () async {
+            _searchController.clear();
+            await _receiveCubit.fetchReceiveShipments();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -49,9 +72,10 @@ class ReceiveGoodsPage extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: TextField(
-                            onChanged: (value) => debouncer.run(() =>
-                                receiveCubit.fetchReceiveShipments(
-                                    search: search = value)),
+                            onChanged: (value) => _debouncer.run(() =>
+                                _receiveCubit.fetchReceiveShipments(
+                                    search: _searchController.text)),
+                            controller: _searchController,
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: Icon(Icons.search_outlined),
@@ -74,7 +98,6 @@ class ReceiveGoodsPage extends StatelessWidget {
                 title: const Text('Terima Barang'),
               ),
               BlocBuilder<ReceiveCubit, ReusableState>(
-                bloc: receiveCubit..fetchReceiveShipments(),
                 buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
                   if (state is FetchShipmentsLoading) {

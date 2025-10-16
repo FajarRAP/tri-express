@@ -15,24 +15,47 @@ import '../../../domain/entities/batch_entity.dart';
 import '../../cubit/delivery_cubit.dart';
 import '../../widgets/batch_card_item.dart';
 
-class SendGoodsPage extends StatelessWidget {
+class SendGoodsPage extends StatefulWidget {
   const SendGoodsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final deliveryCubit = context.read<DeliveryCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
-    String? search;
+  State<SendGoodsPage> createState() => _SendGoodsPageState();
+}
 
+class _SendGoodsPageState extends State<SendGoodsPage> {
+  late final DeliveryCubit _deliveryCubit;
+  late final Debouncer _debouncer;
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _deliveryCubit = context.read<DeliveryCubit>()..fetchDeliveryShipments();
+    _debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debouncer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollState) => paginateWhenScrollEnd(
           scrollState,
-          paginate: () =>
-              deliveryCubit.fetchDeliveryShipmentsPaginate(search: search),
+          paginate: () => _deliveryCubit.fetchDeliveryShipmentsPaginate(
+              search: _searchController.text),
         ),
         child: RefreshIndicator(
-          onRefresh: deliveryCubit.fetchDeliveryShipments,
+          onRefresh: () async {
+            _searchController.clear();
+            await _deliveryCubit.fetchDeliveryShipments();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -49,9 +72,10 @@ class SendGoodsPage extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: TextField(
-                            onChanged: (value) => debouncer.run(() =>
-                                deliveryCubit.fetchDeliveryShipments(
-                                    search: search = value)),
+                            onChanged: (value) => _debouncer.run(() =>
+                                _deliveryCubit.fetchDeliveryShipments(
+                                    search: _searchController.text)),
+                            controller: _searchController,
                             decoration: const InputDecoration(
                               hintText: 'Cari batch pengiriman',
                               prefixIcon: Icon(Icons.search_outlined),
@@ -73,7 +97,6 @@ class SendGoodsPage extends StatelessWidget {
                 title: const Text('Kirim Barang'),
               ),
               BlocBuilder<DeliveryCubit, ReusableState<List<BatchEntity>>>(
-                bloc: deliveryCubit..fetchDeliveryShipments(),
                 buildWhen: (previous, current) => current is FetchShipments,
                 builder: (context, state) {
                   if (state is FetchShipmentsLoading) {

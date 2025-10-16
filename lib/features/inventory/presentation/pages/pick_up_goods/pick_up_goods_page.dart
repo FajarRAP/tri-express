@@ -14,23 +14,47 @@ import '../../../../../core/widgets/notification_icon_button.dart';
 import '../../cubit/pick_up_cubit.dart';
 import '../../widgets/good_card_item.dart';
 
-class PickUpGoodsPage extends StatelessWidget {
+class PickUpGoodsPage extends StatefulWidget {
   const PickUpGoodsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final pickUpCubit = context.read<PickUpCubit>();
-    final debouncer = Debouncer(delay: const Duration(milliseconds: 500));
-    String? search;
+  State<PickUpGoodsPage> createState() => _PickUpGoodsPageState();
+}
 
+class _PickUpGoodsPageState extends State<PickUpGoodsPage> {
+  late final PickUpCubit _pickUpCubit;
+  late final Debouncer _debouncer;
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pickUpCubit = context.read<PickUpCubit>();
+    _debouncer = Debouncer(delay: const Duration(milliseconds: 500));
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debouncer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (scrollState) => paginateWhenScrollEnd(
           scrollState,
-          paginate: () => pickUpCubit.fetchPickedGoodsPaginate(search: search),
+          paginate: () => _pickUpCubit.fetchPickedGoodsPaginate(
+              search: _searchController.text),
         ),
         child: RefreshIndicator(
-          onRefresh: pickUpCubit.fetchPickedGoods,
+          onRefresh: () async {
+            _searchController.clear();
+            await _pickUpCubit.fetchPickedGoods();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
@@ -47,9 +71,10 @@ class PickUpGoodsPage extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: TextField(
-                            onChanged: (value) => debouncer.run(() =>
-                                pickUpCubit.fetchPickedGoods(
-                                    search: search = value)),
+                            onChanged: (value) => _debouncer.run(() =>
+                                _pickUpCubit.fetchPickedGoods(
+                                    search: _searchController.text)),
+                            controller: _searchController,
                             decoration: const InputDecoration(
                               hintText: 'Cari resi atau invoice',
                               prefixIcon: const Icon(Icons.search_outlined),
@@ -71,7 +96,7 @@ class PickUpGoodsPage extends StatelessWidget {
                 title: const Text('Ambil di Gudang'),
               ),
               BlocBuilder<PickUpCubit, ReusableState>(
-                bloc: pickUpCubit..fetchPickedGoods(),
+                bloc: _pickUpCubit..fetchPickedGoods(),
                 buildWhen: (previous, current) => current is FetchGoods,
                 builder: (context, state) {
                   if (state is FetchGoodsLoading) {
