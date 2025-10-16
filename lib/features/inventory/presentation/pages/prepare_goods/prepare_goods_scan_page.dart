@@ -249,6 +249,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                           _prepareCubit.fetchPreviewPrepareShipments(
                               uhfresults: scannerState.uhfResults);
                         },
+                        fabParams: ('Siapkan', boxSvgPath),
                         isScanning: scannerState.isFromUHFReader,
                       ),
                     );

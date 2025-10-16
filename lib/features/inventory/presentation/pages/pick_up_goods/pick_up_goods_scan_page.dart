@@ -221,6 +221,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
                           _pickUpCubit.fetchPreviewPickUpGoods(
                               uhfResults: scannerState.uhfResults);
                         },
+                        fabParams: ('Siapkan', boxSvgPath),
                         isScanning: scannerState.isFromUHFReader,
                       ),
                     );

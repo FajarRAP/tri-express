@@ -301,6 +301,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                             uhfresults: scannerState.uhfResults,
                           );
                         },
+                        fabParams: ('Siapkan', sendSvgPath),
                         isScanning: scannerState.isFromUHFReader,
                       ),
                     );

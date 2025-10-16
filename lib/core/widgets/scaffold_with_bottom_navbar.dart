@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
@@ -8,6 +9,7 @@ import '../../features/inventory/presentation/cubit/shipment_cubit.dart';
 import '../../features/inventory/presentation/widgets/unique_code_action_bottom_sheet.dart';
 import '../routes/router.dart';
 import '../themes/colors.dart';
+import '../utils/constants.dart';
 import '../utils/states.dart';
 import '../utils/top_snackbar.dart';
 
@@ -39,13 +41,20 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) => _onItemTapped(index, context),
             currentIndex: getIndex(context),
+            unselectedItemColor: black,
+            unselectedLabelStyle: const TextStyle(fontSize: 12),
+            selectedItemColor: primary,
+            selectedLabelStyle:
+                const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             items: <BottomNavigationBarItem>[
               const BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
+                activeIcon: _Icon(path: homeSvgPath, isActive: true),
+                icon: _Icon(path: homeSvgPath),
                 label: 'Menu',
               ),
               const BottomNavigationBarItem(
-                icon: Icon(Icons.local_shipping_outlined),
+                activeIcon: _Icon(path: truckAltSvgPath, isActive: true),
+                icon: _Icon(path: truckAltSvgPath),
                 label: 'On The Way',
               ),
               BottomNavigationBarItem(
@@ -55,19 +64,21 @@ class ScaffoldWithBottomNavbar extends StatelessWidget {
                     color: primary,
                   ),
                   padding: const EdgeInsets.all(10),
-                  child: const Icon(
-                    Icons.qr_code_scanner_outlined,
-                    color: light,
+                  child: SvgPicture.asset(
+                    qrScannerSvgPath,
+                    colorFilter: const ColorFilter.mode(light, BlendMode.srcIn),
                   ),
                 ),
                 label: '',
               ),
               const BottomNavigationBarItem(
-                icon: Icon(Icons.inventory_2_outlined),
+                activeIcon: _Icon(path: boxAltSvgPath, isActive: true),
+                icon: _Icon(path: boxAltSvgPath),
                 label: 'Inventory',
               ),
               const BottomNavigationBarItem(
-                icon: Icon(Icons.settings_outlined),
+                activeIcon: _Icon(path: settingSvgPath, isActive: true),
+                icon: _Icon(path: settingSvgPath),
                 label: 'Settings',
               ),
             ],
@@ -142,6 +153,26 @@ class _UniqueCodeActionBuilder extends StatelessWidget {
 
         return UniqueCodeActionBottomSheet(onResult: onResult);
       },
+    );
+  }
+}
+
+class _Icon extends StatelessWidget {
+  const _Icon({
+    required this.path,
+    this.isActive = false,
+  });
+
+  final String path;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      path,
+      colorFilter:
+          isActive ? const ColorFilter.mode(primary, BlendMode.srcIn) : null,
+      width: 24,
     );
   }
 }

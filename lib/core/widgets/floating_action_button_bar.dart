@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../themes/colors.dart';
+import '../utils/constants.dart';
 
 class FloatingActionButtonBar extends StatelessWidget {
   const FloatingActionButtonBar({
@@ -9,6 +11,7 @@ class FloatingActionButtonBar extends StatelessWidget {
     this.onScan,
     this.onSave,
     this.onSync,
+    this.fabParams,
     this.isScanning = false,
   });
 
@@ -16,6 +19,7 @@ class FloatingActionButtonBar extends StatelessWidget {
   final void Function()? onScan;
   final void Function()? onSave;
   final void Function()? onSync;
+  final (String, String)? fabParams;
   final bool isScanning;
 
   @override
@@ -35,7 +39,10 @@ class FloatingActionButtonBar extends StatelessWidget {
             side: const BorderSide(color: danger),
           ),
           tooltip: 'Scan Ulang',
-          child: const Icon(Icons.replay),
+          child: SvgPicture.asset(
+            resetSvgPath,
+            colorFilter: const ColorFilter.mode(danger, BlendMode.srcIn),
+          ),
         ),
         FloatingActionButton.small(
           onPressed: onScan,
@@ -75,8 +82,11 @@ class FloatingActionButtonBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             side: const BorderSide(color: primary),
           ),
-          tooltip: 'Simpan',
-          child: const Icon(Icons.save),
+          tooltip: fabParams?.$1 ?? 'Simpan',
+          child: SvgPicture.asset(
+            fabParams?.$2 ?? saveSvgPath,
+            colorFilter: const ColorFilter.mode(primary, BlendMode.srcIn),
+          ),
         ),
       ],
     );
