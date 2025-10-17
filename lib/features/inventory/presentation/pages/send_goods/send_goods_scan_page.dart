@@ -216,13 +216,27 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
         child: BlocBuilder<DeliveryCubit, ReusableState<List<BatchEntity>>>(
           buildWhen: (previous, current) => current is FetchPreviewShipments,
           builder: (context, state) {
-            final batches = state is FetchPreviewShipmentsLoaded
-                ? state.data
+            final scannerState = context.watch<ScannerCubit>().state;
+            final allBatches = state is FetchPreviewShipmentsLoaded
+                ? state.allBatches
                 : <BatchEntity>[];
+            final batches = state is FetchPreviewShipmentsLoaded
+                ? state.filteredBatches
+                : <BatchEntity>[];
+            final allUniqueCodes = allBatches
+                .expand((e) => e.goods)
+                .expand((e) => e.uniqueCodes)
+                .toSet();
+            final selectedUniqueCodes = _selectedBatches
+                .expand((e) => e.goods)
+                .expand((e) => e.uniqueCodes)
+                .toSet();
 
             return Row(
               children: <Widget>[
-                if (batches.isNotEmpty)
+                if (batches.isNotEmpty &&
+                    !scannerState.isFromQRScanner &&
+                    !scannerState.isFromUHFReader)
                   Expanded(
                     child: CheckboxListTile.adaptive(
                       onChanged: (value) {
@@ -236,76 +250,71 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
                         'Semua',
                         style: label[medium].copyWith(color: primary),
                       ),
-                      value: _selectedBatches.length == batches.length &&
-                          batches.isNotEmpty,
+                      value:
+                          allUniqueCodes.length == selectedUniqueCodes.length &&
+                              allUniqueCodes.isNotEmpty,
                       side: const BorderSide(color: primary),
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ),
-                BlocBuilder<ScannerCubit, ScannerState>(
-                  builder: (context, scannerState) {
-                    return Expanded(
-                      child: FloatingActionButtonBar(
-                        onReset: () {
-                          _selectedBatches.clear();
-                          _deliveryCubit.clearBatches();
-                          onReset();
-                        },
-                        onScan: onScan,
-                        onSave: () => showModalBottomSheet(
-                          builder: (context) => BlocConsumer<DeliveryCubit,
-                              ReusableState<List<BatchEntity>>>(
-                            listener: (context, state) {
-                              if (state is ActionSuccess<List<BatchEntity>>) {
-                                TopSnackbar.successSnackbar(
-                                    message: state.message);
-                                context.goNamed(sendGoodsRoute);
-                              }
-
-                              if (state is ActionFailure<List<BatchEntity>>) {
-                                TopSnackbar.dangerSnackbar(
-                                    message: state.failure.message);
-                              }
-                            },
-                            builder: (context, state) {
-                              final onPressed = switch (state) {
-                                ActionInProgress() => null,
-                                _ => () =>
-                                    _deliveryCubit.createDeliveryShipments(
-                                      nextWarehouse: widget.nextWarehouse,
-                                      driver: widget.driver,
-                                      batches: _selectedBatches,
-                                      deliveredAt: widget.deliveredAt,
-                                    ),
-                              };
-
-                              return ActionConfirmationBottomSheet(
-                                onPressed: onPressed,
-                                message:
-                                    'Apakah anda yakin akan mengirim barang ini?',
-                              );
-                            },
-                          ),
-                          context: context,
-                        ),
-                        onSync: () {
-                          if (scannerState.uhfResults.isEmpty) {
-                            return TopSnackbar.dangerSnackbar(
-                              message: 'Belum ada barang yang discan',
-                            );
+                Expanded(
+                  child: FloatingActionButtonBar(
+                    onReset: () {
+                      _selectedBatches.clear();
+                      _deliveryCubit.clearBatches();
+                      onReset();
+                    },
+                    onScan: onScan,
+                    onSave: () => showModalBottomSheet(
+                      builder: (context) => BlocConsumer<DeliveryCubit,
+                          ReusableState<List<BatchEntity>>>(
+                        listener: (context, state) {
+                          if (state is ActionSuccess<List<BatchEntity>>) {
+                            TopSnackbar.successSnackbar(message: state.message);
+                            context.goNamed(sendGoodsRoute);
                           }
 
-                          _scannerCubit.updateInventoryStatus(false);
-                          _deliveryCubit.fetchPreviewDeliveryShipments(
-                            nextWarehouse: widget.nextWarehouse,
-                            uhfresults: scannerState.uhfResults,
+                          if (state is ActionFailure<List<BatchEntity>>) {
+                            TopSnackbar.dangerSnackbar(
+                                message: state.failure.message);
+                          }
+                        },
+                        builder: (context, state) {
+                          final onPressed = switch (state) {
+                            ActionInProgress() => null,
+                            _ => () => _deliveryCubit.createDeliveryShipments(
+                                  nextWarehouse: widget.nextWarehouse,
+                                  driver: widget.driver,
+                                  batches: _selectedBatches,
+                                  deliveredAt: widget.deliveredAt,
+                                ),
+                          };
+
+                          return ActionConfirmationBottomSheet(
+                            onPressed: onPressed,
+                            message:
+                                'Apakah anda yakin akan mengirim barang ini?',
                           );
                         },
-                        fabParams: ('Siapkan', sendSvgPath),
-                        isScanning: scannerState.isFromUHFReader,
                       ),
-                    );
-                  },
+                      context: context,
+                    ),
+                    onSync: () {
+                      if (scannerState.uhfResults.isEmpty) {
+                        return TopSnackbar.dangerSnackbar(
+                          message: 'Belum ada barang yang discan',
+                        );
+                      }
+
+                      _scannerCubit.updateInventoryStatus(false);
+                      _deliveryCubit.fetchPreviewDeliveryShipments(
+                        nextWarehouse: widget.nextWarehouse,
+                        uhfresults: scannerState.uhfResults,
+                      );
+                    },
+                    fabParams: ('Siapkan', sendSvgPath),
+                    isScanning: scannerState.isFromUHFReader,
+                  ),
                 ),
               ],
             );
@@ -334,7 +343,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
 
         if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
           return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
               itemBuilder: (context, index) =>
                   ScannedItemCard(item: scannerState.uhfResults[index]),
@@ -369,7 +378,7 @@ class _SendGoodsScanPageState extends State<SendGoodsScanPage>
               }
 
               return SliverPadding(
-                padding: const EdgeInsets.only(bottom: 96),
+                padding: const EdgeInsets.only(bottom: 80),
                 sliver: SliverList.separated(
                   itemBuilder: (context, index) => BatchCardCheckbox(
                     onChanged: (value) {
