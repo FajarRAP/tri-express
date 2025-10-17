@@ -31,6 +31,7 @@ const imagePath = 'assets/images';
 const onboardingImagePath = '$imagePath/onboarding-bg.jpg';
 const loginImagePath = '$imagePath/login-bg.png';
 const logoTextImagePath = '$imagePath/logo-text.png';
+const logoImagePath = '$imagePath/logo.png';
 
 const superAdminRole = 'superadmin';
 
@@ -46,3 +47,5 @@ const truckAltSvgPath = 'assets/svgs/truck-alt.svg';
 const qrScannerSvgPath = 'assets/svgs/qr-scanner.svg';
 const boxAltSvgPath = 'assets/svgs/box-alt.svg';
 const settingSvgPath = 'assets/svgs/setting.svg';
+const connectionOffSvgPath = 'assets/svgs/connection-off.svg';
+const connectionOnSvgPath = 'assets/svgs/connection-on.svg';
