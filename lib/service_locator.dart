@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
+import 'core/services/network_info_service.dart';
 import 'core/utils/dio_interceptor.dart';
 import 'features/auth/data/data_sources/auth_local_data_source.dart';
 import 'features/auth/data/data_sources/auth_remote_data_source.dart';
@@ -28,6 +30,7 @@ import 'features/core/domain/use_cases/get_onboarding_status_use_case.dart';
 import 'features/core/domain/use_cases/read_all_notifications_use_case.dart';
 import 'features/core/domain/use_cases/read_notification_use_case.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
+import 'features/core/presentation/cubit/internet_cubit.dart';
 import 'features/inventory/data/data_sources/inventory_remote_data_source.dart';
 import 'features/inventory/data/repositories/inventory_repository_impl.dart';
 import 'features/inventory/domain/repositories/inventory_repository.dart';
@@ -73,6 +76,11 @@ void setupServiceLocator() {
       ),
     ),
   );
+
+  getIt.registerLazySingleton<NetworkInfoService>(
+      () => NetworkInfoServiceImpl(internetConnection: InternetConnection()));
+
+  getIt.registerLazySingleton(() => InternetCubit(getIt()));
 
   // Core
   getIt
