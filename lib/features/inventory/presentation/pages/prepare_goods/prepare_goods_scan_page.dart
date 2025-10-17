@@ -154,6 +154,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
         child: BlocBuilder<PrepareCubit, ReusableState<List>>(
           buildWhen: (previous, current) => current is FetchPreviewShipments,
           builder: (context, state) {
+            final scannerState = context.watch<ScannerCubit>().state;
             final allGoods = state is FetchPreviewShipmentsLoaded
                 ? state.data
                 : <GoodEntity>[];
@@ -163,7 +164,9 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
 
             return Row(
               children: <Widget>[
-                if (goods.isNotEmpty)
+                if (goods.isNotEmpty &&
+                    !scannerState.isFromQRScanner &&
+                    !scannerState.isFromUHFReader)
                   Expanded(
                     child: CheckboxListTile.adaptive(
                       onChanged: (value) {
@@ -192,68 +195,63 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ),
-                BlocBuilder<ScannerCubit, ScannerState>(
-                  builder: (context, scannerState) {
-                    return Expanded(
-                      child: FloatingActionButtonBar(
-                        onReset: () {
-                          _selectedCodes.clear();
-                          _prepareCubit.clearGoods();
-                          onReset();
-                        },
-                        onScan: onScan,
-                        onSave: () => showModalBottomSheet(
-                          context: context,
-                          builder: (context) =>
-                              BlocConsumer<PrepareCubit, ReusableState<List>>(
-                            listener: (context, state) {
-                              if (state is ActionSuccess<List>) {
-                                TopSnackbar.successSnackbar(
-                                    message: state.message);
-                                context.goNamed(prepareGoodsRoute);
-                              }
-
-                              if (state is ActionFailure<List>) {
-                                TopSnackbar.dangerSnackbar(
-                                    message: state.failure.message);
-                              }
-                            },
-                            builder: (context, state) {
-                              final onPressed = switch (state) {
-                                ActionInProgress() => null,
-                                _ => () => _prepareCubit.createPrepareShipments(
-                                    shippedAt: widget.shippedAt,
-                                    estimatedAt: widget.estimatedAt,
-                                    nextWarehouse: widget.nextWarehouse,
-                                    transportMode: widget.transportMode,
-                                    batchName: widget.batchName,
-                                    selectedCodes: _selectedCodes),
-                              };
-
-                              return ActionConfirmationBottomSheet(
-                                onPressed: onPressed,
-                                message:
-                                    'Apakah anda yakin akan menyimpan barang ini?',
-                              );
-                            },
-                          ),
-                        ),
-                        onSync: () {
-                          if (scannerState.uhfResults.isEmpty) {
-                            return TopSnackbar.dangerSnackbar(
-                              message: 'Belum ada barang yang discan',
-                            );
+                Expanded(
+                  child: FloatingActionButtonBar(
+                    onReset: () {
+                      _selectedCodes.clear();
+                      _prepareCubit.clearGoods();
+                      onReset();
+                    },
+                    onScan: onScan,
+                    onSave: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) =>
+                          BlocConsumer<PrepareCubit, ReusableState<List>>(
+                        listener: (context, state) {
+                          if (state is ActionSuccess<List>) {
+                            TopSnackbar.successSnackbar(message: state.message);
+                            context.goNamed(prepareGoodsRoute);
                           }
 
-                          _scannerCubit.updateInventoryStatus(false);
-                          _prepareCubit.fetchPreviewPrepareShipments(
-                              uhfresults: scannerState.uhfResults);
+                          if (state is ActionFailure<List>) {
+                            TopSnackbar.dangerSnackbar(
+                                message: state.failure.message);
+                          }
                         },
-                        fabParams: ('Siapkan', boxSvgPath),
-                        isScanning: scannerState.isFromUHFReader,
+                        builder: (context, state) {
+                          final onPressed = switch (state) {
+                            ActionInProgress() => null,
+                            _ => () => _prepareCubit.createPrepareShipments(
+                                shippedAt: widget.shippedAt,
+                                estimatedAt: widget.estimatedAt,
+                                nextWarehouse: widget.nextWarehouse,
+                                transportMode: widget.transportMode,
+                                batchName: widget.batchName,
+                                selectedCodes: _selectedCodes),
+                          };
+
+                          return ActionConfirmationBottomSheet(
+                            onPressed: onPressed,
+                            message:
+                                'Apakah anda yakin akan menyimpan barang ini?',
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ),
+                    onSync: () {
+                      if (scannerState.uhfResults.isEmpty) {
+                        return TopSnackbar.dangerSnackbar(
+                          message: 'Belum ada barang yang discan',
+                        );
+                      }
+
+                      _scannerCubit.updateInventoryStatus(false);
+                      _prepareCubit.fetchPreviewPrepareShipments(
+                          uhfresults: scannerState.uhfResults);
+                    },
+                    fabParams: ('Siapkan', boxSvgPath),
+                    isScanning: scannerState.isFromUHFReader,
+                  ),
                 ),
               ],
             );
@@ -282,7 +280,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
 
         if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
           return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
               itemBuilder: (context, index) =>
                   ScannedItemCard(item: scannerState.uhfResults[index]),
@@ -320,7 +318,7 @@ class _PrepareGoodsScanPageState extends State<PrepareGoodsScanPage>
               }
 
               return SliverPadding(
-                padding: const EdgeInsets.only(bottom: 96),
+                padding: const EdgeInsets.only(bottom: 80),
                 sliver: SliverList.separated(
                   itemBuilder: (context, index) => GoodCardCheckbox(
                     onChanged: (value) {
