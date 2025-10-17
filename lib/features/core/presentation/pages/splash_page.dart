@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/routes/router.dart';
+import '../../../../core/themes/colors.dart';
+import '../../../../core/utils/constants.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 
 class SplashPage extends StatelessWidget {
@@ -20,7 +22,10 @@ class SplashPage extends StatelessWidget {
         Authenticated() => context.goNamed(menuRoute),
         _ => null,
       },
-      child: const Scaffold(body: Center(child: FlutterLogo(size: 100))),
+      child: Scaffold(
+        backgroundColor: light,
+        body: Center(child: Image.asset(logoImagePath, width: 80)),
+      ),
     );
   }
 }
