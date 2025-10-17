@@ -10,6 +10,7 @@ import 'core/themes/theme.dart';
 import 'core/utils/top_snackbar.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/core/presentation/cubit/core_cubit.dart';
+import 'features/core/presentation/cubit/internet_cubit.dart';
 import 'features/inventory/presentation/cubit/delivery_cubit.dart';
 import 'features/inventory/presentation/cubit/pick_up_cubit.dart';
 import 'features/inventory/presentation/cubit/prepare_cubit.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => getIt<CoreCubit>()),
+        BlocProvider(create: (context) => getIt<InternetCubit>()),
         BlocProvider(create: (context) => getIt<AuthCubit>()),
         BlocProvider(create: (context) => getIt<ReceiveCubit>()),
         BlocProvider(create: (context) => getIt<PrepareCubit>()),
@@ -50,10 +52,18 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         builder: (context, child) => Overlay(
           initialEntries: <OverlayEntry>[
-            OverlayEntry(builder: (context) {
-              TopSnackbar.init(context);
-              return child!;
-            }),
+            OverlayEntry(
+              builder: (context) {
+                TopSnackbar.init(context);
+
+                return BlocListener<InternetCubit, bool>(
+                  listener: (context, isConnected) => isConnected
+                      ? TopSnackbar.hasInternetSnackbar()
+                      : TopSnackbar.noInternetSnackbar(),
+                  child: child,
+                );
+              },
+            ),
           ],
         ),
         localizationsDelegates: [
