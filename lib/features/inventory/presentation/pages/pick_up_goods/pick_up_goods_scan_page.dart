@@ -257,7 +257,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
 
         if (scannerState.isFromQRScanner || scannerState.isFromUHFReader) {
           return SliverPadding(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: const EdgeInsets.only(bottom: 80),
             sliver: SliverList.builder(
               itemBuilder: (context, index) =>
                   ScannedItemCard(item: scannerState.uhfResults[index]),
@@ -295,7 +295,7 @@ class _PickUpGoodsScanPageState extends State<PickUpGoodsScanPage>
               }
 
               return SliverPadding(
-                padding: const EdgeInsets.only(bottom: 96),
+                padding: const EdgeInsets.only(bottom: 80),
                 sliver: SliverList.separated(
                   itemBuilder: (context, index) => GoodCardCheckbox(
                     onChanged: (value) {
